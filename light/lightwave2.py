@@ -1,4 +1,3 @@
-#light
 import custom_components.lightwave2 as lightwave2
 
 from custom_components.lightwave2 import LIGHTWAVE_LINK2
@@ -9,6 +8,7 @@ import logging
 
 _LOGGER = logging.getLogger(__name__)
 DEPENDENCIES = ['lightwave2']
+
 
 async def async_setup_platform(hass, config, async_add_entities,
                                discovery_info=None):
@@ -32,7 +32,6 @@ class LWRF2Light(Light):
         self._lwlink = link
         self._state = self._lwlink.get_device_by_id(self._device_id).features["switch"][1]
         self._brightness = int(self._lwlink.get_device_by_id(self._device_id).features["dimLevel"][1] / 100 * 255)
-
 
     @property
     def supported_features(self):
