@@ -15,3 +15,7 @@ To use this component in your installation, add the following to your `configura
 lightwave2:
   username: example@example.co.uk
   password: hunter2
+  
+```
+
+This should then automatically add all switches and lights.
