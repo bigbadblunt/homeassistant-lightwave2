@@ -34,9 +34,11 @@ class LWRF2Switch(SwitchDevice):
 
     @property
     def should_poll(self):
+        """Gen 2 hub tracks state, so we need to update"""
         return True
         
     async def async_update(self):
+        """Update state"""
         self._state = self._lwlink.get_device_by_id(self._device_id).features["switch"][1]
 
     @property
@@ -46,6 +48,7 @@ class LWRF2Switch(SwitchDevice):
     
     @property
     def unique_id(self):
+        """Unique identifier. Provided by hub."""
         return self._device_id
         
     @property

@@ -10,7 +10,7 @@ LIGHTWAVE_LINK2 = 'lightwave_link2'
 
 
 async def async_setup(hass, config):
-    """Your controller/hub specific code."""
+    """Setup Lightwave hub. Uses undocumented websocket API."""
     from lightwave2 import lightwave2
     
     email = config[DOMAIN][CONF_USERNAME]

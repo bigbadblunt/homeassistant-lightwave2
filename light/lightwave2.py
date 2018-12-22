@@ -12,7 +12,7 @@ DEPENDENCIES = ['lightwave2']
 
 async def async_setup_platform(hass, config, async_add_entities,
                                discovery_info=None):
-    """Find and return LightWave switches."""
+    """Find and return LightWave lights."""
 
     lights = []
     link = hass.data[LIGHTWAVE_LINK2]
@@ -40,9 +40,11 @@ class LWRF2Light(Light):
         
     @property
     def should_poll(self):
+        """Gen 2 hub tracks state, so we need to update"""
         return True
         
     async def async_update(self):
+        """Update state"""
         self._state = self._lwlink.get_device_by_id(self._device_id).features["switch"][1]
         self._brightness = int(self._lwlink.get_device_by_id(self._device_id).features["dimLevel"][1] / 100 * 255)
 
@@ -58,6 +60,7 @@ class LWRF2Light(Light):
         
     @property
     def unique_id(self):
+        """Unique identifier. Provided by hub."""
         return self._device_id
         
     @property
@@ -66,19 +69,19 @@ class LWRF2Light(Light):
         return self._state
 
     async def async_turn_on(self, **kwargs):
-        """Turn the LightWave switch on."""
+        """Turn the LightWave light on."""
         self._state = True
         
         if ATTR_BRIGHTNESS in kwargs:
             self._brightness = kwargs[ATTR_BRIGHTNESS]
         
-        await self._lwlink.async_set_brightness_by_device_id(self._device_id, int(self._brightness/255*100))
+        await self._lwlink.async_set_brightness_by_device_id(self._device_id, int(self._brightness / 255 * 100))
         await self._lwlink.async_turn_on_by_device_id(self._device_id)
         
         self.async_schedule_update_ha_state()
 
     async def async_turn_off(self, **kwargs):
-        """Turn the LightWave switch off."""
+        """Turn the LightWave light off."""
         self._state = False
         await self._lwlink.async_turn_off_by_device_id(self._device_id)
         self.async_schedule_update_ha_state()
