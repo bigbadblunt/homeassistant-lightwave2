@@ -18,4 +18,4 @@ lightwave2:
   
 ```
 
-This should then automatically add all switches and lights.
+This should then automatically add all switches and lights that are configured in your Lightwave app.
