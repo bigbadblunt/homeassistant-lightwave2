@@ -62,7 +62,14 @@ class LWRF2Light(Light):
     def unique_id(self):
         """Unique identifier. Provided by hub."""
         return self._device_id
-        
+
+    @property
+    def device_info(self):
+        """Return information about the device."""
+        return {
+            'product_code': self._lwlink.get_device_by_id(self._device_id).product_code
+        }
+
     @property
     def is_on(self):
         """Lightwave switch is on state."""
