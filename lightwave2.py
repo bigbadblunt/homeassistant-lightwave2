@@ -1,3 +1,4 @@
+import voluptuous as vol
 from homeassistant.helpers.discovery import async_load_platform
 from homeassistant.const import (CONF_USERNAME, CONF_PASSWORD)
 import logging
@@ -8,6 +9,12 @@ _LOGGER = logging.getLogger(__name__)
 DOMAIN = 'lightwave2'
 LIGHTWAVE_LINK2 = 'lightwave_link2'
 
+CONFIG_SCHEMA = vol.Schema({
+    DOMAIN: vol.Schema({
+        vol.Required(CONF_USERNAME): cv.string,
+        vol.Required(CONF_PASSWORD): cv.string,
+    })
+}, extra=vol.ALLOW_EXTRA)
 
 async def async_setup(hass, config):
     """Setup Lightwave hub. Uses undocumented websocket API."""
