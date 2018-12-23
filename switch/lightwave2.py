@@ -2,7 +2,6 @@ import custom_components.lightwave2 as lightwave2
 
 from custom_components.lightwave2 import LIGHTWAVE_LINK2
 from homeassistant.components.switch import SwitchDevice
-from homeassistant.const import CONF_NAME
 import logging
 
 _LOGGER = logging.getLogger(__name__)
