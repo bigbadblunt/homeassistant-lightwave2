@@ -86,6 +86,7 @@ class LWRF2Climate(ClimateDevice):
         if ATTR_TEMPERATURE in kwargs:
             self.temperature = kwargs[ATTR_TEMPERATURE]
 
+        _LOGGER.debug(self._target_temperature)
         await self._lwlink.async_set_temperature_by_device_id(self._device_id, self._temperature)
 
     async def async_update(self):
