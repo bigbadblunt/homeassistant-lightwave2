@@ -35,8 +35,9 @@ class LWRF2Climate(ClimateDevice):
         self._device_id = device_id
         self._lwlink = link
         self._support_flags = SUPPORT_TARGET_TEMPERATURE
-        self._temperature = None #TODO
-        self._target_temperature = None #TODO
+        self._state = self._lwlink.get_device_by_id(self._device_id).features["heatState"][1]
+        self._temperature = self._lwlink.get_device_by_id(self._device_id).features["temperature"][1] / 10
+        self._target_temperature = self._lwlink.get_device_by_id(self._device_id).features["targetTemperature"][1] / 10
         self._temperature_scale = TEMP_CELSIUS
 
     @property
@@ -83,8 +84,8 @@ class LWRF2Climate(ClimateDevice):
     async def set_temperature(self, **kwargs):
         pass
 
-    async def async_update(self): #TODO
+    async def async_update(self):
         """Update state"""
-        self._state = self._lwlink.get_device_by_id(self._device_id).features["switch"][1]
+        self._state = self._lwlink.get_device_by_id(self._device_id).features["heatState"][1]
         self._temperature = self._lwlink.get_device_by_id(self._device_id).features["temperature"][1] / 10
         self._target_temperature = self._lwlink.get_device_by_id(self._device_id).features["targetTemperature"][1] / 10
