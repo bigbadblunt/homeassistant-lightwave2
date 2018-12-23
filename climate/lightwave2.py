@@ -35,7 +35,7 @@ class LWRF2Climate(ClimateDevice):
         self._device_id = device_id
         self._lwlink = link
         self._support_flags = SUPPORT_TARGET_TEMPERATURE
-        self._state = self._lwlink.get_device_by_id(self._device_id).features["heatState"][1]
+        self._valve_level = self._lwlink.get_device_by_id(self._device_id).features["valveLevel"][1]
         self._temperature = self._lwlink.get_device_by_id(self._device_id).features["temperature"][1] / 10
         self._target_temperature = self._lwlink.get_device_by_id(self._device_id).features["targetTemperature"][1] / 10
         self._temperature_scale = TEMP_CELSIUS
@@ -78,6 +78,14 @@ class LWRF2Climate(ClimateDevice):
         return self._temperature
 
     @property
+    def current_operation(self):
+        """Return current operation ie. heat, cool, idle."""
+        if self._valve_level == 100:
+            return STATE_HEAT
+        else:
+            return STATE_OFF
+
+    @property
     def target_temperature(self):
         """Return the temperature we try to reach."""
         return self._target_temperature
@@ -91,6 +99,6 @@ class LWRF2Climate(ClimateDevice):
 
     async def async_update(self):
         """Update state"""
-        self._state = self._lwlink.get_device_by_id(self._device_id).features["heatState"][1]
+        self._valve_level = self._lwlink.get_device_by_id(self._device_id).features["valveLevel"][1]
         self._temperature = self._lwlink.get_device_by_id(self._device_id).features["temperature"][1] / 10
         self._target_temperature = self._lwlink.get_device_by_id(self._device_id).features["targetTemperature"][1] / 10
