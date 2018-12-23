@@ -83,7 +83,10 @@ class LWRF2Climate(ClimateDevice):
         return self._target_temperature
 
     async def set_temperature(self, **kwargs):
-        pass
+        if ATTR_TEMPERATURE in kwargs:
+            self._brightness = kwargs[ATTR_TEMPERATURE]
+
+        await self._lwlink.async_set_temperature_by_device_id(self._device_id, self._temperature)
 
     async def async_update(self):
         """Update state"""
