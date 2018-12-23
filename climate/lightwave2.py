@@ -42,7 +42,8 @@ class LWRF2Climate(ClimateDevice):
 
     @property
     def should_poll(self):
-        pass
+        """Gen 2 hub tracks state, so we need to update"""
+        return True
 
     @property
     def supported_features(self):
