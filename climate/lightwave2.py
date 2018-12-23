@@ -7,6 +7,9 @@ from homeassistant.components.climate import (
     ATTR_TEMPERATURE, SUPPORT_TARGET_TEMPERATURE,
     SUPPORT_TARGET_TEMPERATURE_HIGH, SUPPORT_TARGET_TEMPERATURE_LOW,
     SUPPORT_OPERATION_MODE, SUPPORT_AWAY_MODE, SUPPORT_FAN_MODE)
+from homeassistant.const import (
+    TEMP_CELSIUS, TEMP_FAHRENHEIT,
+    CONF_SCAN_INTERVAL, STATE_ON, STATE_OFF, STATE_UNKNOWN)
 import logging
 
 _LOGGER = logging.getLogger(__name__)
@@ -34,6 +37,7 @@ class LWRF2Climate(ClimateDevice):
         self._support_flags = SUPPORT_TARGET_TEMPERATURE
         self._temperature = None #TODO
         self._target_temperature = None #TODO
+        self._temperature_scale = TEMP_CELSIUS
 
     @property
     def should_poll(self):
@@ -60,6 +64,11 @@ class LWRF2Climate(ClimateDevice):
     def name(self):
         """Return the name, if any."""
         return self._name
+
+    @property
+    def temperature_unit(self):
+        """Return the unit of measurement."""
+        return self._temperature_scale
 
     @property
     def current_temperature(self):
