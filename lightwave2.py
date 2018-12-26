@@ -5,6 +5,7 @@ import voluptuous as vol
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.discovery import async_load_platform
 from homeassistant.const import (CONF_USERNAME, CONF_PASSWORD)
+from homeassistant.core import callback
 
 
 REQUIREMENTS = ['lightwave2==0.0.11']
@@ -42,4 +43,4 @@ async def async_setup(hass, config):
 def async_update_callback():
     """Update the light's state."""
     _LOGGER.debug("In callback")
-    self.async_schedule_update_ha_state()
+    hass.async_schedule_update_ha_state()
