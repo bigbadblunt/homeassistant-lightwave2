@@ -43,7 +43,7 @@ class LWRF2Light(Light):
     def async_update_callback(self):
         """Update the component's state."""
         _LOGGER.debug("In callback")
-        self.async_schedule_update_ha_state()
+        self.async_schedule_update_ha_state(True)
 
     @property
     def supported_features(self):

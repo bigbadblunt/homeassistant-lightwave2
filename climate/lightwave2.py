@@ -48,7 +48,7 @@ class LWRF2Climate(ClimateDevice):
     @callback
     def async_update_callback(self):
         """Update the component's state."""
-        self.async_schedule_update_ha_state()
+        self.async_schedule_update_ha_state(True)
 
     @property
     def should_poll(self):
