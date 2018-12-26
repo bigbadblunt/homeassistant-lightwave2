@@ -35,11 +35,13 @@ class LWRF2Light(Light):
 
     async def async_added_to_hass(self):
         """Subscribe to events."""
-        await self._lwlink.async_register_callback(self.async_update_callback)
+        _LOGGER.debug("Registering")
+        self._lwlink.async_register_callback(self.async_update_callback)
 
     @callback
     def async_update_callback(self):
         """Update the component's state."""
+        _LOGGER.debug("In callback")
         self.async_schedule_update_ha_state()
 
     @property
