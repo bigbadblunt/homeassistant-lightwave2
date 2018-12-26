@@ -31,15 +31,15 @@ async def async_setup(hass, config):
     await link.async_connect()
     hass.data[LIGHTWAVE_LINK2] = link
     await link.async_get_hierarchy()
-    await link.async_register_callback(self.async_schedule_update_ha_state)
+    await link.async_register_callback(async_update_callback)
     
     hass.async_create_task(async_load_platform(hass, 'switch', DOMAIN, None, config))
     hass.async_create_task(async_load_platform(hass, 'light', DOMAIN, None, config))
     hass.async_create_task(async_load_platform(hass, 'climate', DOMAIN, None, config))
     return True
 
-    @callback
-    def async_update_callback(self):
-        """Update the light's state."""
-        _LOGGER.debug("In callback")
-        self.async_schedule_update_ha_state()
+@callback
+def async_update_callback():
+    """Update the light's state."""
+    _LOGGER.debug("In callback")
+    self.async_schedule_update_ha_state()
