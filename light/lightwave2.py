@@ -40,7 +40,7 @@ class LWRF2Light(Light):
     @property
     def should_poll(self):
         """Gen 2 hub tracks state, so we need to update"""
-        return True
+        return False
         
     async def async_update(self):
         """Update state"""
