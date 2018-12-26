@@ -1,5 +1,3 @@
-import custom_components.lightwave2 as lightwave2
-
 from custom_components.lightwave2 import LIGHTWAVE_LINK2
 from homeassistant.components.switch import SwitchDevice
 from homeassistant.core import callback
@@ -78,7 +76,6 @@ class LWRF2Switch(SwitchDevice):
         self._state = True
         await self._lwlink.async_turn_on_by_device_id(self._device_id)
         self.async_schedule_update_ha_state()
-        _LOGGER.debug(self._device_id)
 
     async def async_turn_off(self, **kwargs):
         """Turn the LightWave switch off."""

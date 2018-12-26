@@ -1,5 +1,3 @@
-import custom_components.lightwave2 as lightwave2
-
 from custom_components.lightwave2 import LIGHTWAVE_LINK2
 from homeassistant.components.climate import (
     STATE_AUTO, STATE_COOL, STATE_HEAT, STATE_ECO, ClimateDevice,
