@@ -18,6 +18,6 @@ lightwave2:
   
 ```
 
-This should then automatically add all switches and lights that are configured in your Lightwave app.
+This should then automatically add all switches, lights and thermostats that are configured in your Lightwave app.
 
 Credit to Warren Ashcroft whose code I used as a base https://github.com/washcroft/LightwaveRF-LinkPlus
