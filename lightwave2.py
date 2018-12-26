@@ -24,7 +24,13 @@ CONFIG_SCHEMA = vol.Schema({
 async def async_setup(hass, config):
     """Setup Lightwave hub. Uses undocumented websocket API."""
     from lightwave2 import lightwave2
-    
+
+    @callback
+    def async_update_callback():
+        """Update the light's state."""
+        _LOGGER.debug("In callback")
+        hass.async_schedule_update_ha_state()
+
     email = config[DOMAIN][CONF_USERNAME]
     password = config[DOMAIN][CONF_PASSWORD]
     
@@ -39,8 +45,4 @@ async def async_setup(hass, config):
     hass.async_create_task(async_load_platform(hass, 'climate', DOMAIN, None, config))
     return True
 
-@callback
-def async_update_callback():
-    """Update the light's state."""
-    _LOGGER.debug("In callback")
-    hass.async_schedule_update_ha_state()
+
