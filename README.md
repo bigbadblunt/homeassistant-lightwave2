@@ -4,7 +4,7 @@ Prototype Home Assistant component for controlling LightwaveRF devices with use 
 
 ### Setup
 
-Copy 3 files: `lightwave2.py`, `light/lightwave2.py`, `switch/lightwave2.py` to your `ha_config_dir/custom_components` directory.
+Copy 4 files: `lightwave2.py`, `light/lightwave2.py`, `switch/lightwave2.py`, `climate/lightwave2.py` to your `ha_config_dir/custom_components` directory.
 
 ### Configuration
 
