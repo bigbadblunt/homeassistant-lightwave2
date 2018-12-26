@@ -10,6 +10,7 @@ from homeassistant.components.climate import (
 from homeassistant.const import (
     TEMP_CELSIUS, TEMP_FAHRENHEIT,
     CONF_SCAN_INTERVAL, STATE_ON, STATE_OFF, STATE_UNKNOWN)
+from homeassistant.core import callback
 import logging
 
 _LOGGER = logging.getLogger(__name__)
@@ -39,6 +40,15 @@ class LWRF2Climate(ClimateDevice):
         self._temperature = self._lwlink.get_device_by_id(self._device_id).features["temperature"][1] / 10
         self._target_temperature = self._lwlink.get_device_by_id(self._device_id).features["targetTemperature"][1] / 10
         self._temperature_scale = TEMP_CELSIUS
+
+    async def async_added_to_hass(self):
+        """Subscribe to events."""
+        await self._lwlink.async_register_callback(self.async_update_callback)
+
+    @callback
+    def async_update_callback(self):
+        """Update the component's state."""
+        self.async_schedule_update_ha_state()
 
     @property
     def should_poll(self):
