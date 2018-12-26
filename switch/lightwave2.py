@@ -39,7 +39,7 @@ class LWRF2Switch(SwitchDevice):
     @callback
     def async_update_callback(self):
         """Update the component's state."""
-        _LOGGER.debug("In callback")
+        _LOGGER.debug("In callback %s", self._name)
         self.async_schedule_update_ha_state(True)
 
     @property
@@ -49,7 +49,6 @@ class LWRF2Switch(SwitchDevice):
         
     async def async_update(self):
         """Update state"""
-        _LOGGER.debug("In async_update")
         self._state = self._lwlink.get_device_by_id(self._device_id).features["switch"][1]
 
     @property
