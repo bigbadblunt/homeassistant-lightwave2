@@ -36,6 +36,7 @@ class LWRF2Light(Light):
     async def async_added_to_hass(self):
         """Subscribe to events."""
         _LOGGER.debug("Registering")
+        _LOGGER.debug(self.async_update_callback)
         self._lwlink.async_register_callback(self.async_update_callback)
 
     @callback
