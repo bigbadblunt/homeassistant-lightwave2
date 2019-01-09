@@ -6,6 +6,18 @@ Prototype Home Assistant component for controlling LightwaveRF devices with use 
 
 Copy 4 files: `lightwave2.py`, `light/lightwave2.py`, `switch/lightwave2.py`, `climate/lightwave2.py` to your `ha_config_dir/custom_components` directory.
 
+Testing and working with:
+
+L21 Dimmer (2nd generation)
+
+LW430 Dimmer (1st generation)
+
+LW270 Power socket (1st generation)
+
+LW821 In-line relay (1st generation)
+
+LW934 Electric switch (1st generation)
+
 ### Configuration
 
 To use this component in your installation, add the following to your `configuration.yaml` file:
