@@ -30,7 +30,7 @@ class LWRF2Light(Light):
         self._lwlink = link
         self._state = self._lwlink.get_device_by_id(self._device_id).features["switch"][1]
         self._brightness = int(self._lwlink.get_device_by_id(self._device_id).features["dimLevel"][1] / 100 * 255)
-        self._gen2 = self._lwlink.get_device_by_id(self._device_id).isgen2()
+        self._gen2 = self._lwlink.get_device_by_id(self._device_id).is_gen2()
 
     async def async_added_to_hass(self):
         """Subscribe to events."""
