@@ -51,7 +51,7 @@ class LWRF2Climate(ClimateDevice):
 
     @property
     def should_poll(self):
-        """Gen 2 hub tracks state, so we need to update"""
+        """Lightwave2 library will push state, no polling needed"""
         return False
 
     @property
