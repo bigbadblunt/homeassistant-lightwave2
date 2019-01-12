@@ -49,7 +49,7 @@ class LWRF2Switch(SwitchDevice):
     @property
     def assumed_state(self):
         """Gen 2 devices will report state changes, gen 1 doesn't"""
-        return not self._gen2()
+        return not self._gen2
 
     async def async_update(self):
         """Update state"""
