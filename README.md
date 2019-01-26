@@ -6,7 +6,7 @@ Home Assistant component for controlling LightwaveRF devices with use of a Light
 
 Copy 4 files: `lightwave2.py`, `light/lightwave2.py`, `switch/lightwave2.py`, `climate/lightwave2.py` to your `<ha_config_dir>/custom_components` directory.
 
-Testing by me and working with:
+Tested by me and working with:
 
 - L21 1-gang Dimmer (2nd generation)
 - LW430 3-gang Dimmer (1st generation)
@@ -14,7 +14,7 @@ Testing by me and working with:
 - LW821 In-line relay (1st generation)
 - LW934 Electric switch (1st generation)
 
-Testing by others:
+Tested by others:
 
 - L22 2-gang Dimmer (2nd generation)
 
