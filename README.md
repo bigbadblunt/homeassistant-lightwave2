@@ -4,7 +4,7 @@ Home Assistant component for controlling LightwaveRF devices with use of a Light
 
 ### Setup
 
-Copy 4 files: `lightwave2.py`, `light/lightwave2.py`, `switch/lightwave2.py`, `climate/lightwave2.py` to your `<ha_config_dir>/custom_components` directory.
+Copy all files from lightwave2 to your `<ha_config_dir>/custom_components` directory. (i.e. you should have `<ha_config_dir>/custom_components/lightwave2/__init__.py`, `<ha_config_dir>/custom_components/lightwave2/switch.py` etc)
 
 Tested by me and working with:
 
