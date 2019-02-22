@@ -15,8 +15,8 @@ async def async_setup_platform(hass, config, async_add_entities,
     lights = []
     link = hass.data[LIGHTWAVE_LINK2]
 
-    for device_id, name in link.get_lights():
-        lights.append(LWRF2Light(name, device_id, link))
+    for featureset_id, name in link.get_lights():
+        lights.append(LWRF2Light(name, featureset_id, link))
     _LOGGER.debug(link.get_lights())
     async_add_entities(lights)
 
@@ -24,13 +24,13 @@ async def async_setup_platform(hass, config, async_add_entities,
 class LWRF2Light(Light):
     """Representation of a LightWaveRF light."""
 
-    def __init__(self, name, device_id, link):
+    def __init__(self, name, featureset_id, link):
         self._name = name
-        self._device_id = device_id
+        self._featureset_id = featureset_id
         self._lwlink = link
-        self._state = self._lwlink.get_device_by_id(self._device_id).features["switch"][1]
-        self._brightness = int(self._lwlink.get_device_by_id(self._device_id).features["dimLevel"][1] / 100 * 255)
-        self._gen2 = self._lwlink.get_device_by_id(self._device_id).is_gen2()
+        self._state = self._lwlink.get_featureset_by_id(self._featureset_id).features["switch"][1]
+        self._brightness = int(self._lwlink.get_featureset_by_id(self._featureset_id).features["dimLevel"][1] / 100 * 255)
+        self._gen2 = self._lwlink.get_featureset_by_id(self._featureset_id).is_gen2()
 
     async def async_added_to_hass(self):
         """Subscribe to events."""
@@ -58,8 +58,8 @@ class LWRF2Light(Light):
 
     async def async_update(self):
         """Update state"""
-        self._state = self._lwlink.get_device_by_id(self._device_id).features["switch"][1]
-        self._brightness = int(self._lwlink.get_device_by_id(self._device_id).features["dimLevel"][1] / 100 * 255)
+        self._state = self._lwlink.get_featureset_by_id(self._featureset_id).features["switch"][1]
+        self._brightness = int(self._lwlink.get_featureset_by_id(self._featureset_id).features["dimLevel"][1] / 100 * 255)
 
     @property
     def name(self):
@@ -74,13 +74,13 @@ class LWRF2Light(Light):
     @property
     def unique_id(self):
         """Unique identifier. Provided by hub."""
-        return self._device_id
+        return self._featureset_id
 
     @property
     def device_info(self):
         """Return information about the device."""
         return {
-            'product_code': self._lwlink.get_device_by_id(self._device_id).product_code
+            'product_code': self._lwlink.get_featureset_by_id(self._featureset_id).product_code
         }
 
     @property
@@ -95,13 +95,13 @@ class LWRF2Light(Light):
         if ATTR_BRIGHTNESS in kwargs:
             self._brightness = kwargs[ATTR_BRIGHTNESS]
         
-        await self._lwlink.async_set_brightness_by_device_id(self._device_id, int(self._brightness / 255 * 100))
-        await self._lwlink.async_turn_on_by_device_id(self._device_id)
+        await self._lwlink.async_set_brightness_by_featureset_id(self._featureset_id, int(self._brightness / 255 * 100))
+        await self._lwlink.async_turn_on_by_featureset_id(self._featureset_id)
         
         self.async_schedule_update_ha_state()
 
     async def async_turn_off(self, **kwargs):
         """Turn the LightWave light off."""
         self._state = False
-        await self._lwlink.async_turn_off_by_device_id(self._device_id)
+        await self._lwlink.async_turn_off_by_featureset_id(self._featureset_id)
         self.async_schedule_update_ha_state()

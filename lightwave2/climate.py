@@ -21,22 +21,22 @@ async def async_setup_platform(hass, config, async_add_entities,
     climates = []
     link = hass.data[LIGHTWAVE_LINK2]
 
-    for device_id, name in link.get_climates():
-        climates.append(LWRF2Climate(name, device_id, link))
+    for featureset_id, name in link.get_climates():
+        climates.append(LWRF2Climate(name, featureset_id, link))
     _LOGGER.debug(link.get_climates())
     async_add_entities(climates)
 
 class LWRF2Climate(ClimateDevice):
     """Representation of a LightWaveRF thermostat."""
 
-    def __init__(self, name, device_id, link):
+    def __init__(self, name, featureset_id, link):
         self._name = name
-        self._device_id = device_id
+        self._featureset_id = featureset_id
         self._lwlink = link
         self._support_flags = SUPPORT_TARGET_TEMPERATURE
-        self._valve_level = self._lwlink.get_device_by_id(self._device_id).features["valveLevel"][1]
-        self._temperature = self._lwlink.get_device_by_id(self._device_id).features["temperature"][1] / 10
-        self._target_temperature = self._lwlink.get_device_by_id(self._device_id).features["targetTemperature"][1] / 10
+        self._valve_level = self._lwlink.get_featureset_by_id(self._featureset_id).features["valveLevel"][1]
+        self._temperature = self._lwlink.get_featureset_by_id(self._featureset_id).features["temperature"][1] / 10
+        self._target_temperature = self._lwlink.get_featureset_by_id(self._featureset_id).features["targetTemperature"][1] / 10
         self._temperature_scale = TEMP_CELSIUS
 
     async def async_added_to_hass(self):
@@ -61,13 +61,13 @@ class LWRF2Climate(ClimateDevice):
     @property
     def unique_id(self):
         """Unique identifier. Provided by hub."""
-        return self._device_id
+        return self._featureset_id
 
     @property
     def device_info(self):
         """Return information about the device."""
         return {
-            'product_code': self._lwlink.get_device_by_id(self._device_id).product_code
+            'product_code': self._lwlink.get_featureset_by_id(self._featureset_id).product_code
         }
 
     @property
@@ -103,10 +103,10 @@ class LWRF2Climate(ClimateDevice):
         if ATTR_TEMPERATURE in kwargs:
             self._target_temperature = kwargs[ATTR_TEMPERATURE]
 
-        await self._lwlink.async_set_temperature_by_device_id(self._device_id, self._target_temperature)
+        await self._lwlink.async_set_temperature_by_featureset_id(self._featureset_id, self._target_temperature)
 
     async def async_update(self):
         """Update state"""
-        self._valve_level = self._lwlink.get_device_by_id(self._device_id).features["valveLevel"][1]
-        self._temperature = self._lwlink.get_device_by_id(self._device_id).features["temperature"][1] / 10
-        self._target_temperature = self._lwlink.get_device_by_id(self._device_id).features["targetTemperature"][1] / 10
+        self._valve_level = self._lwlink.get_featureset_by_id(self._featureset_id).features["valveLevel"][1]
+        self._temperature = self._lwlink.get_featureset_by_id(self._featureset_id).features["temperature"][1] / 10
+        self._target_temperature = self._lwlink.get_featureset_by_id(self._featureset_id).features["targetTemperature"][1] / 10
