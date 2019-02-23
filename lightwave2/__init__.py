@@ -13,10 +13,17 @@ DOMAIN = 'lightwave2'
 LIGHTWAVE_LINK2 = 'lightwave_link2'
 
 CONFIG_SCHEMA = vol.Schema({
-    DOMAIN: {
+    DOMAIN: vol.Any({
         vol.Required(CONF_USERNAME): cv.string,
         vol.Required(CONF_PASSWORD): cv.string,
+        vol.Optional('backend'): 'emulated'
+    },
+    {
+        vol.Required(CONF_API_KEY): cv.string,
+        vol.Required('refresh_key'): cv.string,
+        vol.Required('backend'): 'public'
     }
+    )
 })
 
 async def async_setup(hass, config):
