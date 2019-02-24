@@ -17,7 +17,6 @@ async def async_setup_platform(hass, config, async_add_entities,
 
     for featureset_id, name in link.get_lights():
         lights.append(LWRF2Light(name, featureset_id, link))
-    _LOGGER.debug(link.get_lights())
     async_add_entities(lights)
 
 

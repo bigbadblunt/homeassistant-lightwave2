@@ -23,7 +23,6 @@ async def async_setup_platform(hass, config, async_add_entities,
 
     for featureset_id, name in link.get_climates():
         climates.append(LWRF2Climate(name, featureset_id, link))
-    _LOGGER.debug(link.get_climates())
     async_add_entities(climates)
 
 class LWRF2Climate(ClimateDevice):
@@ -99,7 +98,6 @@ class LWRF2Climate(ClimateDevice):
         return self._target_temperature
 
     async def async_set_temperature(self, **kwargs):
-        _LOGGER.debug(kwargs)
         if ATTR_TEMPERATURE in kwargs:
             self._target_temperature = kwargs[ATTR_TEMPERATURE]
 

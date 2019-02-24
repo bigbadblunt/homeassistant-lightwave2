@@ -16,7 +16,6 @@ async def async_setup_platform(hass, config, async_add_entities,
 
     for featureset_id, name in link.get_switches():
         switches.append(LWRF2Switch(name, featureset_id, link))
-    _LOGGER.debug(link.get_switches())
     async_add_entities(switches)
 
 
