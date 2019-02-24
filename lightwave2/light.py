@@ -2,9 +2,7 @@ from custom_components.lightwave2 import LIGHTWAVE_LINK2
 from homeassistant.components.light import (
     ATTR_BRIGHTNESS, SUPPORT_BRIGHTNESS, Light)
 from homeassistant.core import callback
-import logging
 
-_LOGGER = logging.getLogger(__name__)
 DEPENDENCIES = ['lightwave2']
 
 
@@ -27,9 +25,14 @@ class LWRF2Light(Light):
         self._name = name
         self._featureset_id = featureset_id
         self._lwlink = link
-        self._state = self._lwlink.get_featureset_by_id(self._featureset_id).features["switch"][1]
-        self._brightness = int(self._lwlink.get_featureset_by_id(self._featureset_id).features["dimLevel"][1] / 100 * 255)
-        self._gen2 = self._lwlink.get_featureset_by_id(self._featureset_id).is_gen2()
+        self._state = \
+            self._lwlink.get_featureset_by_id(self._featureset_id).features[
+                "switch"][1]
+        self._brightness = int(
+            self._lwlink.get_featureset_by_id(self._featureset_id).features[
+                "dimLevel"][1] / 100 * 255)
+        self._gen2 = self._lwlink.get_featureset_by_id(
+            self._featureset_id).is_gen2()
 
     async def async_added_to_hass(self):
         """Subscribe to events."""
@@ -44,7 +47,7 @@ class LWRF2Light(Light):
     def supported_features(self):
         """Flag supported features."""
         return SUPPORT_BRIGHTNESS
-        
+
     @property
     def should_poll(self):
         """Lightwave2 library will push state, no polling needed"""
@@ -57,8 +60,12 @@ class LWRF2Light(Light):
 
     async def async_update(self):
         """Update state"""
-        self._state = self._lwlink.get_featureset_by_id(self._featureset_id).features["switch"][1]
-        self._brightness = int(self._lwlink.get_featureset_by_id(self._featureset_id).features["dimLevel"][1] / 100 * 255)
+        self._state = \
+            self._lwlink.get_featureset_by_id(self._featureset_id).features[
+                "switch"][1]
+        self._brightness = int(
+            self._lwlink.get_featureset_by_id(self._featureset_id).features[
+                "dimLevel"][1] / 100 * 255)
 
     @property
     def name(self):
@@ -69,7 +76,7 @@ class LWRF2Light(Light):
     def brightness(self):
         """Return the brightness of the group lights."""
         return self._brightness
-        
+
     @property
     def unique_id(self):
         """Unique identifier. Provided by hub."""
@@ -79,7 +86,8 @@ class LWRF2Light(Light):
     def device_info(self):
         """Return information about the device."""
         return {
-            'product_code': self._lwlink.get_featureset_by_id(self._featureset_id).product_code
+            'product_code': self._lwlink.get_featureset_by_id(
+                self._featureset_id).product_code
         }
 
     @property
@@ -90,13 +98,14 @@ class LWRF2Light(Light):
     async def async_turn_on(self, **kwargs):
         """Turn the LightWave light on."""
         self._state = True
-        
+
         if ATTR_BRIGHTNESS in kwargs:
             self._brightness = kwargs[ATTR_BRIGHTNESS]
-        
-        await self._lwlink.async_set_brightness_by_featureset_id(self._featureset_id, int(self._brightness / 255 * 100))
+
+        await self._lwlink.async_set_brightness_by_featureset_id(
+            self._featureset_id, int(self._brightness / 255 * 100))
         await self._lwlink.async_turn_on_by_featureset_id(self._featureset_id)
-        
+
         self.async_schedule_update_ha_state()
 
     async def async_turn_off(self, **kwargs):

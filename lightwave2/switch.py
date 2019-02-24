@@ -1,9 +1,7 @@
 from custom_components.lightwave2 import LIGHTWAVE_LINK2
 from homeassistant.components.switch import SwitchDevice
 from homeassistant.core import callback
-import logging
 
-_LOGGER = logging.getLogger(__name__)
 DEPENDENCIES = ['lightwave2']
 
 
@@ -27,8 +25,11 @@ class LWRF2Switch(SwitchDevice):
         self._name = name
         self._featureset_id = featureset_id
         self._lwlink = link
-        self._state = self._lwlink.get_featureset_by_id(self._featureset_id).features["switch"][1]
-        self._gen2 = self._lwlink.get_featureset_by_id(self._featureset_id).is_gen2()
+        self._state = \
+            self._lwlink.get_featureset_by_id(self._featureset_id).features[
+                "switch"][1]
+        self._gen2 = self._lwlink.get_featureset_by_id(
+            self._featureset_id).is_gen2()
 
     async def async_added_to_hass(self):
         """Subscribe to events."""
@@ -51,13 +52,15 @@ class LWRF2Switch(SwitchDevice):
 
     async def async_update(self):
         """Update state"""
-        self._state = self._lwlink.get_featureset_by_id(self._featureset_id).features["switch"][1]
+        self._state = \
+            self._lwlink.get_featureset_by_id(self._featureset_id).features[
+                "switch"][1]
 
     @property
     def name(self):
         """Lightwave switch name."""
         return self._name
-    
+
     @property
     def unique_id(self):
         """Unique identifier. Provided by hub."""
@@ -67,7 +70,8 @@ class LWRF2Switch(SwitchDevice):
     def device_info(self):
         """Return information about the device."""
         return {
-            'product_code': self._lwlink.get_featureset_by_id(self._featureset_id).product_code
+            'product_code': self._lwlink.get_featureset_by_id(
+                self._featureset_id).product_code
         }
 
     @property
