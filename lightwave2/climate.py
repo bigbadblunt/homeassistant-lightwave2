@@ -1,8 +1,8 @@
 from custom_components.lightwave2 import LIGHTWAVE_LINK2
-from homeassistant.components.climate import ClimateDevice
+from homeassistant.components.climate import ClimateDevice, PLATFORM_SCHEMA
 from homeassistant.components.climate.const import (
-    STATE_AUTO, STATE_COOL, STATE_HEAT, STATE_ECO, 
-    PLATFORM_SCHEMA, ATTR_TARGET_TEMP_HIGH, ATTR_TARGET_TEMP_LOW,
+    STATE_AUTO, STATE_COOL, STATE_HEAT, STATE_ECO,
+    ATTR_TARGET_TEMP_HIGH, ATTR_TARGET_TEMP_LOW,
     ATTR_TEMPERATURE, SUPPORT_TARGET_TEMPERATURE,
     SUPPORT_TARGET_TEMPERATURE_HIGH, SUPPORT_TARGET_TEMPERATURE_LOW,
     SUPPORT_OPERATION_MODE, SUPPORT_AWAY_MODE, SUPPORT_FAN_MODE)
