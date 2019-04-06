@@ -1,10 +1,11 @@
+import logging
 from custom_components.lightwave2 import LIGHTWAVE_LINK2
 from homeassistant.components.light import (
     ATTR_BRIGHTNESS, SUPPORT_BRIGHTNESS, Light)
 from homeassistant.core import callback
 
 DEPENDENCIES = ['lightwave2']
-
+_LOGGER = logging.getLogger(__name__)
 
 async def async_setup_platform(hass, config, async_add_entities,
                                discovery_info=None):
@@ -28,9 +29,9 @@ class LWRF2Light(Light):
         self._state = \
             self._lwlink.get_featureset_by_id(self._featureset_id).features[
                 "switch"][1]
-        self._brightness = int(
+        self._brightness = int(round(
             self._lwlink.get_featureset_by_id(self._featureset_id).features[
-                "dimLevel"][1] / 100 * 255)
+                "dimLevel"][1] / 100 * 255))
         self._gen2 = self._lwlink.get_featureset_by_id(
             self._featureset_id).is_gen2()
 
@@ -63,9 +64,9 @@ class LWRF2Light(Light):
         self._state = \
             self._lwlink.get_featureset_by_id(self._featureset_id).features[
                 "switch"][1]
-        self._brightness = int(
+        self._brightness = int(round(
             self._lwlink.get_featureset_by_id(self._featureset_id).features[
-                "dimLevel"][1] / 100 * 255)
+                "dimLevel"][1] / 100 * 255))
 
     @property
     def name(self):
@@ -98,12 +99,12 @@ class LWRF2Light(Light):
     async def async_turn_on(self, **kwargs):
         """Turn the LightWave light on."""
         self._state = True
-
+        _LOGGER.debug("Setting brightness %s %s", self._brightness, int(self._brightness / 255 * 100))
         if ATTR_BRIGHTNESS in kwargs:
             self._brightness = kwargs[ATTR_BRIGHTNESS]
 
         await self._lwlink.async_set_brightness_by_featureset_id(
-            self._featureset_id, int(self._brightness / 255 * 100))
+            self._featureset_id, int(round(self._brightness / 255 * 100)))
         await self._lwlink.async_turn_on_by_featureset_id(self._featureset_id)
 
         self.async_schedule_update_ha_state()
