@@ -5,7 +5,7 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.discovery import async_load_platform
 from homeassistant.const import (CONF_USERNAME, CONF_PASSWORD)
 
-REQUIREMENTS = ['lightwave2==0.3.13']
+REQUIREMENTS = ['lightwave2==0.3.14']
 
 _LOGGER = logging.getLogger(__name__)
 DOMAIN = 'lightwave2'
