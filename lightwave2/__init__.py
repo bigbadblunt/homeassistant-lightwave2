@@ -1,11 +1,13 @@
+import logging
 import voluptuous as vol
 
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.discovery import async_load_platform
 from homeassistant.const import (CONF_USERNAME, CONF_PASSWORD)
 
-REQUIREMENTS = ['lightwave2==0.3.10']
+REQUIREMENTS = ['lightwave2==0.3.11']
 
+_LOGGER = logging.getLogger(__name__)
 DOMAIN = 'lightwave2'
 LIGHTWAVE_LINK2 = 'lightwave_link2'
 
@@ -20,6 +22,7 @@ CONFIG_SCHEMA = vol.Schema({
 async def async_setup(hass, config):
     """Setup Lightwave hub. Uses undocumented websocket API."""
     from lightwave2 import lightwave2
+    _LOGGER.debug("Imported lightwave2 library version %s", REQUIREMENTS)
 
     email = config[DOMAIN][CONF_USERNAME]
     password = config[DOMAIN][CONF_PASSWORD]
