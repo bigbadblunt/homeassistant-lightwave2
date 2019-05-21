@@ -30,6 +30,9 @@ class LWRF2Switch(SwitchDevice):
                 "switch"][1]
         self._gen2 = self._lwlink.get_featureset_by_id(
             self._featureset_id).is_gen2()
+        self._reports_power = self._lwlink.get_featureset_by_id(
+            self._featureset_id).reports_power()
+        self._power = None
 
     async def async_added_to_hass(self):
         """Subscribe to events."""
@@ -55,6 +58,9 @@ class LWRF2Switch(SwitchDevice):
         self._state = \
             self._lwlink.get_featureset_by_id(self._featureset_id).features[
                 "switch"][1]
+        if self._reports_power:
+            self._power = self._lwlink.get_featureset_by_id(self._featureset_id).features[
+                "power"][1]
 
     @property
     def name(self):
@@ -90,3 +96,8 @@ class LWRF2Switch(SwitchDevice):
         self._state = False
         await self._lwlink.async_turn_off_by_featureset_id(self._featureset_id)
         self.async_schedule_update_ha_state()
+
+    @property
+    def current_power_w(self):
+        """Lightwave switch is on state."""
+        return self._power
