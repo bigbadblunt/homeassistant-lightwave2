@@ -1,11 +1,12 @@
 import logging
 from custom_components.lightwave2 import LIGHTWAVE_LINK2
 from homeassistant.components.light import (
-    ATTR_CURRENT_POWER_W, ATTR_BRIGHTNESS, SUPPORT_BRIGHTNESS, Light)
+    ATTR_BRIGHTNESS, SUPPORT_BRIGHTNESS, Light)
 from homeassistant.core import callback
 
 DEPENDENCIES = ['lightwave2']
 _LOGGER = logging.getLogger(__name__)
+ATTR_CURRENT_POWER_W = "current_power_w"
 
 async def async_setup_platform(hass, config, async_add_entities,
                                discovery_info=None):
@@ -132,6 +133,7 @@ class LWRF2Light(Light):
 
         attribs = {}
 
-        attribs[ATTR_CURRENT_POWER_W] = self._power
+        if self._power:
+            attribs[ATTR_CURRENT_POWER_W] = self._power
 
         return attribs
