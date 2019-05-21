@@ -1,5 +1,5 @@
 from custom_components.lightwave2 import LIGHTWAVE_LINK2
-from homeassistant.components.switch import SwitchDevice
+from homeassistant.components.switch import ATTR_CURRENT_POWER_W, SwitchDevice
 from homeassistant.core import callback
 
 DEPENDENCIES = ['lightwave2']
@@ -101,3 +101,14 @@ class LWRF2Switch(SwitchDevice):
     def current_power_w(self):
         """Power consumption"""
         return self._power
+
+    @property
+    def device_state_attributes(self):
+        """Return the optional state attributes."""
+
+        attribs = {}
+
+        attribs[ATTR_CURRENT_POWER_W] = self._power
+
+        return attribs
+
