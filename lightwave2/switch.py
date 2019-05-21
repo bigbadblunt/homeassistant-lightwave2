@@ -99,5 +99,5 @@ class LWRF2Switch(SwitchDevice):
 
     @property
     def current_power_w(self):
-        """Lightwave switch is on state."""
+        """Power consumption"""
         return self._power
