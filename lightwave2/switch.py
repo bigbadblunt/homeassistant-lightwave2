@@ -108,7 +108,7 @@ class LWRF2Switch(SwitchDevice):
 
         attribs = {}
 
-        if self._power:
+        if self._power is not None:
             attribs[ATTR_CURRENT_POWER_W] = self._power
 
         return attribs
