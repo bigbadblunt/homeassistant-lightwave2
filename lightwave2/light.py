@@ -38,6 +38,9 @@ class LWRF2Light(Light):
         self._reports_power = self._lwlink.get_featureset_by_id(
             self._featureset_id).reports_power()
         self._power = None
+        if self._reports_power:
+            self._power = self._lwlink.get_featureset_by_id(self._featureset_id).features[
+                "power"][1]
 
     async def async_added_to_hass(self):
         """Subscribe to events."""
