@@ -64,7 +64,7 @@ class LWRF2Light(Light):
         """Subscribe to events."""
         await self._lwlink.async_register_callback(self.async_update_callback)
         _LOGGER.debug("Registering webhook: %s ", self._url)
-        req = await self._lwlink.async_register_webhook(self._url, self._lwlink.get_featureset_by_id(self._featureset_id).features["power"][0], "12345")
+        req = await self._lwlink.async_register_webhook(self._url, self._lwlink.get_featureset_by_id(self._featureset_id).features["switch"][0], "12345")
         _LOGGER.debug(req)
 
     @callback
