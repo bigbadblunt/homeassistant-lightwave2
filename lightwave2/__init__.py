@@ -27,14 +27,21 @@ async def async_setup(hass, config):
     from lightwave2 import lightwave2
     _LOGGER.debug("Imported lightwave2 library version %s", REQUIREMENTS)
 
+    _tempbackend = BACKEND_EMULATED #TODO - get this from config file
+
     email = config[DOMAIN][CONF_USERNAME]
     password = config[DOMAIN][CONF_PASSWORD]
 
-    link = lightwave2.LWLink2Public(email, password)
+    if _tempbackend == BACKEND_EMULATED:
+        hass.data[LIGHTWAVE_BACKEND] = BACKEND_EMULATED
+        link = lightwave2.LWLink2(email, password)
+    else:
+        hass.data[LIGHTWAVE_BACKEND] = BACKEND_PUBLIC
+        link = lightwave2.LWLink2Public(email, password)
     await link.async_connect()
 
     hass.data[LIGHTWAVE_LINK2] = link
-    hass.data[LIGHTWAVE_BACKEND] = BACKEND_EMULATED #TODO - get this from config file
+
     await link.async_get_hierarchy()
 
     hass.async_create_task(
