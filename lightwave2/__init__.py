@@ -39,5 +39,7 @@ async def async_setup(hass, config):
         async_load_platform(hass, 'light', DOMAIN, None, config))
     hass.async_create_task(
         async_load_platform(hass, 'climate', DOMAIN, None, config))
+    hass.async_create_task(
+        async_load_platform(hass, 'cover', DOMAIN, None, config))
 
     return True
