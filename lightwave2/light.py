@@ -63,7 +63,7 @@ class LWRF2Light(Light):
     async def async_added_to_hass(self):
         """Subscribe to events."""
         await self._lwlink.async_register_callback(self.async_update_callback)
-        if url is not None:
+        if self._url is not None:
             for featurename in self._lwlink.get_featureset_by_id(self._featureset_id).features:
                 featureid = self._lwlink.get_featureset_by_id(self._featureset_id).features[featurename][0]
                 _LOGGER.debug("Registering webhook: %s %s", featurename, featureid)
