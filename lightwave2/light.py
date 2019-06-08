@@ -7,6 +7,7 @@ from homeassistant.core import callback
 DEPENDENCIES = ['lightwave2']
 _LOGGER = logging.getLogger(__name__)
 ATTR_CURRENT_POWER_W = "current_power_w"
+_url = None
 
 async def async_setup_platform(hass, config, async_add_entities,
                                discovery_info=None):
@@ -15,10 +16,21 @@ async def async_setup_platform(hass, config, async_add_entities,
     lights = []
     link = hass.data[LIGHTWAVE_LINK2]
 
+    webhook_id = hass.components.webhook.async_generate_id()
+    hass.components.webhook.async_register(
+        'lightwave2', 'Lightwave lights webhook', webhook_id, handle_webhook)
+    _url = hass.components.webhook.async_generate_url(webhook_id)
+
     for featureset_id, name in link.get_lights():
         lights.append(LWRF2Light(name, featureset_id, link))
+
     async_add_entities(lights)
 
+async def handle_webhook(hass, webhook_id, request):
+    """Handle webhook callback."""
+    body = await request.json()
+    _LOGGER.debug("Received webhook: %s ", body)
+    # Do something with the data
 
 class LWRF2Light(Light):
     """Representation of a LightWaveRF light."""
@@ -43,9 +55,15 @@ class LWRF2Light(Light):
             self._power = self._lwlink.get_featureset_by_id(self._featureset_id).features[
                 "power"][1]
 
+
+
+
     async def async_added_to_hass(self):
         """Subscribe to events."""
         await self._lwlink.async_register_callback(self.async_update_callback)
+        _LOGGER.debug("Registering webhook: %s ", _url)
+        req = await self._lwlink.async_register_webhook(_url, self._featureset_id, "12345")
+        _LOGGER.debug(req)
 
     @callback
     def async_update_callback(self):
