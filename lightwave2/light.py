@@ -7,7 +7,6 @@ from homeassistant.core import callback
 DEPENDENCIES = ['lightwave2']
 _LOGGER = logging.getLogger(__name__)
 ATTR_CURRENT_POWER_W = "current_power_w"
-_url = None
 
 async def async_setup_platform(hass, config, async_add_entities,
                                discovery_info=None):
@@ -20,11 +19,11 @@ async def async_setup_platform(hass, config, async_add_entities,
     _LOGGER.debug("Generated webhook: %s ", webhook_id)
     hass.components.webhook.async_register(
         'lightwave2', 'Lightwave lights webhook', webhook_id, handle_webhook)
-    _url = hass.components.webhook.async_generate_url(webhook_id)
+    url = hass.components.webhook.async_generate_url(webhook_id)
     _LOGGER.debug("Webhook URL: %s ", _url)
 
     for featureset_id, name in link.get_lights():
-        lights.append(LWRF2Light(name, featureset_id, link))
+        lights.append(LWRF2Light(name, featureset_id, link, url))
 
     async_add_entities(lights)
 
@@ -37,11 +36,12 @@ async def handle_webhook(hass, webhook_id, request):
 class LWRF2Light(Light):
     """Representation of a LightWaveRF light."""
 
-    def __init__(self, name, featureset_id, link):
+    def __init__(self, name, featureset_id, link, url):
         self._name = name
         _LOGGER.debug("Adding light: %s ", self._name)
         self._featureset_id = featureset_id
         self._lwlink = link
+        self._url = url
         self._state = \
             self._lwlink.get_featureset_by_id(self._featureset_id).features[
                 "switch"][1]
@@ -63,8 +63,8 @@ class LWRF2Light(Light):
     async def async_added_to_hass(self):
         """Subscribe to events."""
         await self._lwlink.async_register_callback(self.async_update_callback)
-        _LOGGER.debug("Registering webhook: %s ", _url)
-        req = await self._lwlink.async_register_webhook(_url, self._featureset_id, "12345")
+        _LOGGER.debug("Registering webhook: %s ", self._url)
+        req = await self._lwlink.async_register_webhook(self._url, self._featureset_id, "12345")
         _LOGGER.debug(req)
 
     @callback
