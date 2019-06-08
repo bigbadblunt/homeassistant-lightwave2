@@ -1,5 +1,5 @@
 import logging
-from custom_components.lightwave2 import LIGHTWAVE_LINK2
+from custom_components.lightwave2 import LIGHTWAVE_LINK2, LIGHTWAVE_BACKEND, BACKEND_EMULATED, BACKEND_PUBLIC
 from homeassistant.components.light import (
     ATTR_BRIGHTNESS, SUPPORT_BRIGHTNESS, Light)
 from homeassistant.core import callback
@@ -15,12 +15,15 @@ async def async_setup_platform(hass, config, async_add_entities,
     lights = []
     link = hass.data[LIGHTWAVE_LINK2]
 
-    webhook_id = hass.components.webhook.async_generate_id()
-    _LOGGER.debug("Generated webhook: %s ", webhook_id)
-    hass.components.webhook.async_register(
-        'lightwave2', 'Lightwave lights webhook', webhook_id, handle_webhook)
-    url = hass.components.webhook.async_generate_url(webhook_id)
-    _LOGGER.debug("Webhook URL: %s ", url)
+    if hass.data[LIGHTWAVE_BACKEND] == BACKEND_EMULATED:
+        url = None
+    else:
+        hass.components.webhook.async_generate_id()
+        _LOGGER.debug("Generated webhook: %s ", webhook_id)
+        hass.components.webhook.async_register(
+            'lightwave2', 'Lightwave lights webhook', webhook_id, handle_webhook)
+        url = hass.components.webhook.async_generate_url(webhook_id)
+        _LOGGER.debug("Webhook URL: %s ", url)
 
     for featureset_id, name in link.get_lights():
         lights.append(LWRF2Light(name, featureset_id, link, url))
@@ -36,7 +39,7 @@ async def handle_webhook(hass, webhook_id, request):
 class LWRF2Light(Light):
     """Representation of a LightWaveRF light."""
 
-    def __init__(self, name, featureset_id, link, url):
+    def __init__(self, name, featureset_id, link, url=None):
         self._name = name
         _LOGGER.debug("Adding light: %s ", self._name)
         self._featureset_id = featureset_id
@@ -60,11 +63,11 @@ class LWRF2Light(Light):
     async def async_added_to_hass(self):
         """Subscribe to events."""
         await self._lwlink.async_register_callback(self.async_update_callback)
-        for featurename in self._lwlink.get_featureset_by_id(self._featureset_id).features:
-            featureid = self._lwlink.get_featureset_by_id(self._featureset_id).features[featurename][0]
-            _LOGGER.debug("Registering webhook: %s %s", featurename, featureid)
-            req = await self._lwlink.async_register_webhook(self._url, featureid, "hass" + featureid, overwrite = True)
-        _LOGGER.debug(req)
+        if url is not None:
+            for featurename in self._lwlink.get_featureset_by_id(self._featureset_id).features:
+                featureid = self._lwlink.get_featureset_by_id(self._featureset_id).features[featurename][0]
+                _LOGGER.debug("Registering webhook: %s %s", featurename, featureid)
+                req = await self._lwlink.async_register_webhook(self._url, featureid, "hass" + featureid, overwrite = True)
 
     @callback
     def async_update_callback(self):

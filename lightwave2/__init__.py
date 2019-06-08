@@ -10,6 +10,9 @@ REQUIREMENTS = ['lightwave2==0.3.22']
 _LOGGER = logging.getLogger(__name__)
 DOMAIN = 'lightwave2'
 LIGHTWAVE_LINK2 = 'lightwave_link2'
+LIGHTWAVE_BACKEND = 'lightwave_backend'
+BACKEND_EMULATED = 'emulated'
+BACKEND_PUBLIC = 'public'
 
 CONFIG_SCHEMA = vol.Schema({
     DOMAIN: vol.Schema({
@@ -31,6 +34,7 @@ async def async_setup(hass, config):
     await link.async_connect()
 
     hass.data[LIGHTWAVE_LINK2] = link
+    hass.data[LIGHTWAVE_BACKEND] = BACKEND_EMULATED #TODO - get this from config file
     await link.async_get_hierarchy()
 
     hass.async_create_task(
