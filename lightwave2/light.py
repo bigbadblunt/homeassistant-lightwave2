@@ -57,14 +57,13 @@ class LWRF2Light(Light):
             self._power = self._lwlink.get_featureset_by_id(self._featureset_id).features[
                 "power"][1]
 
-
-
-
     async def async_added_to_hass(self):
         """Subscribe to events."""
         await self._lwlink.async_register_callback(self.async_update_callback)
-        _LOGGER.debug("Registering webhook: %s ", self._url)
-        req = await self._lwlink.async_register_webhook(self._url, self._lwlink.get_featureset_by_id(self._featureset_id).features["switch"][0], "123456")
+        for featurename in self._lwlink.get_featureset_by_id(self._featureset_id).features:
+            featureid = self._lwlink.get_featureset_by_id(self._featureset_id).features[featurename][0]
+            _LOGGER.debug("Registering webhook: %s %s", featurename, featureid)
+            req = await self._lwlink.async_register_webhook(self._url, featureid, "hass" + featureid, overwrite = True)
         _LOGGER.debug(req)
 
     @callback
