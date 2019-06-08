@@ -18,7 +18,7 @@ async def async_setup_platform(hass, config, async_add_entities,
     if hass.data[LIGHTWAVE_BACKEND] == BACKEND_EMULATED:
         url = None
     else:
-        hass.components.webhook.async_generate_id()
+        webhook_id = hass.components.webhook.async_generate_id()
         _LOGGER.debug("Generated webhook: %s ", webhook_id)
         hass.components.webhook.async_register(
             'lightwave2', 'Lightwave lights webhook', webhook_id, handle_webhook)
