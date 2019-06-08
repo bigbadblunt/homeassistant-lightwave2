@@ -27,7 +27,7 @@ async def async_setup(hass, config):
     from lightwave2 import lightwave2
     _LOGGER.debug("Imported lightwave2 library version %s", REQUIREMENTS)
 
-    _tempbackend = BACKEND_EMULATED #TODO - get this from config file
+    _tempbackend = BACKEND_PUBLIC #TODO - get this from config file
 
     email = config[DOMAIN][CONF_USERNAME]
     password = config[DOMAIN][CONF_PASSWORD]
