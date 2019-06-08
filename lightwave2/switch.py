@@ -3,7 +3,7 @@ from homeassistant.components.switch import ATTR_CURRENT_POWER_W, SwitchDevice
 from homeassistant.core import callback
 
 DEPENDENCIES = ['lightwave2']
-
+_LOGGER = logging.getLogger(__name__)
 
 async def async_setup_platform(hass, config, async_add_entities,
                                discovery_info=None):
@@ -23,6 +23,7 @@ class LWRF2Switch(SwitchDevice):
     def __init__(self, name, featureset_id, link):
         """Initialize LWRFSwitch entity."""
         self._name = name
+        _LOGGER.debug("Adding switch: %s ", self._name)
         self._featureset_id = featureset_id
         self._lwlink = link
         self._state = \

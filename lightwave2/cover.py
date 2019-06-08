@@ -3,6 +3,7 @@ from homeassistant.components.cover import CoverDevice
 from homeassistant.core import callback
 
 DEPENDENCIES = ['lightwave2']
+_LOGGER = logging.getLogger(__name__)
 ATTR_CURRENT_POWER_W = "current_power_w"
 
 
@@ -24,6 +25,7 @@ class LWRF2Cover(CoverDevice):
     def __init__(self, name, featureset_id, link):
         """Initialize LWRFCover entity."""
         self._name = name
+        _LOGGER.debug("Adding cover: %s ", self._name)
         self._featureset_id = featureset_id
         self._lwlink = link
         self._state = 50

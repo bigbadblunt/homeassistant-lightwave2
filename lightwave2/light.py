@@ -25,6 +25,7 @@ class LWRF2Light(Light):
 
     def __init__(self, name, featureset_id, link):
         self._name = name
+        _LOGGER.debug("Adding light: %s ", self._name)
         self._featureset_id = featureset_id
         self._lwlink = link
         self._state = \

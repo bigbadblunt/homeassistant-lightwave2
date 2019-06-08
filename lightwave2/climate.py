@@ -7,7 +7,7 @@ from homeassistant.const import (
 from homeassistant.core import callback
 
 DEPENDENCIES = ['lightwave2']
-
+_LOGGER = logging.getLogger(__name__)
 
 async def async_setup_platform(hass, config, async_add_entities,
                                discovery_info=None):
@@ -26,6 +26,7 @@ class LWRF2Climate(ClimateDevice):
 
     def __init__(self, name, featureset_id, link):
         self._name = name
+        _LOGGER.debug("Adding climate: %s ", self._name)
         self._featureset_id = featureset_id
         self._lwlink = link
         self._support_flags = SUPPORT_TARGET_TEMPERATURE
