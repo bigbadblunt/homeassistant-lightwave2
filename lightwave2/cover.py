@@ -1,3 +1,4 @@
+import logging
 from custom_components.lightwave2 import LIGHTWAVE_LINK2
 from homeassistant.components.cover import CoverDevice
 from homeassistant.core import callback

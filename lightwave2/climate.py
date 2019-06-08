@@ -1,3 +1,4 @@
+import logging
 from custom_components.lightwave2 import LIGHTWAVE_LINK2
 from homeassistant.components.climate import ClimateDevice
 from homeassistant.components.climate.const import (

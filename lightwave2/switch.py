@@ -1,3 +1,4 @@
+import logging
 from custom_components.lightwave2 import LIGHTWAVE_LINK2
 from homeassistant.components.switch import ATTR_CURRENT_POWER_W, SwitchDevice
 from homeassistant.core import callback
