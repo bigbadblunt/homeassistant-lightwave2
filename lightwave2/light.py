@@ -20,7 +20,7 @@ async def async_setup_platform(hass, config, async_add_entities,
     hass.components.webhook.async_register(
         'lightwave2', 'Lightwave lights webhook', webhook_id, handle_webhook)
     url = hass.components.webhook.async_generate_url(webhook_id)
-    _LOGGER.debug("Webhook URL: %s ", _url)
+    _LOGGER.debug("Webhook URL: %s ", url)
 
     for featureset_id, name in link.get_lights():
         lights.append(LWRF2Light(name, featureset_id, link, url))
