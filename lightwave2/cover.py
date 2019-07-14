@@ -1,6 +1,8 @@
 import logging
 from custom_components.lightwave2 import LIGHTWAVE_LINK2
-from homeassistant.components.cover import CoverDevice
+from homeassistant.components.cover import (
+    SUPPORT_CLOSE, SUPPORT_OPEN,
+    SUPPORT_STOP, CoverDevice)
 from homeassistant.core import callback
 
 DEPENDENCIES = ['lightwave2']
@@ -54,6 +56,11 @@ class LWRF2Cover(CoverDevice):
         return False
 
     @property
+    def supported_features(self):
+        """Flag supported features."""
+        return SUPPORT_OPEN | SUPPORT_CLOSE | SUPPORT_STOP
+
+    @property
     def assumed_state(self):
         """Gen 2 devices will report state changes, gen 1 doesn't"""
         return not self._gen2
@@ -84,6 +91,12 @@ class LWRF2Cover(CoverDevice):
     def current_cover_position(self):
         """Lightwave cover position."""
         return self._state
+
+    @property
+    def is_closed(self):
+        """Return if the cover is closed."""
+        is_closed = None
+        return is_closed
 
     async def async_open_cover(self, **kwargs):
         """Open the LightWave cover."""
