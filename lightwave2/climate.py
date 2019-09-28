@@ -90,7 +90,7 @@ class LWRF2Climate(ClimateDevice):
         return self._temperature
 
     @property
-    def current_operation(self):
+    def hvac_mode(self):
         """Return current operation ie. heat, cool, idle."""
         if self._valve_level == 100:
             return HVAC_MODE_HEAT
