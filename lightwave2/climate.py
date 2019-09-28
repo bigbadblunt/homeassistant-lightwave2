@@ -100,7 +100,7 @@ class LWRF2Climate(ClimateDevice):
     @property
     def hvac_modes(self):
         """Return current operation ie. heat, cool, idle."""
-        return [HVAC_MODE_COOL, HVAC_MODE_OFF]
+        return [HVAC_MODE_HEAT, HVAC_MODE_OFF]
 
 
     @property
