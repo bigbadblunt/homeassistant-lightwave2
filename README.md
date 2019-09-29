@@ -2,10 +2,6 @@
 
 Home Assistant component for controlling LightwaveRF devices with use of a Lightwave Link Plus hub. Controls both generation 1 ("Connect Series") and generation 2 ("Smart Series") devices. Does not work with gen1 hub.
 
-### Setup
-
-Copy all files from lightwave2 to your `<ha_config_dir>/custom_components` directory. (i.e. you should have `<ha_config_dir>/custom_components/lightwave2/__init__.py`, `<ha_config_dir>/custom_components/lightwave2/switch.py` etc)
-
 Tested by me and working with:
 
 - L21 1-gang Dimmer (2nd generation)
@@ -17,6 +13,12 @@ Tested by me and working with:
 Tested by others:
 
 - L22 2-gang Dimmer (2nd generation)
+
+### Setup
+
+Copy all files from custom_components/lightwave2 to a `<ha_config_dir>/custom_components/lightwave2` directory. (i.e. you should have `<ha_config_dir>/custom_components/lightwave2/__init__.py`, `<ha_config_dir>/custom_components/lightwave2/switch.py` etc)
+
+
 
 ### Configuration
 
