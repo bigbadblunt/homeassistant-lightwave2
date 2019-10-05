@@ -18,12 +18,12 @@ Tested by others:
 ## Setup
 There are two ways to set up:
 
-####1. Manual
+#### 1. Manual
 Copy all files from custom_components/lightwave2 to a `<ha_config_dir>/custom_components/lightwave2` directory. (i.e. you should have `<ha_config_dir>/custom_components/lightwave2/__init__.py`, `<ha_config_dir>/custom_components/lightwave2/switch.py` etc)
 
 If you use this method then you'll need to keep an eye on this repository to check for updates.
 
-####2. Using HACS
+#### 2. Using HACS
 This component is also available through the Home Assistant Community Store HACS (https://hacs.netlify.com/)
 
 If you use this method, your component will always update to the latest version. But you'll need to set up HACS first.
