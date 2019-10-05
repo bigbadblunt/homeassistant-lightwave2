@@ -8,7 +8,7 @@ Tested by me and working with:
 - LW430 3-gang Dimmer (1st generation)
 - LW270 2-gang Power socket (1st generation)
 - LW821 In-line relay (1st generation)
-- LW934 Electric switch (1st generation)
+- LW934 Electric switch/thermostat (1st generation)
 
 Tested by others:
 
