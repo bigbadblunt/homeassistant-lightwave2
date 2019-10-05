@@ -35,9 +35,10 @@ async def async_setup(hass, config):
     #_LOGGER.debug("Imported lightwave2 library version %s", REQUIREMENTS)
 
     async def service_handle(call):
-        entity_ids = call.data.get("entity_id")
-        rgb = call.data.get("rgb")
-        LOGGER.debug("Received service call %s, rgb %s", entity_ids, rgb )
+        pass
+        #entity_ids = call.data.get("entity_id")
+        #rgb = call.data.get("rgb")
+        #_LOGGER.debug("Received service call %s, rgb %s", entity_ids, rgb )
 
 
     email = config[DOMAIN][CONF_USERNAME]
@@ -65,6 +66,6 @@ async def async_setup(hass, config):
     hass.async_create_task(
         async_load_platform(hass, 'cover', DOMAIN, None, config))
 
-    hass.services.register(DOMAIN, SERVICE_SETLEDRGB, service_handle)
+    #hass.services.register(DOMAIN, SERVICE_SETLEDRGB, service_handle)
 
     return True
