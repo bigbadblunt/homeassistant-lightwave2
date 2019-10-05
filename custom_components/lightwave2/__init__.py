@@ -36,9 +36,9 @@ async def async_setup(hass, config):
 
     async def service_handle(call):
         pass
-        #entity_ids = call.data.get("entity_id")
-        #rgb = call.data.get("rgb")
-        #_LOGGER.debug("Received service call %s, rgb %s", entity_ids, rgb )
+        entity_ids = call.data.get("entity_id")
+        rgb = call.data.get("rgb")
+        _LOGGER.debug("Received service call %s, rgb %s", entity_ids, rgb )
 
 
     email = config[DOMAIN][CONF_USERNAME]
