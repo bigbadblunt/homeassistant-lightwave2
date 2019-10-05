@@ -42,6 +42,7 @@ async def async_setup(hass, config):
     async def service_handle(call):
         list = await component.async_extract_from_service(call)
         _LOGGER.debug("%s", call)
+        _LOGGER.debug("%s", list)
         entity_ids = call.data.get("entity_id")
         rgb = call.data.get("rgb")
         _LOGGER.debug("Received service call %s, rgb %s", entity_ids, rgb )
