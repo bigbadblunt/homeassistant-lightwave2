@@ -1,0 +1,9 @@
+set_led_rgb:
+  description: Set the colour of the LED on the switch.
+  fields:
+    rgb:
+      description: RGB value to set the LED to (in decimal).
+      example: 16777215
+    entity_id:
+      description: Name(s) of entities.
+      example: 'light.bedroom'
