@@ -38,5 +38,5 @@ lightwave2:
 ```
 
 This should then automatically add all switches, lights, thermostats and blinds/covers that are configured in your Lightwave app.
-
+## Thanks
 Credit to Warren Ashcroft whose code I used as a base https://github.com/washcroft/LightwaveRF-LinkPlus
