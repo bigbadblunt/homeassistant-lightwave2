@@ -37,7 +37,7 @@ async def async_setup(hass, config):
     async def service_handle(call):
         pass
         entity_ids = call.data.get("entity_id")
-        entities = hass.data['lightwave2_light'].entities
+        entities = hass.data[DOMAIN].entities
         _LOGGER.debug("Entities %s", entities)
         entities = [e for q in entities if e.entity_id in entity_ids]
         _LOGGER.debug("Matched entities %s", entities)
