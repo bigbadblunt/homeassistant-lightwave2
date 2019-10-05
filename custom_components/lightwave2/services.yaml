@@ -5,5 +5,5 @@ set_led_rgb:
       description: Name(s) of entities.
       example: 'light.bedroom'
     rgb:
-      description: RGB value to set the LED to (in decimal).
-      example: 16777215
+      description: RGB value to set the LED to (can be decimal, "0xABCDFE" hex string or "#ABCDEF" hex string).
+      example: '#FFFFFF'
