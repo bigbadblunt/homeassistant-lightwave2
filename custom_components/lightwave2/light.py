@@ -1,5 +1,5 @@
 import logging
-from custom_components.lightwave2 import LIGHTWAVE_LINK2, LIGHTWAVE_BACKEND, BACKEND_EMULATED, BACKEND_PUBLIC
+from custom_components.lightwave2 import LIGHTWAVE_LINK2, LIGHTWAVE_BACKEND, BACKEND_EMULATED, LIGHTWAVE_ENTITIES, BACKEND_PUBLIC
 from homeassistant.components.light import (
     ATTR_BRIGHTNESS, SUPPORT_BRIGHTNESS, Light)
 from homeassistant.core import callback
@@ -29,6 +29,7 @@ async def async_setup_platform(hass, config, async_add_entities,
     for featureset_id, name in link.get_lights():
         lights.append(LWRF2Light(name, featureset_id, link, url))
 
+    hass.data[LIGHTWAVE_ENTITIES].extend(lights)
     async_add_entities(lights)
 
 async def handle_webhook(hass, webhook_id, request):

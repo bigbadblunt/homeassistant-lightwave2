@@ -12,9 +12,11 @@ CONF_REFRESH_KEY = 'refresh_key'
 CONF_BACKEND = 'backend'
 LIGHTWAVE_LINK2 = 'lightwave_link2'
 LIGHTWAVE_BACKEND = 'lightwave_backend'
+LIGHTWAVE_ENTITIES = "lightwave_entities"
 BACKEND_EMULATED = 'emulated'
 BACKEND_PUBLIC = 'public'
 SERVICE_SETLEDRGB = 'set_led_rgb'
+
 
 CONFIG_SCHEMA = vol.Schema({
     DOMAIN: vol.Any({
@@ -40,11 +42,10 @@ async def async_setup(hass, config):
     )
 
     async def service_handle(call):
-        list = await component.async_extract_from_service(call)
         _LOGGER.debug("%s", call)
         _LOGGER.debug("%s", list)
         entity_ids = call.data.get("entity_id")
-        _LOGGER.debug("%s", component.get_entity(entity_ids))
+        _LOGGER.debug("list of ents %s", hass.data[LIGHTWAVE_ENTITIES])
         rgb = call.data.get("rgb")
         _LOGGER.debug("Received service call %s, rgb %s", entity_ids, rgb )
 
@@ -62,6 +63,8 @@ async def async_setup(hass, config):
     await link.async_connect()
 
     hass.data[LIGHTWAVE_LINK2] = link
+
+    hass.data[LIGHTWAVE_ENTITIES] = []
 
     await link.async_get_hierarchy()
 
