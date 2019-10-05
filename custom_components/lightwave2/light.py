@@ -174,6 +174,6 @@ class LWRF2Light(Light):
             attribs[ATTR_CURRENT_POWER_W] = self._power
 
         if self._ledrgb is not None:
-            attribs[ATTR_LED_RGB] = self._power
+            attribs[ATTR_LED_RGB] = self._ledrgb
 
         return attribs
