@@ -66,6 +66,6 @@ async def async_setup(hass, config):
     hass.async_create_task(
         async_load_platform(hass, 'cover', DOMAIN, None, config))
 
-    hass.services.register(DOMAIN, SERVICE_SETLEDRGB, service_handle)
+    hass.services.async_register(DOMAIN, SERVICE_SETLEDRGB, service_handle)
 
     return True
