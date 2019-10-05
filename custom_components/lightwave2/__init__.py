@@ -42,11 +42,14 @@ async def async_setup(hass, config):
     )
 
     async def service_handle(call):
-        _LOGGER.debug("%s", call)
-        _LOGGER.debug("%s", list)
         entity_ids = call.data.get("entity_id")
-        _LOGGER.debug("list of ents %s", hass.data[LIGHTWAVE_ENTITIES])
+        entities =  hass.data[LIGHTWAVE_ENTITIES]
+        entities = [e for e in entities if e.entity_id in entity_ids]
         rgb = call.data.get("rgb")
+        for ent in entities
+            _LOGGER.debug("Matched entites %S", ent)
+            await ent.async_set_rgb(led_rgb=rgb)
+
         _LOGGER.debug("Received service call %s, rgb %s", entity_ids, rgb )
 
 

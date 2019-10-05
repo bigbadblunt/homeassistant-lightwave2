@@ -160,6 +160,10 @@ class LWRF2Light(Light):
         await self._lwlink.async_turn_off_by_featureset_id(self._featureset_id)
         self.async_schedule_update_ha_state()
 
+    async def async_set_rgb(self, **kwargs):
+        self._ledrgb = kwargs[ATTR_LED_RGB]
+        await self._lwlink.async_set_led_rgb_by_featureset_id(self._featureset_id, self._ledrgb)
+
     @property
     def current_power_w(self):
         """Power consumption"""
