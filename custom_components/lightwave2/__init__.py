@@ -46,12 +46,14 @@ async def async_setup(hass, config):
         entities =  hass.data[LIGHTWAVE_ENTITIES]
         entities = [e for e in entities if e.entity_id in entity_ids]
         rgb = call.data.get("rgb")
+        if str(rgb)[0:1] == "#":
+            rgb = int("0x" + rgb[1:7], 16)
+        else:
+            rgb = int(str(rgb), 0)
+        _LOGGER.debug("Received service call %s, rgb %s, rgb as hex %s", entity_ids, rgb, hex(rgb) )
         for ent in entities:
             _LOGGER.debug("Matched entites %s", ent)
             await ent.async_set_rgb(led_rgb=rgb)
-
-        _LOGGER.debug("Received service call %s, rgb %s", entity_ids, rgb )
-
 
     email = config[DOMAIN][CONF_USERNAME]
     password = config[DOMAIN][CONF_PASSWORD]
