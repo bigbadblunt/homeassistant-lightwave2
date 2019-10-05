@@ -47,7 +47,7 @@ async def async_setup(hass, config):
         entities = [e for e in entities if e.entity_id in entity_ids]
         rgb = call.data.get("rgb")
         for ent in entities:
-            _LOGGER.debug("Matched entites %S", ent)
+            _LOGGER.debug("Matched entites %s", ent)
             await ent.async_set_rgb(led_rgb=rgb)
 
         _LOGGER.debug("Received service call %s, rgb %s", entity_ids, rgb )
