@@ -40,7 +40,7 @@ async def async_setup(hass, config):
     )
 
     async def service_handle(call):
-        for entity in await component.async_extract_from_service(service_call):
+        for entity in await component.async_extract_from_service(call):
             _LOGGER.debug("%s", entity)
         entity_ids = call.data.get("entity_id")
         rgb = call.data.get("rgb")
