@@ -3,6 +3,7 @@ import voluptuous as vol
 
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.discovery import async_load_platform
+from homeassistant.helpers.entity_component import EntityComponent
 from homeassistant.const import (CONF_USERNAME, CONF_PASSWORD, CONF_API_KEY)
 
 _LOGGER = logging.getLogger(__name__)
@@ -34,13 +35,14 @@ async def async_setup(hass, config):
     from lightwave2 import lightwave2
     #_LOGGER.debug("Imported lightwave2 library version %s", REQUIREMENTS)
 
+    component = EntityComponent(
+        _LOGGER, DOMAIN, hass
+    )
+
     async def service_handle(call):
-        pass
+        for entity in await component.async_extract_from_service(service_call):
+            _LOGGER.debug("%s", entity)
         entity_ids = call.data.get("entity_id")
-        entities = hass.data[DOMAIN].entities
-        _LOGGER.debug("Entities %s", entities)
-        entities = [e for q in entities if e.entity_id in entity_ids]
-        _LOGGER.debug("Matched entities %s", entities)
         rgb = call.data.get("rgb")
         _LOGGER.debug("Received service call %s, rgb %s", entity_ids, rgb )
 
