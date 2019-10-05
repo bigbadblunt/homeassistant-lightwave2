@@ -7,6 +7,7 @@ from homeassistant.core import callback
 DEPENDENCIES = ['lightwave2']
 _LOGGER = logging.getLogger(__name__)
 ATTR_CURRENT_POWER_W = "current_power_w"
+ATTR_LED_RGB = "led_rgb"
 
 async def async_setup_platform(hass, config, async_add_entities,
                                discovery_info=None):
@@ -59,6 +60,12 @@ class LWRF2Light(Light):
         if self._reports_power:
             self._power = self._lwlink.get_featureset_by_id(self._featureset_id).features[
                 "power"][1]
+        self._has_led = self._lwlink.get_featureset_by_id(
+            self._featureset_id).has_led()
+        self._ledrgb = None
+        if self._has_led:
+            self._ledrgb = self._lwlink.get_featureset_by_id(self._featureset_id).features[
+                "rgbColor"][1]
 
     async def async_added_to_hass(self):
         """Subscribe to events."""
@@ -100,6 +107,10 @@ class LWRF2Light(Light):
         if self._reports_power:
             self._power = self._lwlink.get_featureset_by_id(self._featureset_id).features[
                 "power"][1]
+        if self._has_led:
+            self._ledrgb = self._lwlink.get_featureset_by_id(
+                self._featureset_id).features[
+                "rgbColor"][1]
 
     @property
     def name(self):
@@ -161,5 +172,8 @@ class LWRF2Light(Light):
 
         if self._power is not None:
             attribs[ATTR_CURRENT_POWER_W] = self._power
+
+        if self._ledrgb is not None:
+            attribs[ATTR_LED_RGB] = self._power
 
         return attribs
