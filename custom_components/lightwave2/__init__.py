@@ -13,6 +13,7 @@ LIGHTWAVE_LINK2 = 'lightwave_link2'
 LIGHTWAVE_BACKEND = 'lightwave_backend'
 BACKEND_EMULATED = 'emulated'
 BACKEND_PUBLIC = 'public'
+SERVICE_SETLEDRGB = 'set_led_rgb'
 
 CONFIG_SCHEMA = vol.Schema({
     DOMAIN: vol.Any({
@@ -32,6 +33,12 @@ async def async_setup(hass, config):
     """Setup Lightwave hub. Uses undocumented websocket API."""
     from lightwave2 import lightwave2
     #_LOGGER.debug("Imported lightwave2 library version %s", REQUIREMENTS)
+
+    async def service_handle(call):
+        entity_ids = call.data.get("entity_id")
+        rgb = call.data.get("rgb")
+        LOGGER.debug("Received service call %s, rgb %s", entity_ids, rgb )
+
 
     email = config[DOMAIN][CONF_USERNAME]
     password = config[DOMAIN][CONF_PASSWORD]
@@ -57,5 +64,7 @@ async def async_setup(hass, config):
         async_load_platform(hass, 'climate', DOMAIN, None, config))
     hass.async_create_task(
         async_load_platform(hass, 'cover', DOMAIN, None, config))
+
+    hass.services.register(DOMAIN, SERVICE_SETLEDRGB, service_handle)
 
     return True
