@@ -31,7 +31,7 @@ CONFIG_SCHEMA = vol.Schema({
 async def async_setup(hass, config):
     """Setup Lightwave hub. Uses undocumented websocket API."""
     from lightwave2 import lightwave2
-    _LOGGER.debug("Imported lightwave2 library version %s", REQUIREMENTS)
+    #_LOGGER.debug("Imported lightwave2 library version %s", REQUIREMENTS)
 
     email = config[DOMAIN][CONF_USERNAME]
     password = config[DOMAIN][CONF_PASSWORD]
