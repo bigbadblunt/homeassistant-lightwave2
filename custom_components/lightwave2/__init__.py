@@ -22,12 +22,12 @@ CONFIG_SCHEMA = vol.Schema({
     DOMAIN: vol.Any({
         vol.Required(CONF_USERNAME): cv.string,
         vol.Required(CONF_PASSWORD): cv.string,
-        vol.Optional(CONF_BACKEND): [BACKEND_EMULATED, BACKEND_PUBLIC]
+        vol.Optional(CONF_BACKEND): vol.In([BACKEND_EMULATED, BACKEND_PUBLIC])
     },
         {
             vol.Required(CONF_API_KEY): cv.string,
             vol.Required(CONF_REFRESH_KEY): cv.string,
-            vol.Optional(CONF_BACKEND): [BACKEND_EMULATED, BACKEND_PUBLIC]
+            vol.Optional(CONF_BACKEND): vol.In([BACKEND_EMULATED, BACKEND_PUBLIC])
         }
     )
 }, extra=vol.ALLOW_EXTRA)
