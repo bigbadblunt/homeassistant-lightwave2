@@ -4,6 +4,7 @@ import voluptuous as vol
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.discovery import async_load_platform
 from homeassistant.helpers.entity_component import EntityComponent
+from homeassistant.exceptions import PlatformNotReady
 from homeassistant.const import (CONF_USERNAME, CONF_PASSWORD, CONF_API_KEY)
 
 _LOGGER = logging.getLogger(__name__)
@@ -65,13 +66,14 @@ async def async_setup(hass, config):
     else:
         hass.data[LIGHTWAVE_BACKEND] = BACKEND_PUBLIC
         link = lightwave2.LWLink2Public(email, password)
-    await link.async_connect()
+
+    connected = await link.async_connect(max_tries = 1)
+    if not connected:
+        raise PlatformNotReady
+    await link.async_get_hierarchy()
 
     hass.data[LIGHTWAVE_LINK2] = link
-
     hass.data[LIGHTWAVE_ENTITIES] = []
-
-    await link.async_get_hierarchy()
 
     hass.async_create_task(
         async_load_platform(hass, 'switch', DOMAIN, None, config))
