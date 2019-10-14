@@ -3,8 +3,6 @@ import voluptuous as vol
 
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.discovery import async_load_platform
-from homeassistant.helpers.entity_component import EntityComponent
-from homeassistant.exceptions import PlatformNotReady
 from homeassistant.const import (CONF_USERNAME, CONF_PASSWORD, CONF_API_KEY)
 
 _LOGGER = logging.getLogger(__name__)
@@ -17,7 +15,6 @@ LIGHTWAVE_ENTITIES = "lightwave_entities"
 BACKEND_EMULATED = 'emulated'
 BACKEND_PUBLIC = 'public'
 SERVICE_SETLEDRGB = 'set_led_rgb'
-
 
 CONFIG_SCHEMA = vol.Schema({
     DOMAIN: vol.Any({
@@ -37,10 +34,6 @@ async def async_setup(hass, config):
     """Setup Lightwave hub. Uses undocumented websocket API."""
     from lightwave2 import lightwave2
     #_LOGGER.debug("Imported lightwave2 library version %s", REQUIREMENTS)
-
-    component = EntityComponent(
-        _LOGGER, DOMAIN, hass
-    )
 
     async def service_handle(call):
         entity_ids = call.data.get("entity_id")
@@ -67,8 +60,7 @@ async def async_setup(hass, config):
         hass.data[LIGHTWAVE_BACKEND] = BACKEND_PUBLIC
         link = lightwave2.LWLink2Public(email, password)
 
-    connected = await link.async_connect(max_tries = 1)
-    if not connected:
+    if not await link.async_connect(max_tries = 1):
         return False
     await link.async_get_hierarchy()
 
