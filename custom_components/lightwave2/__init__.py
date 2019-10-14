@@ -69,7 +69,7 @@ async def async_setup(hass, config):
 
     connected = await link.async_connect(max_tries = 1)
     if not connected:
-        raise PlatformNotReady
+        return False
     await link.async_get_hierarchy()
 
     hass.data[LIGHTWAVE_LINK2] = link
