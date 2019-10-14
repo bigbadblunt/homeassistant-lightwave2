@@ -75,7 +75,7 @@ class LWRF2Light(Light):
             for featurename in self._lwlink.get_featureset_by_id(self._featureset_id).features:
                 featureid = self._lwlink.get_featureset_by_id(self._featureset_id).features[featurename][0]
                 _LOGGER.debug("Registering webhook: %s %s", featurename, featureid.replace("+", "P"))
-                req = await self._lwlink.async_register_webhook(self._url, featureid, "hass" + featureid, overwrite = True)
+                req = await self._lwlink.async_register_webhook(self._url, featureid, "hass" + featureid.replace("+", "P"), overwrite = True)
 
     @callback
     def async_update_callback(self):
