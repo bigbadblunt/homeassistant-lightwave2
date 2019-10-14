@@ -32,6 +32,13 @@ async def async_setup_platform(hass, config, async_add_entities,
     hass.data[LIGHTWAVE_ENTITIES].extend(lights)
     async_add_entities(lights)
 
+async def handle_webhook(hass, webhook_id, request):
+    """Handle webhook callback."""
+    link = hass.data[LIGHTWAVE_LINK2]
+    body = await request.json()
+    _LOGGER.debug("Received webhook: %s ", body)
+    link.process_webhook_received(body)
+
 class LWRF2Light(Light):
     """Representation of a LightWaveRF light."""
 
@@ -75,12 +82,6 @@ class LWRF2Light(Light):
     def async_update_callback(self):
         """Update the component's state."""
         self.async_schedule_update_ha_state(True)
-
-    async def handle_webhook(hass, webhook_id, request):
-        """Handle webhook callback."""
-        body = await request.json()
-        _LOGGER.debug("Received webhook: %s ", body)
-        self._lwlink.process_webhook_received(body)
 
     @property
     def supported_features(self):
