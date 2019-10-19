@@ -37,6 +37,8 @@ async def handle_webhook(hass, webhook_id, request):
     body = await request.json()
     _LOGGER.debug("Received webhook: %s ", body)
     link.process_webhook_received(body)
+    for ent in hass.data[LIGHTWAVE_ENTITIES]:
+        ent.async_schedule_update_ha_state(True)
 
 async def async_setup(hass, config):
     """Setup Lightwave hub. Uses undocumented websocket API."""
@@ -45,7 +47,7 @@ async def async_setup(hass, config):
 
     async def service_handle(call):
         entity_ids = call.data.get("entity_id")
-        entities =  hass.data[LIGHTWAVE_ENTITIES]
+        entities = hass.data[LIGHTWAVE_ENTITIES]
         entities = [e for e in entities if e.entity_id in entity_ids]
         rgb = call.data.get("rgb")
         if str(rgb)[0:1] == "#":
@@ -82,7 +84,7 @@ async def async_setup(hass, config):
         webhook_id = hass.components.webhook.async_generate_id()
         _LOGGER.debug("Generated webhook: %s ", webhook_id)
         hass.components.webhook.async_register(
-            'lightwave2', 'Lightwave lights webhook', webhook_id, handle_webhook)
+            'lightwave2', 'Lightwave webhook', webhook_id, handle_webhook)
         url = hass.components.webhook.async_generate_url(webhook_id)
         _LOGGER.debug("Webhook URL: %s ", url)
     hass.data[LIGHTWAVE_WEBHOOK] = url
