@@ -12,6 +12,7 @@ CONF_BACKEND = 'backend'
 LIGHTWAVE_LINK2 = 'lightwave_link2'
 LIGHTWAVE_BACKEND = 'lightwave_backend'
 LIGHTWAVE_ENTITIES = "lightwave_entities"
+LIGHTWAVE_WEBHOOK = 'lightwave_webhook'
 BACKEND_EMULATED = 'emulated'
 BACKEND_PUBLIC = 'public'
 SERVICE_SETLEDRGB = 'set_led_rgb'
@@ -29,6 +30,13 @@ CONFIG_SCHEMA = vol.Schema({
         }
     )
 }, extra=vol.ALLOW_EXTRA)
+
+async def handle_webhook(hass, webhook_id, request):
+    """Handle webhook callback."""
+    link = hass.data[LIGHTWAVE_LINK2]
+    body = await request.json()
+    _LOGGER.debug("Received webhook: %s ", body)
+    link.process_webhook_received(body)
 
 async def async_setup(hass, config):
     """Setup Lightwave hub. Uses undocumented websocket API."""
@@ -60,12 +68,24 @@ async def async_setup(hass, config):
         hass.data[LIGHTWAVE_BACKEND] = BACKEND_PUBLIC
         link = lightwave2.LWLink2Public(email, password)
 
+
+
     if not await link.async_connect(max_tries = 1):
         return False
     await link.async_get_hierarchy()
 
     hass.data[LIGHTWAVE_LINK2] = link
     hass.data[LIGHTWAVE_ENTITIES] = []
+    if hass.data[LIGHTWAVE_BACKEND] == BACKEND_EMULATED:
+        url = None
+    else:
+        webhook_id = hass.components.webhook.async_generate_id()
+        _LOGGER.debug("Generated webhook: %s ", webhook_id)
+        hass.components.webhook.async_register(
+            'lightwave2', 'Lightwave lights webhook', webhook_id, handle_webhook)
+        url = hass.components.webhook.async_generate_url(webhook_id)
+        _LOGGER.debug("Webhook URL: %s ", url)
+    hass.data[LIGHTWAVE_WEBHOOK] = url
 
     hass.async_create_task(
         async_load_platform(hass, 'switch', DOMAIN, None, config))
