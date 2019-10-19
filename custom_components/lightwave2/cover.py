@@ -1,5 +1,5 @@
 import logging
-from custom_components.lightwave2 import LIGHTWAVE_LINK2
+from custom_components.lightwave2 import LIGHTWAVE_LINK2, LIGHTWAVE_BACKEND, BACKEND_EMULATED, LIGHTWAVE_ENTITIES, LIGHTWAVE_WEBHOOK
 from homeassistant.components.cover import (
     SUPPORT_CLOSE, SUPPORT_OPEN,
     SUPPORT_STOP, CoverDevice)
@@ -17,20 +17,28 @@ async def async_setup_platform(hass, config, async_add_entities,
     covers = []
     link = hass.data[LIGHTWAVE_LINK2]
 
+    if hass.data[LIGHTWAVE_BACKEND] == BACKEND_EMULATED:
+        url = None
+    else:
+        url = hass.data[LIGHTWAVE_WEBHOOK]
+
     for featureset_id, name in link.get_covers():
-        covers.append(LWRF2Cover(name, featureset_id, link))
+        covers.append(LWRF2Cover(name, featureset_id, link, url))
+
+    hass.data[LIGHTWAVE_ENTITIES].extend(covers)
     async_add_entities(covers)
 
 
 class LWRF2Cover(CoverDevice):
     """Representation of a LightWaveRF cover."""
 
-    def __init__(self, name, featureset_id, link):
+    def __init__(self, name, featureset_id, link, url=None):
         """Initialize LWRFCover entity."""
         self._name = name
         _LOGGER.debug("Adding cover: %s ", self._name)
         self._featureset_id = featureset_id
         self._lwlink = link
+        self._url = url
         self._state = 50
         self._gen2 = self._lwlink.get_featureset_by_id(
             self._featureset_id).is_gen2()
@@ -44,6 +52,11 @@ class LWRF2Cover(CoverDevice):
     async def async_added_to_hass(self):
         """Subscribe to events."""
         await self._lwlink.async_register_callback(self.async_update_callback)
+        if self._url is not None:
+            for featurename in self._lwlink.get_featureset_by_id(self._featureset_id).features:
+                featureid = self._lwlink.get_featureset_by_id(self._featureset_id).features[featurename][0]
+                _LOGGER.debug("Registering webhook: %s %s", featurename, featureid.replace("+", "P"))
+                req = await self._lwlink.async_register_webhook(self._url, featureid, "hass" + featureid.replace("+", "P"), overwrite = True)
 
     @callback
     def async_update_callback(self):

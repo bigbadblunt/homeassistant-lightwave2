@@ -1,5 +1,5 @@
 import logging
-from custom_components.lightwave2 import LIGHTWAVE_LINK2
+from custom_components.lightwave2 import LIGHTWAVE_LINK2, LIGHTWAVE_BACKEND, BACKEND_EMULATED, LIGHTWAVE_ENTITIES, LIGHTWAVE_WEBHOOK
 from homeassistant.components.climate import ClimateDevice
 from homeassistant.components.climate.const import (
     HVAC_MODE_OFF, HVAC_MODE_HEAT, SUPPORT_TARGET_TEMPERATURE)
@@ -17,19 +17,27 @@ async def async_setup_platform(hass, config, async_add_entities,
     climates = []
     link = hass.data[LIGHTWAVE_LINK2]
 
+    if hass.data[LIGHTWAVE_BACKEND] == BACKEND_EMULATED:
+        url = None
+    else:
+        url = hass.data[LIGHTWAVE_WEBHOOK]
+
     for featureset_id, name in link.get_climates():
-        climates.append(LWRF2Climate(name, featureset_id, link))
+        climates.append(LWRF2Climate(name, featureset_id, link, url))
+
+    hass.data[LIGHTWAVE_ENTITIES].extend(climates)
     async_add_entities(climates)
 
 
 class LWRF2Climate(ClimateDevice):
     """Representation of a LightWaveRF thermostat."""
 
-    def __init__(self, name, featureset_id, link):
+    def __init__(self, name, featureset_id, link, url=None):
         self._name = name
         _LOGGER.debug("Adding climate: %s ", self._name)
         self._featureset_id = featureset_id
         self._lwlink = link
+        self._url = url
         self._support_flags = SUPPORT_TARGET_TEMPERATURE
         self._valve_level = \
             self._lwlink.get_featureset_by_id(self._featureset_id).features[
@@ -45,6 +53,11 @@ class LWRF2Climate(ClimateDevice):
     async def async_added_to_hass(self):
         """Subscribe to events."""
         await self._lwlink.async_register_callback(self.async_update_callback)
+        if self._url is not None:
+            for featurename in self._lwlink.get_featureset_by_id(self._featureset_id).features:
+                featureid = self._lwlink.get_featureset_by_id(self._featureset_id).features[featurename][0]
+                _LOGGER.debug("Registering webhook: %s %s", featurename, featureid.replace("+", "P"))
+                req = await self._lwlink.async_register_webhook(self._url, featureid, "hass" + featureid.replace("+", "P"), overwrite = True)
 
     @callback
     def async_update_callback(self):

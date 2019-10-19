@@ -1,5 +1,5 @@
 import logging
-from custom_components.lightwave2 import LIGHTWAVE_LINK2
+from custom_components.lightwave2 import LIGHTWAVE_LINK2, LIGHTWAVE_BACKEND, BACKEND_EMULATED, LIGHTWAVE_ENTITIES, LIGHTWAVE_WEBHOOK
 from homeassistant.components.switch import ATTR_CURRENT_POWER_W, SwitchDevice
 from homeassistant.core import callback
 
@@ -13,20 +13,28 @@ async def async_setup_platform(hass, config, async_add_entities,
     switches = []
     link = hass.data[LIGHTWAVE_LINK2]
 
+    if hass.data[LIGHTWAVE_BACKEND] == BACKEND_EMULATED:
+        url = None
+    else:
+        url = hass.data[LIGHTWAVE_WEBHOOK]
+
     for featureset_id, name in link.get_switches():
-        switches.append(LWRF2Switch(name, featureset_id, link))
+        switches.append(LWRF2Switch(name, featureset_id, link, url))
+
+    hass.data[LIGHTWAVE_ENTITIES].extend(switches)
     async_add_entities(switches)
 
 
 class LWRF2Switch(SwitchDevice):
     """Representation of a LightWaveRF switch."""
 
-    def __init__(self, name, featureset_id, link):
+    def __init__(self, name, featureset_id, link, url=None):
         """Initialize LWRFSwitch entity."""
         self._name = name
         _LOGGER.debug("Adding switch: %s ", self._name)
         self._featureset_id = featureset_id
         self._lwlink = link
+        self._url = url
         self._state = \
             self._lwlink.get_featureset_by_id(self._featureset_id).features[
                 "switch"][1]
@@ -42,6 +50,11 @@ class LWRF2Switch(SwitchDevice):
     async def async_added_to_hass(self):
         """Subscribe to events."""
         await self._lwlink.async_register_callback(self.async_update_callback)
+        if self._url is not None:
+            for featurename in self._lwlink.get_featureset_by_id(self._featureset_id).features:
+                featureid = self._lwlink.get_featureset_by_id(self._featureset_id).features[featurename][0]
+                _LOGGER.debug("Registering webhook: %s %s", featurename, featureid.replace("+", "P"))
+                req = await self._lwlink.async_register_webhook(self._url, featureid, "hass" + featureid.replace("+", "P"), overwrite = True)
 
     @callback
     def async_update_callback(self):
