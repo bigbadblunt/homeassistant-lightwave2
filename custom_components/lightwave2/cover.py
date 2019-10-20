@@ -141,6 +141,9 @@ class LWRF2Cover(CoverDevice):
                 self._featureset_id).features.items():
             attribs['lwrf_' + featurename] = featuredict[1]
 
+        attribs['lrwf_product_code'] = self._lwlink.get_featureset_by_id(
+            self._featureset_id).product_code
+
         if self._power is not None:
             attribs[ATTR_CURRENT_POWER_W] = self._power
 

@@ -148,4 +148,7 @@ class LWRF2Climate(ClimateDevice):
                 self._featureset_id).features.items():
             attribs['lwrf_' + featurename] = featuredict[1]
 
+        attribs['lrwf_product_code'] = self._lwlink.get_featureset_by_id(
+            self._featureset_id).product_code
+
         return attribs
