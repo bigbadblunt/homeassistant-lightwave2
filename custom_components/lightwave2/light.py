@@ -163,7 +163,7 @@ class LWRF2Light(Light):
 
         attribs = {}
 
-        for featurename, featuredict in self._lwlink.get_featureset_by_id(self._featureset_id).features:
+        for featurename, featuredict in self._lwlink.get_featureset_by_id(self._featureset_id).features.items():
             attribs[featurename] = featuredict[1]
 
         if self._power is not None:

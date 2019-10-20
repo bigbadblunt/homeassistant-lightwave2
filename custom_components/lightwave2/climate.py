@@ -137,3 +137,15 @@ class LWRF2Climate(ClimateDevice):
         self._target_temperature = \
             self._lwlink.get_featureset_by_id(self._featureset_id).features[
                 "targetTemperature"][1] / 10
+
+    @property
+    def device_state_attributes(self):
+        """Return the optional state attributes."""
+
+        attribs = {}
+
+        for featurename, featuredict in self._lwlink.get_featureset_by_id(
+                self._featureset_id).features.items():
+            attribs[featurename] = featuredict[1]
+
+        return attribs
