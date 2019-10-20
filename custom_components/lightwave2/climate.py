@@ -146,8 +146,6 @@ class LWRF2Climate(ClimateDevice):
 
         for featurename, featuredict in self._lwlink.get_featureset_by_id(
                 self._featureset_id).features.items():
-            if featurename == 'temperature':
-                featurename = 'current_temp'
-            attribs[featurename] = featuredict[1]
+            attribs['lwrf_' + featurename] = featuredict[1]
 
         return attribs
