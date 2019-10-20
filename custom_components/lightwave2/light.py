@@ -7,7 +7,6 @@ from homeassistant.core import callback
 DEPENDENCIES = ['lightwave2']
 _LOGGER = logging.getLogger(__name__)
 ATTR_CURRENT_POWER_W = "current_power_w"
-ATTR_LED_RGB = "led_rgb"
 
 async def async_setup_platform(hass, config, async_add_entities,
                                discovery_info=None):
@@ -149,8 +148,8 @@ class LWRF2Light(Light):
         await self._lwlink.async_turn_off_by_featureset_id(self._featureset_id)
         self.async_schedule_update_ha_state()
 
-    async def async_set_rgb(self, **kwargs):
-        self._ledrgb = kwargs[ATTR_LED_RGB]
+    async def async_set_rgb(self, led_rgb):
+        self._ledrgb = led_rgb
         await self._lwlink.async_set_led_rgb_by_featureset_id(self._featureset_id, self._ledrgb)
 
     @property
@@ -164,10 +163,10 @@ class LWRF2Light(Light):
 
         attribs = {}
 
+        for featurename, featuredict in self._lwlink.get_featureset_by_id(self._featureset_id).features:
+            attribs[featurename] = featuredict[1]
+
         if self._power is not None:
             attribs[ATTR_CURRENT_POWER_W] = self._power
-
-        if self._ledrgb is not None:
-            attribs[ATTR_LED_RGB] = self._ledrgb
 
         return attribs
