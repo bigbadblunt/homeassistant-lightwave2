@@ -7,6 +7,8 @@ lightwave2:
   password: hunter2
 ```
 
+By default this uses a reverse engineered emulation of the Lightwave app. To use the offical API, add `backend: public`. There is no difference in functionality between the two implementations, but stability/responsiveness might differ depending on your network.
+
 ## Usage:
 Once configured this should then automatically add all switches, lights, thermostats and blinds/covers that are configured in your Lightwave app.
 
