@@ -1,3 +1,4 @@
+#TODO: expose link and attributes to HA
 import logging
 import voluptuous as vol
 
