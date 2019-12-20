@@ -13,6 +13,7 @@ Tested by me and working with:
 Tested by others:
 
 - L22 2-gang Dimmer (2nd generation)
+- L24 4-gang Dimmer (2nd generation)
 - Three-way relays (for controlling blinds/covers)
 
 ## Setup
