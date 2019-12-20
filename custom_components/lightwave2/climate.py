@@ -116,10 +116,6 @@ class LWRF2Climate(ClimateDevice):
         return [HVAC_MODE_AUTO]
 
     @property
-    def hvac_modes(self):
-         return None
-
-    @property
     def target_temperature(self):
         """Return the temperature we try to reach."""
         return self._target_temperature
