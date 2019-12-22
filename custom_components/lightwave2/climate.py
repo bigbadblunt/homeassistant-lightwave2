@@ -2,7 +2,7 @@ import logging
 from custom_components.lightwave2 import LIGHTWAVE_LINK2, LIGHTWAVE_BACKEND, BACKEND_EMULATED, LIGHTWAVE_ENTITIES, LIGHTWAVE_WEBHOOK
 from homeassistant.components.climate import ClimateDevice
 from homeassistant.components.climate.const import (
-    HVAC_MODE_AUTO, HVAC_MODE_OFF, HVAC_MODE_HEAT, SUPPORT_TARGET_TEMPERATURE)
+    HVAC_MODE_HEAT, SUPPORT_TARGET_TEMPERATURE, CURRENT_HVAC_HEAT, CURRENT_HVAC_IDLE)
 from homeassistant.const import (
     ATTR_TEMPERATURE, TEMP_CELSIUS, TEMP_FAHRENHEIT, STATE_OFF)
 from homeassistant.core import callback
@@ -105,15 +105,22 @@ class LWRF2Climate(ClimateDevice):
     @property
     def hvac_mode(self):
         """Return current operation ie. heat, cool, idle."""
-        if self._valve_level == 100:
-            return HVAC_MODE_HEAT
-        else:
-            return HVAC_MODE_OFF
+        #if self._valve_level == 100:
+        return HVAC_MODE_HEAT
+        #else:
+        #    return HVAC_MODE_OFF
 
     @property
     def hvac_modes(self):
         """Return the list of available hvac operation modes."""
-        return [HVAC_MODE_AUTO]
+        return [HVAC_MODE_HEAT]
+
+    @property
+    def hvac_action(self):
+        if self._valve_level == 100:
+            return CURRENT_HVAC_HEAT
+        else:
+            return CURRENT_HVAC_IDLE
 
     @property
     def target_temperature(self):
