@@ -2,7 +2,7 @@ import logging
 from custom_components.lightwave2 import LIGHTWAVE_LINK2, LIGHTWAVE_BACKEND, BACKEND_EMULATED, LIGHTWAVE_ENTITIES, LIGHTWAVE_WEBHOOK
 from homeassistant.components.climate import ClimateDevice
 from homeassistant.components.climate.const import (
-    HVAC_MODE_HEAT, SUPPORT_TARGET_TEMPERATURE, CURRENT_HVAC_HEAT, CURRENT_HVAC_IDLE)
+    HVAC_MODE_OFF, HVAC_MODE_HEAT, SUPPORT_TARGET_TEMPERATURE, CURRENT_HVAC_HEAT, CURRENT_HVAC_IDLE, CURRENT_HVAC_OFF)
 from homeassistant.const import (
     ATTR_TEMPERATURE, TEMP_CELSIUS, TEMP_FAHRENHEIT, STATE_OFF)
 from homeassistant.core import callback
@@ -42,6 +42,9 @@ class LWRF2Climate(ClimateDevice):
         self._valve_level = \
             self._lwlink.get_featureset_by_id(self._featureset_id).features[
                 "valveLevel"][1]
+        self._onoff = \
+            self._lwlink.get_featureset_by_id(self._featureset_id).features[
+                "heatState"][1]
         self._temperature = \
             self._lwlink.get_featureset_by_id(self._featureset_id).features[
                 "temperature"][1] / 10
@@ -105,19 +108,21 @@ class LWRF2Climate(ClimateDevice):
     @property
     def hvac_mode(self):
         """Return current operation ie. heat, cool, idle."""
-        #if self._valve_level == 100:
-        return HVAC_MODE_HEAT
-        #else:
-        #    return HVAC_MODE_OFF
+        if self._onoff == 1:
+            return HVAC_MODE_HEAT
+        else:
+            return HVAC_MODE_OFF
 
     @property
     def hvac_modes(self):
         """Return the list of available hvac operation modes."""
-        return [HVAC_MODE_HEAT]
+        return [HVAC_MODE_HEAT | HVAC_MODE_OFF]
 
     @property
     def hvac_action(self):
-        if self._valve_level == 100:
+        if self._onoff == 0:
+            return CURRENT_HVAC_OFF
+        elif self._valve_level == 100:
             return CURRENT_HVAC_HEAT
         else:
             return CURRENT_HVAC_IDLE
@@ -134,14 +139,21 @@ class LWRF2Climate(ClimateDevice):
         await self._lwlink.async_set_temperature_by_featureset_id(
             self._featureset_id, self._target_temperature)
 
-    async def async_set_hvac_mode(self, **kwargs):
-        pass
+    async def async_set_hvac_mode(self, hvac_mode):
+        feature_id = self._lwlink.get_featureset_by_id(self._featureset_id).features['heatState'][0]
+        if hvac_mode == HVAC_MODE_OFF
+            self._lwlink.async_write_feature(feature_id, 0)
+        else:
+            self._lwlink.async_write_feature(feature_id, 0)
 
     async def async_update(self):
         """Update state"""
         self._valve_level = \
             self._lwlink.get_featureset_by_id(self._featureset_id).features[
                 "valveLevel"][1]
+        self._onoff = \
+            self._lwlink.get_featureset_by_id(self._featureset_id).features[
+                "heatState"][1]
         self._temperature = \
             self._lwlink.get_featureset_by_id(self._featureset_id).features[
                 "temperature"][1] / 10
