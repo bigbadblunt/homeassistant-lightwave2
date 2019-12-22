@@ -134,6 +134,9 @@ class LWRF2Climate(ClimateDevice):
         await self._lwlink.async_set_temperature_by_featureset_id(
             self._featureset_id, self._target_temperature)
 
+    async def async_set_hvac_mode(self, **kwargs):
+        pass
+
     async def async_update(self):
         """Update state"""
         self._valve_level = \
