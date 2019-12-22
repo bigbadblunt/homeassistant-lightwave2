@@ -141,10 +141,12 @@ class LWRF2Climate(ClimateDevice):
 
     async def async_set_hvac_mode(self, hvac_mode):
         feature_id = self._lwlink.get_featureset_by_id(self._featureset_id).features['heatState'][0]
+        _LOGGER.debug("Received mode set request: %s ", hvac_mode)
+        _LOGGER.debug("Setting feature ID: %s ", feature_id)
         if hvac_mode == HVAC_MODE_OFF:
             self._lwlink.async_write_feature(feature_id, 0)
         else:
-            self._lwlink.async_write_feature(feature_id, 0)
+            self._lwlink.async_write_feature(feature_id, 1)
 
     async def async_update(self):
         """Update state"""
