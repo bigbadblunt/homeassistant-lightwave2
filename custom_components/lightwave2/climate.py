@@ -116,7 +116,7 @@ class LWRF2Climate(ClimateDevice):
     @property
     def hvac_modes(self):
         """Return the list of available hvac operation modes."""
-        return [HVAC_MODE_HEAT | HVAC_MODE_OFF]
+        return [HVAC_MODE_HEAT, HVAC_MODE_OFF]
 
     @property
     def hvac_action(self):
