@@ -89,14 +89,6 @@ class LWRF2Switch(SwitchDevice):
         return self._featureset_id
 
     @property
-    def device_info(self):
-        """Return information about the device."""
-        return {
-            'product_code': self._lwlink.get_featureset_by_id(
-                self._featureset_id).product_code
-        }
-
-    @property
     def is_on(self):
         """Lightwave switch is on state."""
         return self._state
@@ -136,3 +128,17 @@ class LWRF2Switch(SwitchDevice):
 
         return attribs
 
+    @property
+    def device_info(self):
+        return {
+            'identifiers': {
+                # Serial numbers are unique identifiers within a specific domain
+                (DOMAIN, self.unique_id)
+            },
+            'name': self.name,
+            'manufacturer': "Lightwave RF",
+            'model': self._lwlink.get_featureset_by_id(
+                self._featureset_id).product_code
+            #'sw_version': self.light.swversion,
+            #'via_device': (hue.DOMAIN, self.api.bridgeid),
+        }

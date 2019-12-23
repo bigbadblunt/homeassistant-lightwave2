@@ -42,7 +42,7 @@ async def handle_webhook(hass, webhook_id, request):
         ent.async_schedule_update_ha_state(True)
 
 async def async_setup(hass, config):
-    '''This checks if there is configuration infop in configuration.yaml, if so it translaters and passes it to the config handler'''
+    '''This checks if there is configuration infop in configuration.yaml, if so it translates and passes it to the config handler'''
     if DOMAIN not in config:
         return True
 
