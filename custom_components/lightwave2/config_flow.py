@@ -33,7 +33,7 @@ class Lightwave2ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         Special type of import, we're not actually going to store any data.
         Instead, we're going to rely on the values that are in config file.
         """
-        _LOGGER.debug("yaml config flow", user_input)
+        _LOGGER.debug("yaml config flow %s", user_input)
         if self._async_current_entries():
             return self.async_abort(reason="single_instance_allowed")
 
