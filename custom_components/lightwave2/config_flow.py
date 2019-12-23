@@ -11,17 +11,15 @@ class Lightwave2ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     async def async_step_user(self, user_input=()):
 
         self._errors = {}
-        _LOGGER.debug("1")
+
         if self._async_current_entries():
             return self.async_abort(reason="single_instance_allowed")
         if self.hass.data.get(DOMAIN):
             return self.async_abort(reason="single_instance_allowed")
 
-        _LOGGER.debug("2")
         if user_input is not None:
             return self.async_create_entry(title="Lightwave 2", data=user_input)
 
-        _LOGGER.debug("3")
         return self.async_show_form(
             step_id='user',
             data_schema=vol.Schema({
@@ -35,6 +33,7 @@ class Lightwave2ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         Special type of import, we're not actually going to store any data.
         Instead, we're going to rely on the values that are in config file.
         """
+        _LOGGER.debug("yaml config flow", user_input)
         if self._async_current_entries():
             return self.async_abort(reason="single_instance_allowed")
 
