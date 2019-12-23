@@ -8,8 +8,7 @@ DEPENDENCIES = ['lightwave2']
 _LOGGER = logging.getLogger(__name__)
 ATTR_CURRENT_POWER_W = "current_power_w"
 
-async def async_setup_platform(hass, config, async_add_entities,
-                               discovery_info=None):
+async def async_setup_entry(hass, entry, async_add_entities):
     """Find and return LightWave lights."""
 
     lights = []
