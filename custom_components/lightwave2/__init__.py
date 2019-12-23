@@ -58,7 +58,6 @@ async def async_setup(hass, config):
 
 async def async_setup_entry(hass, config_entry):
     """Setup Lightwave hub. Uses undocumented websocket API."""
-    _LOGGER.debug("in setup_entry")
     from lightwave2 import lightwave2
 
     async def service_handle(call):

@@ -37,4 +37,4 @@ class Lightwave2ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         if self._async_current_entries():
             return self.async_abort(reason="single_instance_allowed")
 
-        return self.async_create_entry(title="(Imported from configuration.yaml)", data={})
+        return self.async_create_entry(title="(Imported from configuration.yaml)", data=user_input)
