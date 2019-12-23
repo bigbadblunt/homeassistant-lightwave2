@@ -16,11 +16,11 @@
                     "theme": "Enable Themes discovery & tracking",
                     "username": "Username"
                 },
-                "description": "If you need help with the configuration have a look here: https:\/\/hacs.xyz\/docs\/configuration\/start",
-                "title": "HACS (Home Assistant Community Store)"
+                "description": "TODO",
+                "title": "Lightwave 2"
             }
         },
-        "title": "HACS (Home Assistant Community Store)"
+        "title": "Lightwave 2"
     },
     "options": {
         "step": {
