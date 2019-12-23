@@ -11,7 +11,6 @@ class Lightwave2ConfigFlow(config_entries.ConfigFlow, domain='lightwave2'):
         return self.async_show_form(
             step_id='user',
             data_schema=vol.Schema({
-                vol.Required(CONF_USERNAME): cv.string,
-                vol.Required(CONF_PASSWORD): cv.string
+                vol.Required(CONF_USERNAME): str
             })
         )
