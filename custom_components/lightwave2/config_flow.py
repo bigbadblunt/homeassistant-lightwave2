@@ -1,10 +1,11 @@
 from homeassistant import config_entries
 from homeassistant.const import (CONF_USERNAME, CONF_PASSWORD, CONF_API_KEY)
+from .const import DOMAIN
 import voluptuous as vol
 import homeassistant.helpers.config_validation as cv
 #from .const import DOMAIN #TODO move constants to const.py
 
-class Lightwave2ConfigFlow(config_entries.ConfigFlow, domain='lightwave2'):
+class Lightwave2ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def async_step_user(self, user_input=()):
 

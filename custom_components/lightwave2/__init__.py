@@ -3,11 +3,11 @@ import logging
 import voluptuous as vol
 
 import homeassistant.helpers.config_validation as cv
+from .const import DOMAIN
 from homeassistant.helpers.discovery import async_load_platform
 from homeassistant.const import (CONF_USERNAME, CONF_PASSWORD, CONF_API_KEY)
 
 _LOGGER = logging.getLogger(__name__)
-DOMAIN = 'lightwave2'
 CONF_REFRESH_KEY = 'refresh_key'
 CONF_BACKEND = 'backend'
 LIGHTWAVE_LINK2 = 'lightwave_link2'
