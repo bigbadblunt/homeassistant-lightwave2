@@ -42,7 +42,6 @@ async def handle_webhook(hass, webhook_id, request):
         ent.async_schedule_update_ha_state(True)
 
 async def async_setup(hass, config):
-    _LOGGER.debug("in setup_; config: ", config)
     return True
 
 async def async_setup_entry(hass, config_entry):

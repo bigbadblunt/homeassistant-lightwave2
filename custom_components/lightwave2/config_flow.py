@@ -1,6 +1,6 @@
 import logging
 from homeassistant import config_entries
-from homeassistant.const import (CONF_USERNAME, CONF_PASSWORD, CONF_API_KEY)
+from homeassistant.const import (CONF_USERNAME, CONF_PASSWORD)
 from .const import DOMAIN
 import voluptuous as vol
 import homeassistant.helpers.config_validation as cv
