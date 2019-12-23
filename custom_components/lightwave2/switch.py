@@ -2,6 +2,7 @@ import logging
 from custom_components.lightwave2 import LIGHTWAVE_LINK2, LIGHTWAVE_BACKEND, BACKEND_EMULATED, LIGHTWAVE_ENTITIES, LIGHTWAVE_WEBHOOK
 from homeassistant.components.switch import ATTR_CURRENT_POWER_W, SwitchDevice
 from homeassistant.core import callback
+from .const import DOMAIN
 
 DEPENDENCIES = ['lightwave2']
 _LOGGER = logging.getLogger(__name__)
