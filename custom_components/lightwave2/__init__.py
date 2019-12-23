@@ -41,12 +41,14 @@ async def handle_webhook(hass, webhook_id, request):
     for ent in hass.data[LIGHTWAVE_ENTITIES]:
         ent.async_schedule_update_ha_state(True)
 
-
+async def async_setup(hass, config):
+    _LOGGER.debug("in setup_")
+    pass
 
 async def async_setup_entry(hass, config_entry):
     """Setup Lightwave hub. Uses undocumented websocket API."""
+    _LOGGER.debug("in setup_entry")
     from lightwave2 import lightwave2
-    #_LOGGER.debug("Imported lightwave2 library version %s", REQUIREMENTS)
 
     async def service_handle(call):
         entity_ids = call.data.get("entity_id")
