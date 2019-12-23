@@ -4,6 +4,7 @@ from homeassistant.components.cover import (
     SUPPORT_CLOSE, SUPPORT_OPEN,
     SUPPORT_STOP, CoverDevice)
 from homeassistant.core import callback
+from .const import DOMAIN
 
 DEPENDENCIES = ['lightwave2']
 _LOGGER = logging.getLogger(__name__)
@@ -92,14 +93,6 @@ class LWRF2Cover(CoverDevice):
         return self._featureset_id
 
     @property
-    def device_info(self):
-        """Return information about the device."""
-        return {
-            'product_code': self._lwlink.get_featureset_by_id(
-                self._featureset_id).product_code
-        }
-
-    @property
     def current_cover_position(self):
         """Lightwave cover position."""
         return self._state
@@ -147,4 +140,18 @@ class LWRF2Cover(CoverDevice):
             attribs[ATTR_CURRENT_POWER_W] = self._power
 
         return attribs
-
+    
+    @property
+    def device_info(self):
+        return {
+            'identifiers': {
+                # Serial numbers are unique identifiers within a specific domain
+                (DOMAIN, self.unique_id)
+            },
+            'name': self.name,
+            'manufacturer': "Lightwave RF",
+            'model': self._lwlink.get_featureset_by_id(
+                self._featureset_id).product_code
+            #'sw_version': self.light.swversion,
+            #'via_device': (hue.DOMAIN, self.api.bridgeid),
+        }

@@ -6,6 +6,7 @@ from homeassistant.components.climate.const import (
 from homeassistant.const import (
     ATTR_TEMPERATURE, TEMP_CELSIUS, TEMP_FAHRENHEIT, STATE_OFF)
 from homeassistant.core import callback
+from .const import DOMAIN
 
 DEPENDENCIES = ['lightwave2']
 _LOGGER = logging.getLogger(__name__)
@@ -80,14 +81,6 @@ class LWRF2Climate(ClimateDevice):
     def unique_id(self):
         """Unique identifier. Provided by hub."""
         return self._featureset_id
-
-    @property
-    def device_info(self):
-        """Return information about the device."""
-        return {
-            'product_code': self._lwlink.get_featureset_by_id(
-                self._featureset_id).product_code
-        }
 
     @property
     def name(self):
@@ -176,3 +169,18 @@ class LWRF2Climate(ClimateDevice):
             self._featureset_id).product_code
 
         return attribs
+
+    @property
+    def device_info(self):
+        return {
+            'identifiers': {
+                # Serial numbers are unique identifiers within a specific domain
+                (DOMAIN, self.unique_id)
+            },
+            'name': self.name,
+            'manufacturer': "Lightwave RF",
+            'model': self._lwlink.get_featureset_by_id(
+                self._featureset_id).product_code
+            #'sw_version': self.light.swversion,
+            #'via_device': (hue.DOMAIN, self.api.bridgeid),
+        }
