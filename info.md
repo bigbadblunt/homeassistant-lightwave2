@@ -1,16 +1,15 @@
 ## Configuration:
-Add to configuration.yaml:
+In Home Assistant:
 
-```
-lightwave2:
-  username: example@example.co.uk
-  password: hunter2
-```
-
-By default this uses a reverse engineered emulation of the Lightwave app. To use the offical API, add `backend: public`. There is no difference in functionality between the two implementations, but stability/responsiveness might differ depending on your network.
+1. Enter configuration menu
+2. Select "Integrations"
+3. Click the "+" in the bottom right
+4. Choose "Lightwave 2"
+5. Enter username and password
+6. This should automatically find all your devices
 
 ## Usage:
-Once configured this should then automatically add all switches, lights, thermostats and blinds/covers that are configured in your Lightwave app.
+Once configured this should then automatically add all switches, lights, thermostats and blinds/covers that are configured in your Lightwave app. If you add a new device you will need to restart Home Assistant, or remove and re-add the integration.
 
 Generation 2 devices will have the attribute `current_power_w` for current power usage.
 

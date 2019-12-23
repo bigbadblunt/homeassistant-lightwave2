@@ -19,34 +19,36 @@ Tested by others:
 ## Setup
 There are two ways to set up:
 
-#### 1. Manual
+#### 1. Using HACS (preferred)
+This component is available through the Home Assistant Community Store HACS (https://hacs.netlify.com/)
+
+If you use this method, your component will always update to the latest version. But you'll need to set up HACS first.
+
+#### 2. Manual
 Copy all files from custom_components/lightwave2 to a `<ha_config_dir>/custom_components/lightwave2` directory. (i.e. you should have `<ha_config_dir>/custom_components/lightwave2/__init__.py`, `<ha_config_dir>/custom_components/lightwave2/switch.py` etc)
+
+The latest version is at https://github.com/bigbadblunt/homeassistant-lightwave2/releases/latest
 
 If you use this method then you'll need to keep an eye on this repository to check for updates.
 
-#### 2. Using HACS
-This component is also available through the Home Assistant Community Store HACS (https://hacs.netlify.com/)
+## Configuration:
+In Home Assistant:
 
-If you use this method, your component will always update to the latest version. But you'll need to set up HACS first.
-## Configuration
+1. Enter configuration menu
+2. Select "Integrations"
+3. Click the "+" in the bottom right
+4. Choose "Lightwave 2"
+5. Enter username and password
+6. This should automatically find all your devices
 
-To use this component in your installation, add the following to your `configuration.yaml` file:
+## Usage:
+Once configured this should then automatically add all switches, lights, thermostats and blinds/covers that are configured in your Lightwave app. If you add a new device you will need to restart Home Assistant, or remove and re-add the integration.
 
-```yaml
-lightwave2:
-  username: example@example.co.uk
-  password: hunter2
-```
+Generation 2 devices will have the attribute `current_power_w` for current power usage.
 
-By default this uses a reverse engineered emulation of the Lightwave app. To use the offical API, add `backend: public`. There is no difference in functionality between the two implementations, but stability/responsiveness might differ depending on your network.
+Various other attributes are exposed with the name lwrf_*.
 
-## Usage
-Once configured this should then automatically add all switches, lights, thermostats and blinds/covers that are configured in your Lightwave app.
-
-Generation 2 devices will have attributes `current_power_w` for current power usage and `lwrf_rgbColor` for the color of the LED.
-
-The color of the LED can be changed using the service call `lightwave2.set_led_rgb`.
-
+The color of the LED for generation 2 devices can be changed using the service call `lightwave2.set_led_rgb`.
 
 ## Thanks
 Credit to Warren Ashcroft whose code I used as a base https://github.com/washcroft/LightwaveRF-LinkPlus
