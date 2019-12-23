@@ -87,14 +87,11 @@ async def async_setup_entry(hass, config_entry):
         _LOGGER.debug("Webhook URL: %s ", url)
     hass.data[LIGHTWAVE_WEBHOOK] = url
 
-    hass.async_create_task(
-        async_load_platform(hass, 'switch', DOMAIN, None, config))
-    hass.async_create_task(
-        async_load_platform(hass, 'light', DOMAIN, None, config))
-    hass.async_create_task(
-        async_load_platform(hass, 'climate', DOMAIN, None, config))
-    hass.async_create_task(
-        async_load_platform(hass, 'cover', DOMAIN, None, config))
+    forward_setup = hass.config_entries.async_forward_entry_setup
+    hass.async_create_task(forward_setup(config_entry, "switch"))
+    hass.async_create_task(forward_setup(config_entry, "light"))
+    hass.async_create_task(forward_setup(config_entry, "climate"))
+    hass.async_create_task(forward_setup(config_entry, "cover")
 
     hass.services.async_register(DOMAIN, SERVICE_SETLEDRGB, service_handle)
 

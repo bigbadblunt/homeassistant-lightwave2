@@ -6,8 +6,7 @@ from homeassistant.core import callback
 DEPENDENCIES = ['lightwave2']
 _LOGGER = logging.getLogger(__name__)
 
-async def async_setup_platform(hass, config, async_add_entities,
-                               discovery_info=None):
+async def async_setup_entry(hass, entry, async_add_entities):
     """Find and return LightWave switches."""
 
     switches = []
@@ -23,7 +22,6 @@ async def async_setup_platform(hass, config, async_add_entities,
 
     hass.data[LIGHTWAVE_ENTITIES].extend(switches)
     async_add_entities(switches)
-
 
 class LWRF2Switch(SwitchDevice):
     """Representation of a LightWaveRF switch."""
