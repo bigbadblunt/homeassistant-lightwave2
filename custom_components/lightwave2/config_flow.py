@@ -5,7 +5,7 @@ from .const import DOMAIN
 import voluptuous as vol
 import homeassistant.helpers.config_validation as cv
 _LOGGER = logging.getLogger(__name__)
-_LOGGER.debug("0")
+
 class Lightwave2ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def async_step_user(self, user_input=()):
