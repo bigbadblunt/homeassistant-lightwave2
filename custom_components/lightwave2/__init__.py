@@ -64,8 +64,8 @@ async def async_setup_entry(hass, config_entry):
             _LOGGER.debug("Matched entites %s", ent)
             await ent.async_set_rgb(led_rgb=rgb)
 
-    email = hass.data[DOMAIN][config_entry.data[CONF_USERNAME]]
-    password = hass.data[DOMAIN][config_entry.data[CONF_PASSWORD]]
+    email = config_entry.data[CONF_USERNAME]
+    password = config_entry.data[CONF_PASSWORD]
 
     hass.data[LIGHTWAVE_BACKEND] = BACKEND_EMULATED
     link = lightwave2.LWLink2(email, password)
