@@ -1,9 +1,13 @@
 {
     "config": {
+        "abort": {
+            "single_instance_allowed": "Only a single configuration of HACS is allowed."
+        },
         "step": {
             "user": {
                 "data": {
-                    "username": "Username"
+                    "username": "Username",
+                    "password": "Password"
                 },
                 "description": "TODO",
                 "title": "Lightwave 2"
