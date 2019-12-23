@@ -44,9 +44,9 @@ In Home Assistant:
 ## Usage:
 Once configured this should then automatically add all switches, lights, thermostats and blinds/covers that are configured in your Lightwave app. If you add a new device you will need to restart Home Assistant, or remove and re-add the integration.
 
-Generation 2 devices will have the attribute `current_power_w` for current power usage.
+Generation 2 devices have the attribute `current_power_w` for current power usage.
 
-Various other attributes are exposed with the name lwrf_*.
+Various other attributes are exposed with the names `lwrf_*`.
 
 The color of the LED for generation 2 devices can be changed using the service call `lightwave2.set_led_rgb`.
 
