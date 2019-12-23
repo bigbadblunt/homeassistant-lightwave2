@@ -1,1 +1,1 @@
-DOMAIN = "lightwwave2"
+DOMAIN = "lightwave2"
