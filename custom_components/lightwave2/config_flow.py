@@ -10,16 +10,16 @@ class Lightwave2ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def async_step_user(self, user_input=()):
 
-        self._errors = {}
+        #self._errors = {}
         _LOGGER.debug("1")
-        if self._async_current_entries():
-            return self.async_abort(reason="single_instance_allowed")
-        if self.hass.data.get(DOMAIN):
-            return self.async_abort(reason="single_instance_allowed")
+        #if self._async_current_entries():
+        #    return self.async_abort(reason="single_instance_allowed")
+        #if self.hass.data.get(DOMAIN):
+        #    return self.async_abort(reason="single_instance_allowed")
 
         _LOGGER.debug("2")
-        if user_input is not None:
-            return self.async_create_entry(title="", data=user_input)
+        #if user_input is not None:
+        #    return self.async_create_entry(title="", data=user_input)
 
         _LOGGER.debug("3")
         return self.async_show_form(
