@@ -9,7 +9,7 @@
                     "username": "Username",
                     "password": "Password"
                 },
-                "description": "TODO",
+                "description": "Enter Lightwave username and password",
                 "title": "Lightwave 2"
             }
         },
