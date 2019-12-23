@@ -1,0 +1,15 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "data": {
+                    "username": "Username"
+                },
+                "description": "TODO",
+                "title": "Lightwave 2"
+            }
+        },
+        "title": "Lightwave 2"
+    }
+
+}
