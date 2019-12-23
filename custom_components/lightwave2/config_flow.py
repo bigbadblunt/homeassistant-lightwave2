@@ -19,7 +19,7 @@ class Lightwave2ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         _LOGGER.debug("2")
         if user_input is not None:
-            return self.async_create_entry(title="", data=user_input)
+            return self.async_create_entry(title="Lightwave 2", data=user_input)
 
         _LOGGER.debug("3")
         return self.async_show_form(
