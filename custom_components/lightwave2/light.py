@@ -176,6 +176,5 @@ class LWRF2Light(Light):
             'manufacturer': "Lightwave RF",
             'model': self._lwlink.get_featureset_by_id(
                 self._featureset_id).product_code
-            #'sw_version': self.light.swversion,
-            #'via_device': (hue.DOMAIN, self.api.bridgeid),
+            #TODO 'via_device': (hue.DOMAIN, self.api.bridgeid),
         }

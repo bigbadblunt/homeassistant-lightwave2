@@ -140,7 +140,7 @@ class LWRF2Cover(CoverDevice):
             attribs[ATTR_CURRENT_POWER_W] = self._power
 
         return attribs
-    
+
     @property
     def device_info(self):
         return {
@@ -152,6 +152,5 @@ class LWRF2Cover(CoverDevice):
             'manufacturer': "Lightwave RF",
             'model': self._lwlink.get_featureset_by_id(
                 self._featureset_id).product_code
-            #'sw_version': self.light.swversion,
-            #'via_device': (hue.DOMAIN, self.api.bridgeid),
+            #TODO 'via_device': (hue.DOMAIN, self.api.bridgeid),
         }
