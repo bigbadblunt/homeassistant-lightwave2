@@ -3,7 +3,6 @@ from homeassistant import config_entries
 from homeassistant.const import (CONF_USERNAME, CONF_PASSWORD)
 from .const import DOMAIN
 import voluptuous as vol
-import homeassistant.helpers.config_validation as cv
 _LOGGER = logging.getLogger(__name__)
 
 class Lightwave2ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -29,11 +28,7 @@ class Lightwave2ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         )
 
     async def async_step_import(self, user_input):
-        """Import a config entry.
-        Special type of import, we're not actually going to store any data.
-        Instead, we're going to rely on the values that are in config file.
-        """
-        _LOGGER.debug("yaml config flow %s", user_input)
+
         if self._async_current_entries():
             return self.async_abort(reason="single_instance_allowed")
 
