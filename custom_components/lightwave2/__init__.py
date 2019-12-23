@@ -42,6 +42,18 @@ async def handle_webhook(hass, webhook_id, request):
         ent.async_schedule_update_ha_state(True)
 
 async def async_setup(hass, config):
+    '''This checks if there is configuration infop in configuration.yaml, if so it translaters and passes it to the config handler'''
+    if DOMAIN not in config:
+        return True
+
+    email = config[DOMAIN][CONF_USERNAME]
+    password = config[DOMAIN][CONF_PASSWORD]
+
+    hass.async_create_task(
+        hass.config_entries.flow.async_init(
+            DOMAIN, context={"source": SOURCE_IMPORT}, data={CONF_USERNAME: email, CONF_PASSWORD: password}
+        )
+    )
     return True
 
 async def async_setup_entry(hass, config_entry):
