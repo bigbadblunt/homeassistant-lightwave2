@@ -17,6 +17,8 @@ LIGHTWAVE_WEBHOOK = 'lightwave_webhook'
 BACKEND_EMULATED = 'emulated'
 BACKEND_PUBLIC = 'public'
 SERVICE_SETLEDRGB = 'set_led_rgb'
+SERVICE_SETLOCKED = 'lock'
+SERVICE_SETUNLOCKED = 'unlock'
 
 CONFIG_SCHEMA = vol.Schema({
     DOMAIN: vol.Any({
@@ -60,7 +62,7 @@ async def async_setup_entry(hass, config_entry):
     """Setup Lightwave hub. Uses undocumented websocket API."""
     from lightwave2 import lightwave2
 
-    async def service_handle(call):
+    async def service_handle_led(call):
         entity_ids = call.data.get("entity_id")
         entities = hass.data[LIGHTWAVE_ENTITIES]
         entities = [e for e in entities if e.entity_id in entity_ids]
@@ -73,6 +75,28 @@ async def async_setup_entry(hass, config_entry):
         for ent in entities:
             _LOGGER.debug("Matched entites %s", ent)
             await ent.async_set_rgb(led_rgb=rgb)
+
+    async def service_handle_lock(call):
+        entity_ids = call.data.get("entity_id")
+        entities = hass.data[LIGHTWAVE_ENTITIES]
+        entities = [e for e in entities if e.entity_id in entity_ids]
+
+        for ent in entities:
+            feature_id = link.get_featureset_by_id(ent._featureset_id).features['protection'][0]
+            _LOGGER.debug("Received service call lock")
+            _LOGGER.debug("Setting feature ID: %s ", feature_id)
+            await link.async_write_feature(feature_id, 1)
+
+    async def service_handle_unlock(call):
+        entity_ids = call.data.get("entity_id")
+        entities = hass.data[LIGHTWAVE_ENTITIES]
+        entities = [e for e in entities if e.entity_id in entity_ids]
+
+        for ent in entities:
+            feature_id = link.get_featureset_by_id(ent._featureset_id).features['protection'][0]
+            _LOGGER.debug("Received service call unlock")
+            _LOGGER.debug("Setting feature ID: %s ", feature_id)
+            await link.async_write_feature(feature_id, 0)
 
     email = config_entry.data[CONF_USERNAME]
     password = config_entry.data[CONF_PASSWORD]
@@ -103,6 +127,8 @@ async def async_setup_entry(hass, config_entry):
     hass.async_create_task(forward_setup(config_entry, "climate"))
     hass.async_create_task(forward_setup(config_entry, "cover"))
 
-    hass.services.async_register(DOMAIN, SERVICE_SETLEDRGB, service_handle)
+    hass.services.async_register(DOMAIN, SERVICE_SETLEDRGB, service_handle_led)
+    hass.services.async_register(DOMAIN, SERVICE_SETLEDRGB, service_handle_lock)
+    hass.services.async_register(DOMAIN, SERVICE_SETLEDRGB, service_handle_unlock)
 
     return True
