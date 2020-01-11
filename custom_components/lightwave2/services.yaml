@@ -7,3 +7,15 @@ set_led_rgb:
     rgb:
       description: RGB value to set the LED to (can be decimal, "0xABCDFE" hex string or "#ABCDEF" hex string).
       example: '#FFFFFF'
+lock:
+  description: Lock physical controls.
+  fields:
+    entity_id:
+      description: Name(s) of entities.
+      example: 'light.bedroom'
+unlock:
+  description: Unlock physical controls
+  fields:
+    entity_id:
+      description: Name(s) of entities.
+      example: 'light.bedroom'
