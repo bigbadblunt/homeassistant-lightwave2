@@ -19,14 +19,14 @@ async def async_setup_entry(hass, entry, async_add_entities):
     else:
         url = hass.data[LIGHTWAVE_WEBHOOK]
 
-    for featureset_id, name in link.get_sensors():
-        sensors.append(LWRF2Sensor(name, featureset_id, link, url))
+    for featureset_id, name in link.get_windowsensors():
+        sensors.append(LWRF2BinarySensor(name, featureset_id, link, url))
 
     hass.data[LIGHTWAVE_ENTITIES].extend(sensors)
     async_add_entities(sensors)
 
-class LWRF2Sensor(BinarySensorDevice):
-    """Representation of a LightWaveRF light."""
+class LWRF2BinarySensor(BinarySensorDevice):
+    """Representation of a LightWaveRF window sensor."""
 
     def __init__(self, name, featureset_id, link, url=None):
         self._name = name
@@ -36,7 +36,7 @@ class LWRF2Sensor(BinarySensorDevice):
         self._url = url
         self._state = \
             self._lwlink.get_featureset_by_id(self._featureset_id).features[
-                "switch"][1]
+                "windowPosition"][1]
         self._gen2 = self._lwlink.get_featureset_by_id(
             self._featureset_id).is_gen2()
         self._reports_power = self._lwlink.get_featureset_by_id(
@@ -74,7 +74,7 @@ class LWRF2Sensor(BinarySensorDevice):
         """Update state"""
         self._state = \
             self._lwlink.get_featureset_by_id(self._featureset_id).features[
-                "switch"][1]
+                "windowPosition"][1]
         if self._reports_power:
             self._power = self._lwlink.get_featureset_by_id(self._featureset_id).features[
                 "power"][1]
