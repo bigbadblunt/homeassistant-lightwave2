@@ -127,6 +127,7 @@ async def async_setup_entry(hass, config_entry):
     hass.async_create_task(forward_setup(config_entry, "climate"))
     hass.async_create_task(forward_setup(config_entry, "cover"))
     hass.async_create_task(forward_setup(config_entry, "binary_sensor"))
+    hass.async_create_task(forward_setup(config_entry, "sensor"))
 
     hass.services.async_register(DOMAIN, SERVICE_SETLEDRGB, service_handle_led)
     hass.services.async_register(DOMAIN, SERVICE_SETLOCKED, service_handle_lock)

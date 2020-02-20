@@ -50,5 +50,7 @@ Various other attributes are exposed with the names `lwrf_*`.
 
 The color of the LED for generation 2 devices can be changed using the service call `lightwave2.set_led_rgb`.
 
+Devices can be locked/unlocked using the service calls `lightwave2.lock` and `lightwave2.unlock`.
+
 ## Thanks
 Credit to Warren Ashcroft whose code I used as a base https://github.com/washcroft/LightwaveRF-LinkPlus
