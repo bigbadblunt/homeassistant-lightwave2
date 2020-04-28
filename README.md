@@ -1,5 +1,3 @@
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/bigbadblunt/homeassistant-lightwave2?style=for-the-badge) ![GitHub Release Date](https://img.shields.io/github/release-date/bigbadblunt/homeassistant-lightwave2?style=for-the-badge) ![GitHub Releases](https://img.shields.io/github/downloads/bigbadblunt/homeassistant-lightwave2/latest/total?color=purple&label=%20release%20Downloads&style=for-the-badge) ![GitHub All Releases](https://img.shields.io/github/downloads/bigbadblunt/homeassistant-lightwave2/total?color=orange&label=Total%20downloads&style=for-the-badge)
-
 # Lightwave2
 
 Home Assistant (https://www.home-assistant.io/) component for controlling LightwaveRF (https://lightwaverf.com) devices with use of a Lightwave Link Plus hub. Controls both generation 1 ("Connect Series") and generation 2 ("Smart Series") devices. Does not work with gen1 hub.
