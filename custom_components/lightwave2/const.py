@@ -1,8 +1,7 @@
 DOMAIN = "lightwave2"
 CONF_REFRESH_KEY = 'refresh_key'
-CONF_BACKEND = 'backend'
+CONF_PUBLICAPI = 'lightwave_publicapi'
 LIGHTWAVE_LINK2 = 'lightwave_link2'
-LIGHTWAVE_PUBLICAPI = 'lightwave_publicapi'
 LIGHTWAVE_ENTITIES = "lightwave_entities"
 LIGHTWAVE_WEBHOOK = 'lightwave_webhook'
 SERVICE_SETLEDRGB = 'set_led_rgb'

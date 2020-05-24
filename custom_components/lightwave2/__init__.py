@@ -3,7 +3,7 @@ import logging
 import voluptuous as vol
 
 import homeassistant.helpers.config_validation as cv
-from .const import DOMAIN, CONF_REFRESH_KEY, CONF_BACKEND, LIGHTWAVE_LINK2, LIGHTWAVE_PUBLICAPI, LIGHTWAVE_ENTITIES, \
+from .const import DOMAIN, CONF_REFRESH_KEY, CONF_PUBLICAPI, LIGHTWAVE_LINK2,  LIGHTWAVE_ENTITIES, \
     LIGHTWAVE_WEBHOOK, SERVICE_SETLEDRGB, SERVICE_SETLOCKED, SERVICE_SETUNLOCKED
 from homeassistant.const import (CONF_USERNAME, CONF_PASSWORD, CONF_API_KEY)
 from homeassistant.config_entries import SOURCE_IMPORT
@@ -91,7 +91,7 @@ async def async_setup_entry(hass, config_entry):
     email = config_entry.data[CONF_USERNAME]
     password = config_entry.data[CONF_PASSWORD]
 
-    hass.data[LIGHTWAVE_PUBLICAPI] = config_entry.data[LIGHTWAVE_PUBLICAPI]
+    hass.data[CONF_PUBLICAPI] = config_entry.data[CONF_PUBLICAPI]
     #todo, set up config options
     link = lightwave2.LWLink2(email, password)
 
@@ -101,7 +101,7 @@ async def async_setup_entry(hass, config_entry):
 
     hass.data[LIGHTWAVE_LINK2] = link
     hass.data[LIGHTWAVE_ENTITIES] = []
-    if not hass.data[LIGHTWAVE_PUBLICAPI]:
+    if not hass.data[CONF_PUBLICAPI]:
         url = None
     else:
         webhook_id = hass.components.webhook.async_generate_id()
