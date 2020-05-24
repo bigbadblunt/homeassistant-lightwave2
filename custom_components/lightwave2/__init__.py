@@ -14,12 +14,12 @@ CONFIG_SCHEMA = vol.Schema({
     DOMAIN: vol.Any({
         vol.Required(CONF_USERNAME): cv.string,
         vol.Required(CONF_PASSWORD): cv.string,
-        vol.Optional(CONF_PUBLICAPI): cv.bool
+        vol.Optional(CONF_PUBLICAPI): cv.boolean
     },
         {
             vol.Required(CONF_API_KEY): cv.string,
             vol.Required(CONF_REFRESH_KEY): cv.string,
-            vol.Optional(CONF_PUBLICAPI): cv.bool
+            vol.Optional(CONF_PUBLICAPI): cv.boolean
         }
     )
 }, extra=vol.ALLOW_EXTRA)
