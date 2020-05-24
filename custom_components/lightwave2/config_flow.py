@@ -55,6 +55,7 @@ class Lightwave2OptionsFlowHandler(config_entries.OptionsFlow):
         if self.config_entry.options:
             options = self.config_entry.options
             _LOGGER.debug("Using existing options: %s ", options)
+            _LOGGER.debug("Existing public API setting: %s ", options.get(CONF_PUBLICAPI))
         else:
             options = {
                 CONF_PUBLICAPI: False,

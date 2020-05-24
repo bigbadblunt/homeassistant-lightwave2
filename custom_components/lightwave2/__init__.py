@@ -90,6 +90,7 @@ async def async_setup_entry(hass, config_entry):
 
     email = config_entry.data[CONF_USERNAME]
     password = config_entry.data[CONF_PASSWORD]
+    config_entry.add_update_listener(reload_lw)
 
     if CONF_PUBLICAPI in config_entry.options:
         hass.data[CONF_PUBLICAPI] = config_entry.options[CONF_PUBLICAPI]
@@ -132,3 +133,11 @@ async def async_setup_entry(hass, config_entry):
     hass.services.async_register(DOMAIN, SERVICE_SETUNLOCKED, service_handle_unlock)
 
     return True
+
+async def async_remove_entry(hass, config_entry):
+    pass
+
+async def reload_lw(hass, config_entry):
+    """Reload HACS."""
+    await async_remove_entry(hass, config_entry)
+    await async_setup_entry(hass, config_entry)
