@@ -19,7 +19,7 @@
         "step": {
             "user": {
                 "data": {
-                    "publicAPI": "Use public API?"
+                    "lightwave_publicapi": "Use public API?"
                 }
             }
         }
