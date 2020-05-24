@@ -49,6 +49,9 @@ class Lightwave2OptionsFlowHandler(config_entries.OptionsFlow):
         return await self.async_step_user()
 
     async def async_step_user(self, user_input=None):
+        if user_input is not None:
+            return self.async_create_entry(title="", data=user_input)
+
         return self.async_show_form(
             step_id="user", data_schema=vol.Schema({
                 vol.Optional(CONF_PUBLICAPI, default=False): bool
