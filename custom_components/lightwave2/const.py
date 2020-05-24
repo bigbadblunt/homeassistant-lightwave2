@@ -4,6 +4,7 @@ CONF_PUBLICAPI = 'lightwave_publicapi'
 LIGHTWAVE_LINK2 = 'lightwave_link2'
 LIGHTWAVE_ENTITIES = "lightwave_entities"
 LIGHTWAVE_WEBHOOK = 'lightwave_webhook'
+LIGHTWAVE_WEBHOOKID = 'lightwave_webhookid'
 SERVICE_SETLEDRGB = 'set_led_rgb'
 SERVICE_SETLOCKED = 'lock'
 SERVICE_SETUNLOCKED = 'unlock'

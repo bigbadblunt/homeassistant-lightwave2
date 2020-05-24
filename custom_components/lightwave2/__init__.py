@@ -4,7 +4,7 @@ import voluptuous as vol
 
 import homeassistant.helpers.config_validation as cv
 from .const import DOMAIN, CONF_REFRESH_KEY, CONF_PUBLICAPI, LIGHTWAVE_LINK2,  LIGHTWAVE_ENTITIES, \
-    LIGHTWAVE_WEBHOOK, SERVICE_SETLEDRGB, SERVICE_SETLOCKED, SERVICE_SETUNLOCKED
+    LIGHTWAVE_WEBHOOK, LIGHTWAVE_WEBHOOKID, SERVICE_SETLEDRGB, SERVICE_SETLOCKED, SERVICE_SETUNLOCKED
 from homeassistant.const import (CONF_USERNAME, CONF_PASSWORD, CONF_API_KEY)
 from homeassistant.config_entries import SOURCE_IMPORT
 
@@ -113,12 +113,14 @@ async def async_setup_entry(hass, config_entry):
         url = None
     else:
         webhook_id = hass.components.webhook.async_generate_id()
+        hass.data[LIGHTWAVE_WEBHOOKID] = webhook_id
         _LOGGER.debug("Generated webhook: %s ", webhook_id)
         hass.components.webhook.async_register(
             'lightwave2', 'Lightwave webhook', webhook_id, handle_webhook)
         url = hass.components.webhook.async_generate_url(webhook_id)
         _LOGGER.debug("Webhook URL: %s ", url)
     hass.data[LIGHTWAVE_WEBHOOK] = url
+
 
     forward_setup = hass.config_entries.async_forward_entry_setup
     hass.async_create_task(forward_setup(config_entry, "switch"))
@@ -135,13 +137,14 @@ async def async_setup_entry(hass, config_entry):
     return True
 
 async def async_remove_entry(hass, config_entry):
+    if hass.data[LIGHTWAVE_WEBHOOK] is not None:
+        await hass.components.webhook.async_unregister(hass, hass.data[LIGHTWAVE_WEBHOOKID])
     await hass.config_entries.async_forward_entry_unload(config_entry, "switch")
     await hass.config_entries.async_forward_entry_unload(config_entry, "light")
     await hass.config_entries.async_forward_entry_unload(config_entry, "climate")
     await hass.config_entries.async_forward_entry_unload(config_entry, "cover")
     await hass.config_entries.async_forward_entry_unload(config_entry, "binary_sensor")
     await hass.config_entries.async_forward_entry_unload(config_entry, "sensor")
-
 
 async def reload_lw(hass, config_entry):
     """Reload HACS."""
