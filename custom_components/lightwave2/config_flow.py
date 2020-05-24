@@ -1,5 +1,6 @@
 import logging
 from homeassistant import config_entries
+from homeassistant.core import callback
 from homeassistant.const import (CONF_USERNAME, CONF_PASSWORD)
 from .const import DOMAIN, CONF_PUBLICAPI
 import voluptuous as vol
