@@ -96,7 +96,11 @@ async def async_setup_entry(hass, config_entry):
     else:
         hass.data[CONF_PUBLICAPI] = False
     #todo, set up config options
-    link = lightwave2.LWLink2(email, password)
+
+    if hass.data[CONF_PUBLICAPI]:
+        link = lightwave2.LWLink2Public(email, password)
+    else:
+        link = lightwave2.LWLink2(email, password)
 
     if not await link.async_connect(max_tries = 1):
         return False
