@@ -52,8 +52,15 @@ class Lightwave2OptionsFlowHandler(config_entries.OptionsFlow):
         if user_input is not None:
             return self.async_create_entry(title="", data=user_input)
 
+        if self.config_entry.options:
+            options = self.config_entry.options
+        else:
+            options = {
+                CONF_PUBLICAPI: False,
+            }
+
         return self.async_show_form(
             step_id="user", data_schema=vol.Schema({
-                vol.Optional(CONF_PUBLICAPI, default=False): bool
+                vol.Optional(CONF_PUBLICAPI, options.get(CONF_PUBLICAPI)): bool
             })
         )
