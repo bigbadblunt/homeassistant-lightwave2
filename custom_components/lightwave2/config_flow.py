@@ -54,10 +54,12 @@ class Lightwave2OptionsFlowHandler(config_entries.OptionsFlow):
 
         if self.config_entry.options:
             options = self.config_entry.options
+            _LOGGER.debug("Using existing options: %s ", options)
         else:
             options = {
                 CONF_PUBLICAPI: False,
             }
+            _LOGGER.debug("Using default options")
 
         return self.async_show_form(
             step_id="user", data_schema=vol.Schema({
