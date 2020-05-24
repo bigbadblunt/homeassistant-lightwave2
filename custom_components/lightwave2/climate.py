@@ -1,5 +1,5 @@
 import logging
-from custom_components.lightwave2 import LIGHTWAVE_LINK2, LIGHTWAVE_BACKEND, BACKEND_EMULATED, LIGHTWAVE_ENTITIES, LIGHTWAVE_WEBHOOK
+from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES, LIGHTWAVE_WEBHOOK
 from homeassistant.components.climate import ClimateDevice
 from homeassistant.components.climate.const import (
     HVAC_MODE_OFF, HVAC_MODE_HEAT, SUPPORT_TARGET_TEMPERATURE, CURRENT_HVAC_HEAT, CURRENT_HVAC_IDLE, CURRENT_HVAC_OFF)
@@ -16,11 +16,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
     climates = []
     link = hass.data[LIGHTWAVE_LINK2]
-
-    if hass.data[LIGHTWAVE_BACKEND] == BACKEND_EMULATED:
-        url = None
-    else:
-        url = hass.data[LIGHTWAVE_WEBHOOK]
+    url = hass.data[LIGHTWAVE_WEBHOOK]
 
     for featureset_id, name in link.get_climates():
         climates.append(LWRF2Climate(name, featureset_id, link, url))

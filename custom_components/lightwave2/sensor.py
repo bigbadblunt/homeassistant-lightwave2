@@ -1,5 +1,5 @@
 import logging
-from custom_components.lightwave2 import LIGHTWAVE_LINK2, LIGHTWAVE_BACKEND, BACKEND_EMULATED, LIGHTWAVE_ENTITIES, LIGHTWAVE_WEBHOOK
+from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES, LIGHTWAVE_WEBHOOK
 from homeassistant.components.binary_sensor import DEVICE_CLASS_POWER
 from homeassistant.const import POWER_WATT
 from homeassistant.helpers.entity import Entity
@@ -14,11 +14,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
     sensors = []
     link = hass.data[LIGHTWAVE_LINK2]
-
-    if hass.data[LIGHTWAVE_BACKEND] == BACKEND_EMULATED:
-        url = None
-    else:
-        url = hass.data[LIGHTWAVE_WEBHOOK]
+    url = hass.data[LIGHTWAVE_WEBHOOK]
 
     for featureset_id, name in link.get_energy():
         sensors.append(LWRF2Sensor(name, featureset_id, link, url))
