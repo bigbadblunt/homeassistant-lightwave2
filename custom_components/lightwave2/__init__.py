@@ -91,7 +91,7 @@ async def async_setup_entry(hass, config_entry):
     email = config_entry.data[CONF_USERNAME]
     password = config_entry.data[CONF_PASSWORD]
 
-    hass.data[CONF_PUBLICAPI] = config_entry.data[CONF_PUBLICAPI]
+    hass.data[CONF_PUBLICAPI] = config_entry.options[CONF_PUBLICAPI]
     #todo, set up config options
     link = lightwave2.LWLink2(email, password)
 
