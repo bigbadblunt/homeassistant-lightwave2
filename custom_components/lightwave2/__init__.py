@@ -138,7 +138,7 @@ async def async_setup_entry(hass, config_entry):
 
 async def async_remove_entry(hass, config_entry):
     if hass.data[LIGHTWAVE_WEBHOOK] is not None:
-        await hass.components.webhook.async_unregister(hass, hass.data[LIGHTWAVE_WEBHOOKID])
+        await hass.components.webhook.async_unregister(hass.data[LIGHTWAVE_WEBHOOKID])
     await hass.config_entries.async_forward_entry_unload(config_entry, "switch")
     await hass.config_entries.async_forward_entry_unload(config_entry, "light")
     await hass.config_entries.async_forward_entry_unload(config_entry, "climate")
