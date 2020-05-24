@@ -1,7 +1,7 @@
 import logging
 from homeassistant import config_entries
 from homeassistant.const import (CONF_USERNAME, CONF_PASSWORD)
-from .const import DOMAIN
+from .const import DOMAIN, CONF_PUBLICAPI
 import voluptuous as vol
 _LOGGER = logging.getLogger(__name__)
 
@@ -33,3 +33,23 @@ class Lightwave2ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             return self.async_abort(reason="single_instance_allowed")
 
         return self.async_create_entry(title="(Imported from configuration.yaml)", data=user_input)
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry):
+        return Lightwave2OptionsFlowHandler(config_entry)
+
+class Lightwave2OptionsFlowHandler(config_entries.OptionsFlow):
+
+    def __init__(self, config_entry):
+        self.config_entry = config_entry
+
+    async def async_step_init(self, user_input=None):
+        return await self.async_step_user()
+
+    async def async_step_user(self, user_input=None):
+        return self.async_show_form(
+            step_id="user", data_schema=vol.Schema({
+                vol.Optional(CONF_PUBLICAPI, default=False): bool
+            })
+        )
