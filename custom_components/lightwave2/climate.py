@@ -1,6 +1,6 @@
 import logging
 from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES, LIGHTWAVE_WEBHOOK
-from homeassistant.components.climate import ClimateDevice
+from homeassistant.components.climate import ClimateEntity
 from homeassistant.components.climate.const import (
     HVAC_MODE_OFF, HVAC_MODE_HEAT, SUPPORT_TARGET_TEMPERATURE, CURRENT_HVAC_HEAT, CURRENT_HVAC_IDLE, CURRENT_HVAC_OFF)
 from homeassistant.const import (
@@ -25,7 +25,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
     async_add_entities(climates)
 
 
-class LWRF2Climate(ClimateDevice):
+class LWRF2Climate(ClimateEntity):
     """Representation of a LightWaveRF thermostat."""
 
     def __init__(self, name, featureset_id, link, url=None):

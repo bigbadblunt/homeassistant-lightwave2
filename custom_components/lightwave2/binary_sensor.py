@@ -1,6 +1,6 @@
 import logging
 from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES, LIGHTWAVE_WEBHOOK
-from homeassistant.components.binary_sensor import (BinarySensorDevice, DEVICE_CLASS_DOOR)
+from homeassistant.components.binary_sensor import (BinarySensorEntity, DEVICE_CLASS_DOOR)
 from homeassistant.core import callback
 from .const import DOMAIN
 
@@ -21,7 +21,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
     hass.data[LIGHTWAVE_ENTITIES].extend(sensors)
     async_add_entities(sensors)
 
-class LWRF2BinarySensor(BinarySensorDevice):
+class LWRF2BinarySensor(BinarySensorEntity):
     """Representation of a LightWaveRF window sensor."""
 
     def __init__(self, name, featureset_id, link, url=None):

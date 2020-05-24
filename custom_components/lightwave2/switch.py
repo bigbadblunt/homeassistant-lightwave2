@@ -1,6 +1,6 @@
 import logging
 from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES, LIGHTWAVE_WEBHOOK
-from homeassistant.components.switch import ATTR_CURRENT_POWER_W, SwitchDevice
+from homeassistant.components.switch import ATTR_CURRENT_POWER_W, SwitchEntity
 from homeassistant.core import callback
 from .const import DOMAIN
 
@@ -20,7 +20,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
     hass.data[LIGHTWAVE_ENTITIES].extend(switches)
     async_add_entities(switches)
 
-class LWRF2Switch(SwitchDevice):
+class LWRF2Switch(SwitchEntity):
     """Representation of a LightWaveRF switch."""
 
     def __init__(self, name, featureset_id, link, url=None):

@@ -1,7 +1,7 @@
 import logging
 from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES, LIGHTWAVE_WEBHOOK
 from homeassistant.components.light import (
-    ATTR_BRIGHTNESS, SUPPORT_BRIGHTNESS, Light)
+    ATTR_BRIGHTNESS, SUPPORT_BRIGHTNESS, LightEntity)
 from homeassistant.core import callback
 from .const import DOMAIN
 
@@ -22,7 +22,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
     hass.data[LIGHTWAVE_ENTITIES].extend(lights)
     async_add_entities(lights)
 
-class LWRF2Light(Light):
+class LWRF2Light(LightEntity):
     """Representation of a LightWaveRF light."""
 
     def __init__(self, name, featureset_id, link, url=None):

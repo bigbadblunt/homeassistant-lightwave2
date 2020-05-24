@@ -2,7 +2,7 @@ import logging
 from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES, LIGHTWAVE_WEBHOOK
 from homeassistant.components.cover import (
     SUPPORT_CLOSE, SUPPORT_OPEN,
-    SUPPORT_STOP, CoverDevice)
+    SUPPORT_STOP, CoverEntity)
 from homeassistant.core import callback
 from .const import DOMAIN
 
@@ -25,7 +25,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
     async_add_entities(covers)
 
 
-class LWRF2Cover(CoverDevice):
+class LWRF2Cover(CoverEntity):
     """Representation of a LightWaveRF cover."""
 
     def __init__(self, name, featureset_id, link, url=None):
