@@ -135,7 +135,13 @@ async def async_setup_entry(hass, config_entry):
     return True
 
 async def async_remove_entry(hass, config_entry):
-    pass
+    await hass.config_entries.async_forward_entry_unload(config_entry, "switch")
+    await hass.config_entries.async_forward_entry_unload(config_entry, "light")
+    await hass.config_entries.async_forward_entry_unload(config_entry, "climate")
+    await hass.config_entries.async_forward_entry_unload(config_entry, "cover")
+    await hass.config_entries.async_forward_entry_unload(config_entry, "binary_sensor")
+    await hass.config_entries.async_forward_entry_unload(config_entry, "sensor")
+
 
 async def reload_lw(hass, config_entry):
     """Reload HACS."""

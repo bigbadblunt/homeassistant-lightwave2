@@ -61,6 +61,8 @@ class LWRF2Light(LightEntity):
                 _LOGGER.debug("Registering webhook: %s %s", featurename, featureid.replace("+", "P"))
                 req = await self._lwlink.async_register_webhook(self._url, featureid, "hass" + featureid.replace("+", "P"), overwrite = True)
 
+    #TODO add async_will_remove_from_hass() to clean up
+
     @callback
     def async_update_callback(self):
         """Update the component's state."""
