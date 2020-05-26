@@ -125,9 +125,10 @@ class LWRF2Light(LightEntity):
 
         if ATTR_BRIGHTNESS in kwargs:
             _LOGGER.debug("Changing brightness from %s to %s (%s%%)", self._brightness, kwargs[ATTR_BRIGHTNESS], int(kwargs[ATTR_BRIGHTNESS] / 255 * 100))
+            self._brightness = kwargs[ATTR_BRIGHTNESS]
             await self._lwlink.async_set_brightness_by_featureset_id(
                 self._featureset_id, int(round(self._brightness / 255 * 100)))
-            self._brightness = kwargs[ATTR_BRIGHTNESS]
+
 
         self._state = True
         await self._lwlink.async_turn_on_by_featureset_id(self._featureset_id)
