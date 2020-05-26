@@ -129,7 +129,6 @@ class LWRF2Light(LightEntity):
             await self._lwlink.async_set_brightness_by_featureset_id(
                 self._featureset_id, int(round(self._brightness / 255 * 100)))
 
-
         self._state = True
         await self._lwlink.async_turn_on_by_featureset_id(self._featureset_id)
 
