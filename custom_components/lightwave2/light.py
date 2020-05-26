@@ -123,15 +123,15 @@ class LWRF2Light(LightEntity):
 
     async def async_turn_on(self, **kwargs):
         """Turn the LightWave light on."""
-        self._state = True
-
-        _LOGGER.debug("HA light.turn_on received %s", kwargs)
+        _LOGGER.debug("HA light.turn_on received, kwargs: %s", kwargs)
 
         if ATTR_BRIGHTNESS in kwargs and ((self._brightness != kwargs[ATTR_BRIGHTNESS]) or not (self._gen2) or self._forcesend):
             _LOGGER.debug("Changing brightness from %s to %s (%s%%)", self._brightness, kwargs[ATTR_BRIGHTNESS], int(kwargs[ATTR_BRIGHTNESS] / 255 * 100))
             await self._lwlink.async_set_brightness_by_featureset_id(
                 self._featureset_id, int(round(self._brightness / 255 * 100)))
             self._brightness = kwargs[ATTR_BRIGHTNESS]
+
+        self._state = True
         await self._lwlink.async_turn_on_by_featureset_id(self._featureset_id)
 
         self.async_schedule_update_ha_state()
