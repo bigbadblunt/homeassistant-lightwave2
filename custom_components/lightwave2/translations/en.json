@@ -19,7 +19,8 @@
         "step": {
             "user": {
                 "data": {
-                    "lightwave_publicapi": "Use public API?"
+                    "lightwave_publicapi": "Use public API?",
+                    "lightwave_alwayssend": "Always send commands, even if Home Assistant doesn't think the state has changed? This only applies to generation 2 devices, for generation 1, commands are always sent"
                 }
             }
         }

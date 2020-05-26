@@ -1,6 +1,6 @@
 DOMAIN = "lightwave2"
-CONF_REFRESH_KEY = 'refresh_key'
 CONF_PUBLICAPI = 'lightwave_publicapi'
+CONF_FORCESEND = 'lightwave_alwayssend'
 LIGHTWAVE_LINK2 = 'lightwave_link2'
 LIGHTWAVE_ENTITIES = "lightwave_entities"
 LIGHTWAVE_WEBHOOK = 'lightwave_webhook'
