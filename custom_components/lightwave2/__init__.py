@@ -122,7 +122,7 @@ async def async_setup_entry(hass, config_entry):
         config_entry_id=config_entry.entry_id,
         identifiers={(DOMAIN, linkfeatset)},
         manufacturer= "Lightwave RF",
-        name=link.get_featureset_by_id(linkfeatset).product_code,
+        name=linkdetails[0][1],
         model=link.get_featureset_by_id(linkfeatset).product_code
     )
 
