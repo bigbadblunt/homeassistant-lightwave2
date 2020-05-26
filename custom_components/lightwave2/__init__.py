@@ -126,19 +126,6 @@ async def async_setup_entry(hass, config_entry):
         model=link.get_featureset_by_id(linkfeatset).product_code
     )
 
-    return {
-        'identifiers': {
-            # Serial numbers are unique identifiers within a specific domain
-            (DOMAIN, self.unique_id)
-        },
-        'name': self.name,
-
-        'model': self._lwlink.get_featureset_by_id(
-            self._featureset_id).product_code
-        # TODO 'via_device': (hue.DOMAIN, self.api.bridgeid),
-    }
-
-
     forward_setup = hass.config_entries.async_forward_entry_setup
     hass.async_create_task(forward_setup(config_entry, "switch"))
     hass.async_create_task(forward_setup(config_entry, "light"))
