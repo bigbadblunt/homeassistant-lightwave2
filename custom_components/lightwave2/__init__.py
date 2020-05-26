@@ -116,15 +116,14 @@ async def async_setup_entry(hass, config_entry):
     hass.data[LIGHTWAVE_WEBHOOK] = url
 
     device_registry = await dr.async_get_registry(hass)
-    linkdetails = link.get_hubs()
-    linkfeatset = linkdetails[0][0]
-    device_registry.async_get_or_create(
-        config_entry_id=config_entry.entry_id,
-        identifiers={(DOMAIN, linkfeatset)},
-        manufacturer= "Lightwave RF",
-        name=linkdetails[0][1],
-        model=link.get_featureset_by_id(linkfeatset).product_code
-    )
+    for featureset_id, hubname in link.get_hubs():
+        device_registry.async_get_or_create(
+            config_entry_id=config_entry.entry_id,
+            identifiers={(DOMAIN, featureset_id)},
+            manufacturer= "Lightwave RF",
+            name=hubname,
+            model=link.get_featureset_by_id(featureset_id).product_code
+        )
 
     forward_setup = hass.config_entries.async_forward_entry_setup
     hass.async_create_task(forward_setup(config_entry, "switch"))
