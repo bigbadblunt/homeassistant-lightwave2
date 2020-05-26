@@ -1,5 +1,5 @@
 import logging
-from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES, LIGHTWAVE_WEBHOOK, CONF_FORCESEND
+from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES, LIGHTWAVE_WEBHOOK
 from homeassistant.components.light import (
     ATTR_BRIGHTNESS, SUPPORT_BRIGHTNESS, LightEntity)
 from homeassistant.core import callback
@@ -125,7 +125,7 @@ class LWRF2Light(LightEntity):
         """Turn the LightWave light on."""
         _LOGGER.debug("HA light.turn_on received, kwargs: %s", kwargs)
 
-        if ATTR_BRIGHTNESS in kwargs and ((self._brightness != kwargs[ATTR_BRIGHTNESS]) or not (self._gen2) or self._forcesend):
+        if ATTR_BRIGHTNESS in kwargs:
             _LOGGER.debug("Changing brightness from %s to %s (%s%%)", self._brightness, kwargs[ATTR_BRIGHTNESS], int(kwargs[ATTR_BRIGHTNESS] / 255 * 100))
             await self._lwlink.async_set_brightness_by_featureset_id(
                 self._featureset_id, int(round(self._brightness / 255 * 100)))
@@ -138,6 +138,8 @@ class LWRF2Light(LightEntity):
 
     async def async_turn_off(self, **kwargs):
         """Turn the LightWave light off."""
+        _LOGGER.debug("HA light.turn_off received, kwargs: %s", kwargs)
+
         self._state = False
         await self._lwlink.async_turn_off_by_featureset_id(self._featureset_id)
         self.async_schedule_update_ha_state()

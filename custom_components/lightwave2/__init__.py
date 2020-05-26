@@ -3,7 +3,7 @@ import logging
 import voluptuous as vol
 
 import homeassistant.helpers.config_validation as cv
-from .const import DOMAIN, CONF_PUBLICAPI, CONF_FORCESEND, LIGHTWAVE_LINK2,  LIGHTWAVE_ENTITIES, \
+from .const import DOMAIN, CONF_PUBLICAPI, LIGHTWAVE_LINK2,  LIGHTWAVE_ENTITIES, \
     LIGHTWAVE_WEBHOOK, LIGHTWAVE_WEBHOOKID, SERVICE_SETLEDRGB, SERVICE_SETLOCKED, SERVICE_SETUNLOCKED
 from homeassistant.const import (CONF_USERNAME, CONF_PASSWORD)
 from homeassistant.config_entries import SOURCE_IMPORT
@@ -89,10 +89,6 @@ async def async_setup_entry(hass, config_entry):
         hass.data[CONF_PUBLICAPI] = config_entry.options[CONF_PUBLICAPI]
     else:
         hass.data[CONF_PUBLICAPI] = False
-    if CONF_FORCESEND in config_entry.options:
-        hass.data[CONF_FORCESEND] = config_entry.options[CONF_FORCESEND]
-    else:
-        hass.data[CONF_FORCESEND] = False
     #todo, set up config options
 
     if hass.data[CONF_PUBLICAPI]:
