@@ -7,6 +7,7 @@ from .const import DOMAIN, CONF_PUBLICAPI, LIGHTWAVE_LINK2,  LIGHTWAVE_ENTITIES,
     LIGHTWAVE_WEBHOOK, LIGHTWAVE_WEBHOOKID, SERVICE_SETLEDRGB, SERVICE_SETLOCKED, SERVICE_SETUNLOCKED
 from homeassistant.const import (CONF_USERNAME, CONF_PASSWORD)
 from homeassistant.config_entries import SOURCE_IMPORT
+from homeassistant.helpers import device_registry as dr
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -113,6 +114,29 @@ async def async_setup_entry(hass, config_entry):
         url = hass.components.webhook.async_generate_url(webhook_id)
         _LOGGER.debug("Webhook URL: %s ", url)
     hass.data[LIGHTWAVE_WEBHOOK] = url
+
+    device_registry = await dr.async_get_registry(hass)
+    linkdetails = link.get_hubs()
+    linkfeatset = linkdetails[0][0]
+    device_registry.async_get_or_create(
+        config_entry_id=config_entry.entry_id,
+        identifiers={(DOMAIN, linkfeatset)},
+        manufacturer= "Lightwave RF",
+        name=link.get_featureset_by_id(linkfeatset).product_code,
+        model=link.get_featureset_by_id(linkfeatset).product_code
+    )
+
+    return {
+        'identifiers': {
+            # Serial numbers are unique identifiers within a specific domain
+            (DOMAIN, self.unique_id)
+        },
+        'name': self.name,
+
+        'model': self._lwlink.get_featureset_by_id(
+            self._featureset_id).product_code
+        # TODO 'via_device': (hue.DOMAIN, self.api.bridgeid),
+    }
 
 
     forward_setup = hass.config_entries.async_forward_entry_setup
