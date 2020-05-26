@@ -15,10 +15,9 @@ async def async_setup_entry(hass, entry, async_add_entities):
     lights = []
     link = hass.data[LIGHTWAVE_LINK2]
     url = hass.data[LIGHTWAVE_WEBHOOK]
-    forcesend = hass.data[CONF_FORCESEND]
 
     for featureset_id, name in link.get_lights():
-        lights.append(LWRF2Light(name, featureset_id, link, url, forcesend))
+        lights.append(LWRF2Light(name, featureset_id, link, url))
 
     hass.data[LIGHTWAVE_ENTITIES].extend(lights)
     async_add_entities(lights)
@@ -26,13 +25,12 @@ async def async_setup_entry(hass, entry, async_add_entities):
 class LWRF2Light(LightEntity):
     """Representation of a LightWaveRF light."""
 
-    def __init__(self, name, featureset_id, link, url=None, forcesend=None):
+    def __init__(self, name, featureset_id, link, url=None):
         self._name = name
         _LOGGER.debug("Adding light: %s ", self._name)
         self._featureset_id = featureset_id
         self._lwlink = link
         self._url = url
-        self._forcesend = forcesend
         self._state = \
             self._lwlink.get_featureset_by_id(self._featureset_id).features[
                 "switch"][1]

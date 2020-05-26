@@ -54,7 +54,7 @@ class Lightwave2OptionsFlowHandler(config_entries.OptionsFlow):
 
         if self.config_entry.options:
             options = self.config_entry.options
-            _LOGGER.debug("Creating optiosn form using existing options: %s ", options)
+            _LOGGER.debug("Creating options form using existing options: %s ", options)
         else:
             options = {
                 CONF_PUBLICAPI: False
