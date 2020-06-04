@@ -2,7 +2,7 @@ import logging
 from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES, LIGHTWAVE_WEBHOOK
 from homeassistant.components.climate import ClimateEntity
 from homeassistant.components.climate.const import (
-    HVAC_MODE_OFF, HVAC_MODE_HEAT, SUPPORT_TARGET_TEMPERATURE, CURRENT_HVAC_HEAT, CURRENT_HVAC_IDLE, CURRENT_HVAC_OFF)
+    HVAC_MODE_OFF, HVAC_MODE_HEAT, SUPPORT_TARGET_TEMPERATURE, SUPPORT_PRESET_MODE, CURRENT_HVAC_HEAT, CURRENT_HVAC_IDLE, CURRENT_HVAC_OFF)
 from homeassistant.const import (
     ATTR_TEMPERATURE, TEMP_CELSIUS, TEMP_FAHRENHEIT, STATE_OFF)
 from homeassistant.core import callback
@@ -10,6 +10,7 @@ from .const import DOMAIN
 
 DEPENDENCIES = ['lightwave2']
 _LOGGER = logging.getLogger(__name__)
+PRESET_NAMES = {"Auto": None, "20%": 20, "40%": 40, "60%": 60, "80%": 80, "100%": 100}
 
 async def async_setup_entry(hass, entry, async_add_entities):
     """Find and return LightWave thermostats."""
@@ -34,6 +35,9 @@ class LWRF2Climate(ClimateEntity):
         self._featureset_id = featureset_id
         self._lwlink = link
         self._url = url
+        self._trv = self._lwlink.get_featureset_by_id(self._featureset_id).is_trv()
+        if self._trv:
+            self._support_flags = SUPPORT_TARGET_TEMPERATURE | SUPPORT_PRESET_MODE
         self._support_flags = SUPPORT_TARGET_TEMPERATURE
         self._valve_level = \
             self._lwlink.get_featureset_by_id(self._featureset_id).features[
@@ -47,7 +51,22 @@ class LWRF2Climate(ClimateEntity):
         self._target_temperature = \
             self._lwlink.get_featureset_by_id(self._featureset_id).features[
                 "targetTemperature"][1] / 10
+        self._last_tt = self._target_temperature #Used to store the target temperature to revert to after boosting
         self._temperature_scale = TEMP_CELSIUS
+        if self._valve_level == 100 and self._target_temperature < 40:
+            self._preset_mode = "Auto"
+        elif self. valve_level == 100:
+            self._preset_mode = "100%"
+        elif self. valve_level == 80:
+            self._preset_mode = "80%"
+        elif self. valve_level == 60:
+            self._preset_mode = "60%"
+        elif self. valve_level == 40:
+            self._preset_mode = "40%"
+        elif self. valve_level == 20:
+            self._preset_mode = "20%"
+        else:
+            self.preset_mode = "Auto"
 
     async def async_added_to_hass(self):
         """Subscribe to events."""
@@ -110,7 +129,7 @@ class LWRF2Climate(ClimateEntity):
     def hvac_action(self):
         if self._onoff == 0:
             return CURRENT_HVAC_OFF
-        elif self._valve_level == 100:
+        elif self._valve_level > 0:
             return CURRENT_HVAC_HEAT
         else:
             return CURRENT_HVAC_IDLE
@@ -123,6 +142,7 @@ class LWRF2Climate(ClimateEntity):
     async def async_set_temperature(self, **kwargs):
         if ATTR_TEMPERATURE in kwargs:
             self._target_temperature = kwargs[ATTR_TEMPERATURE]
+            self._last_tt = self._target_temperature
 
         await self._lwlink.async_set_temperature_by_featureset_id(
             self._featureset_id, self._target_temperature)
@@ -150,6 +170,47 @@ class LWRF2Climate(ClimateEntity):
         self._target_temperature = \
             self._lwlink.get_featureset_by_id(self._featureset_id).features[
                 "targetTemperature"][1] / 10
+        if self._valve_level == 100 and self._target_temperature < 40:
+            self._preset_mode = "Auto"
+            self._last_tt = self._target_temperature
+        elif self. valve_level == 100:
+            self._preset_mode = "100%"
+        elif self. valve_level == 80:
+            self._preset_mode = "80%"
+        elif self. valve_level == 60:
+            self._preset_mode = "60%"
+        elif self. valve_level == 40:
+            self._preset_mode = "40%"
+        elif self. valve_level == 20:
+            self._preset_mode = "20%"
+        else:
+            self.preset_mode = "Auto"
+
+    @property
+    def preset_mode(self):
+        """Return the preset_mode."""
+        return self._preset_mode
+
+    async def async_set_preset_mode(self, preset_mode):
+        """Set preset mode."""
+        if preset_mode == "Auto":
+            self._target_temperature = self._last_tt
+            await self._lwlink.async_set_temperature_by_featureset_id(
+                self._featureset_id, self._target_temperature)
+        else:
+            feature_id = self._lwlink.get_featureset_by_id(self._featureset_id).features['valveLevel'][0]
+            _LOGGER.debug("Received preset set request: %s ", preset_mode)
+            _LOGGER.debug("Setting feature ID: %s ", feature_id)
+            await self._lwlink.async_write_feature(feature_id, PRESET_NAMES[preset_mode])
+
+            self._target_temperature = 40
+            await self._lwlink.async_set_temperature_by_featureset_id(
+                self._featureset_id, 40)
+
+    @property
+    def preset_modes(self):
+        """List of available preset modes."""
+        return list(PRESET_NAMES)
 
     @property
     def device_state_attributes(self):
