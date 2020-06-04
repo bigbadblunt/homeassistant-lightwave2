@@ -173,15 +173,15 @@ class LWRF2Climate(ClimateEntity):
         if self._valve_level == 100 and self._target_temperature < 40:
             self._preset_mode = "Auto"
             self._last_tt = self._target_temperature
-        elif self. valve_level == 100:
+        elif self._valve_level == 100:
             self._preset_mode = "100%"
-        elif self. valve_level == 80:
+        elif self._valve_level == 80:
             self._preset_mode = "80%"
-        elif self. valve_level == 60:
+        elif self._valve_level == 60:
             self._preset_mode = "60%"
-        elif self. valve_level == 40:
+        elif self._valve_level == 40:
             self._preset_mode = "40%"
-        elif self. valve_level == 20:
+        elif self._valve_level == 20:
             self._preset_mode = "20%"
         else:
             self._preset_mode = "Auto"
