@@ -66,7 +66,7 @@ class LWRF2Climate(ClimateEntity):
         elif self._valve_level == 20:
             self._preset_mode = "20%"
         else:
-            self.preset_mode = "Auto"
+            self._preset_mode = "Auto"
 
     async def async_added_to_hass(self):
         """Subscribe to events."""
@@ -184,7 +184,7 @@ class LWRF2Climate(ClimateEntity):
         elif self. valve_level == 20:
             self._preset_mode = "20%"
         else:
-            self.preset_mode = "Auto"
+            self._preset_mode = "Auto"
 
     @property
     def preset_mode(self):
