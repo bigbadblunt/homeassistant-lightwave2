@@ -210,6 +210,14 @@ class LWRF2Climate(ClimateEntity):
         return list(PRESET_NAMES)
 
     @property
+    def min_temp(self):
+        return 0
+
+    @property
+    def max_temp(self):
+        return 40
+
+    @property
     def device_state_attributes(self):
         """Return the optional state attributes."""
 
