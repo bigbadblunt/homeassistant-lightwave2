@@ -204,10 +204,6 @@ class LWRF2Climate(ClimateEntity):
             _LOGGER.debug("Setting feature ID: %s ", feature_id)
             await self._lwlink.async_write_feature(feature_id, PRESET_NAMES[preset_mode])
 
-            self._target_temperature = 40
-            await self._lwlink.async_set_temperature_by_featureset_id(
-                self._featureset_id, 40)
-
     @property
     def preset_modes(self):
         """List of available preset modes."""
