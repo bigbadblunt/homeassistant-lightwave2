@@ -7,13 +7,14 @@ assignees: ''
 
 ---
 
-Please provide output from `homeassistant.log`, preferably with additional logging enabled.
+Please describe your issues here.
 
-To enable additional logging, add the following to `configuration.yaml`
-```
+Ideally provide output from homeassistant.log, preferably with additional logging enabled.
+
+To enable additional logging, add the following to configuration.yaml
+
 logger:
   default: warning
   logs:
     lightwave2.lightwave2: debug
     custom_components.lightwave2: debug
-```
