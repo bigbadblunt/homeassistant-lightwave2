@@ -4,6 +4,6 @@
   "documentation": "https://github.com/bigbadblunt/homeassistant-lightwave2",
   "dependencies": [],
   "codeowners": ["@bigbadblunt"],
-  "requirements": ["lightwave2==0.6.19"],
+  "requirements": ["lightwave2==0.6.20"],
   "config_flow": true
 }
