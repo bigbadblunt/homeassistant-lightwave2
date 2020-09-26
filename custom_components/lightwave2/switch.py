@@ -7,17 +7,17 @@ from .const import DOMAIN
 DEPENDENCIES = ['lightwave2']
 _LOGGER = logging.getLogger(__name__)
 
-async def async_setup_entry(hass, entry, async_add_entities):
+async def async_setup_entry(hass, config_entry, async_add_entities):
     """Find and return LightWave switches."""
 
     switches = []
-    link = hass.data[LIGHTWAVE_LINK2]
-    url = hass.data[LIGHTWAVE_WEBHOOK]
+    link = hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_LINK2]
+    url = hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_WEBHOOK]
 
     for featureset_id, name in link.get_switches():
         switches.append(LWRF2Switch(name, featureset_id, link, url))
 
-    hass.data[LIGHTWAVE_ENTITIES].extend(switches)
+    hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES].extend(switches)
     async_add_entities(switches)
 
 class LWRF2Switch(SwitchEntity):

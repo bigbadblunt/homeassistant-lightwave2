@@ -11,17 +11,17 @@ _LOGGER = logging.getLogger(__name__)
 ATTR_CURRENT_POWER_W = "current_power_w"
 
 
-async def async_setup_entry(hass, entry, async_add_entities):
+async def async_setup_entry(hass, config_entry, async_add_entities):
     """Find and return LightWave covers."""
 
     covers = []
-    link = hass.data[LIGHTWAVE_LINK2]
-    url = hass.data[LIGHTWAVE_WEBHOOK]
+    link = hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_LINK2]
+    url = hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_WEBHOOK]
 
     for featureset_id, name in link.get_covers():
         covers.append(LWRF2Cover(name, featureset_id, link, url))
 
-    hass.data[LIGHTWAVE_ENTITIES].extend(covers)
+    hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES].extend(covers)
     async_add_entities(covers)
 
 

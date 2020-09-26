@@ -11,36 +11,14 @@ from homeassistant.helpers import device_registry as dr
 
 _LOGGER = logging.getLogger(__name__)
 
-CONFIG_SCHEMA = vol.Schema({
-    DOMAIN: vol.Any({
-        vol.Required(CONF_USERNAME): cv.string,
-        vol.Required(CONF_PASSWORD): cv.string
-    })
-}, extra=vol.ALLOW_EXTRA)
-
 async def handle_webhook(hass, webhook_id, request):
     """Handle webhook callback."""
-    link = hass.data[LIGHTWAVE_LINK2]
+    link = hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_LINK2]
     body = await request.json()
     _LOGGER.debug("Received webhook: %s ", body)
     link.process_webhook_received(body)
-    for ent in hass.data[LIGHTWAVE_ENTITIES]:
+    for ent in hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES]:
         ent.async_schedule_update_ha_state(True)
-
-async def async_setup(hass, config):
-    '''This checks if there is configuration info in configuration.yaml, if so it translates and passes it to the config handler'''
-    if DOMAIN not in config:
-        return True
-
-    email = config[DOMAIN][CONF_USERNAME]
-    password = config[DOMAIN][CONF_PASSWORD]
-
-    hass.async_create_task(
-        hass.config_entries.flow.async_init(
-            DOMAIN, context={"source": SOURCE_IMPORT}, data={CONF_USERNAME: email, CONF_PASSWORD: password}
-        )
-    )
-    return True
 
 async def async_setup_entry(hass, config_entry):
     """Setup Lightwave hub. Uses undocumented websocket API."""
@@ -48,7 +26,7 @@ async def async_setup_entry(hass, config_entry):
 
     async def service_handle_led(call):
         entity_ids = call.data.get("entity_id")
-        entities = hass.data[LIGHTWAVE_ENTITIES]
+        entities = hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES]
         entities = [e for e in entities if e.entity_id in entity_ids]
         rgb = call.data.get("rgb")
         if str(rgb)[0:1] == "#":
@@ -62,7 +40,7 @@ async def async_setup_entry(hass, config_entry):
 
     async def service_handle_lock(call):
         entity_ids = call.data.get("entity_id")
-        entities = hass.data[LIGHTWAVE_ENTITIES]
+        entities = hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES]
         entities = [e for e in entities if e.entity_id in entity_ids]
 
         for ent in entities:
@@ -73,7 +51,7 @@ async def async_setup_entry(hass, config_entry):
 
     async def service_handle_unlock(call):
         entity_ids = call.data.get("entity_id")
-        entities = hass.data[LIGHTWAVE_ENTITIES]
+        entities = hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES]
         entities = [e for e in entities if e.entity_id in entity_ids]
 
         for ent in entities:
@@ -87,12 +65,12 @@ async def async_setup_entry(hass, config_entry):
     config_entry.add_update_listener(reload_lw)
 
     if CONF_PUBLICAPI in config_entry.options:
-        hass.data[CONF_PUBLICAPI] = config_entry.options[CONF_PUBLICAPI]
+        hass.data[DOMAIN][config_entry.entry_id][CONF_PUBLICAPI] = config_entry.options[CONF_PUBLICAPI]
     else:
-        hass.data[CONF_PUBLICAPI] = False
+        hass.data[DOMAIN][config_entry.entry_id][CONF_PUBLICAPI] = False
     #todo, set up config options
 
-    if hass.data[CONF_PUBLICAPI]:
+    if hass.data[DOMAIN][config_entry.entry_id][CONF_PUBLICAPI]:
         link = lightwave2.LWLink2Public(email, password)
     else:
         link = lightwave2.LWLink2(email, password)
@@ -101,19 +79,19 @@ async def async_setup_entry(hass, config_entry):
         return False
     await link.async_get_hierarchy()
 
-    hass.data[LIGHTWAVE_LINK2] = link
-    hass.data[LIGHTWAVE_ENTITIES] = []
+    hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_LINK2] = link
+    hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES] = []
     if not hass.data[CONF_PUBLICAPI]:
         url = None
     else:
         webhook_id = hass.components.webhook.async_generate_id()
-        hass.data[LIGHTWAVE_WEBHOOKID] = webhook_id
+        hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_WEBHOOKID] = webhook_id
         _LOGGER.debug("Generated webhook: %s ", webhook_id)
         hass.components.webhook.async_register(
             'lightwave2', 'Lightwave webhook', webhook_id, handle_webhook)
         url = hass.components.webhook.async_generate_url(webhook_id)
         _LOGGER.debug("Webhook URL: %s ", url)
-    hass.data[LIGHTWAVE_WEBHOOK] = url
+    hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_WEBHOOK] = url
 
     device_registry = await dr.async_get_registry(hass)
     for featureset_id, hubname in link.get_hubs():
@@ -140,8 +118,8 @@ async def async_setup_entry(hass, config_entry):
     return True
 
 async def async_remove_entry(hass, config_entry):
-    if hass.data[LIGHTWAVE_WEBHOOK] is not None:
-        hass.components.webhook.async_unregister(hass.data[LIGHTWAVE_WEBHOOKID])
+    if hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_WEBHOOK] is not None:
+        hass.components.webhook.async_unregister(hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_WEBHOOKID])
     await hass.config_entries.async_forward_entry_unload(config_entry, "switch")
     await hass.config_entries.async_forward_entry_unload(config_entry, "light")
     await hass.config_entries.async_forward_entry_unload(config_entry, "climate")

@@ -12,12 +12,8 @@ class Lightwave2ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         self._errors = {}
 
-        if self._async_current_entries():
-            return self.async_abort(reason="single_instance_allowed")
-        if self.hass.data.get(DOMAIN):
-            return self.async_abort(reason="single_instance_allowed")
-
         if user_input is not None:
+            await self.async_set_unique_id(user_input[CONF_USERNAME])
             return self.async_create_entry(title="Lightwave 2", data=user_input)
 
         return self.async_show_form(
@@ -27,13 +23,6 @@ class Lightwave2ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 vol.Required(CONF_PASSWORD): str
             })
         )
-
-    async def async_step_import(self, user_input):
-
-        if self._async_current_entries():
-            return self.async_abort(reason="single_instance_allowed")
-
-        return self.async_create_entry(title="(Imported from configuration.yaml)", data=user_input)
 
     @staticmethod
     @callback
