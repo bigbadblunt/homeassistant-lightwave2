@@ -14,7 +14,7 @@ class Lightwave2ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         if user_input is not None:
             await self.async_set_unique_id(user_input[CONF_USERNAME])
-            return self.async_create_entry(title="Lightwave 2", data=user_input)
+            return self.async_create_entry(title="Lightwave 2 (" & user_input[CONF_USERNAME] &")", data=user_input)
 
         return self.async_show_form(
             step_id='user',
