@@ -21,12 +21,6 @@ async def handle_webhook(hass, webhook_id, request):
         ent.async_schedule_update_ha_state(True)
 
 async def async_setup(hass, config):
-    return True
-
-async def async_setup_entry(hass, config_entry):
-    """Setup Lightwave hub. Uses undocumented websocket API."""
-    from lightwave2 import lightwave2
-
     async def service_handle_led(call):
         entity_ids = call.data.get("entity_id")
         entities = hass.data[DOMAIN][LIGHTWAVE_ENTITIES]
@@ -62,6 +56,18 @@ async def async_setup_entry(hass, config_entry):
             _LOGGER.debug("Received service call unlock")
             _LOGGER.debug("Setting feature ID: %s ", feature_id)
             await link.async_write_feature(feature_id, 0)
+
+    hass.services.async_register(DOMAIN, SERVICE_SETLEDRGB, service_handle_led)
+    hass.services.async_register(DOMAIN, SERVICE_SETLOCKED, service_handle_lock)
+    hass.services.async_register(DOMAIN, SERVICE_SETUNLOCKED, service_handle_unlock)
+
+    return True
+
+async def async_setup_entry(hass, config_entry):
+    """Setup Lightwave hub. Uses undocumented websocket API."""
+    from lightwave2 import lightwave2
+
+    
 
     hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN].setdefault(config_entry.entry_id, {})
@@ -116,9 +122,7 @@ async def async_setup_entry(hass, config_entry):
     hass.async_create_task(forward_setup(config_entry, "binary_sensor"))
     hass.async_create_task(forward_setup(config_entry, "sensor"))
 
-    hass.services.async_register(DOMAIN, SERVICE_SETLEDRGB, service_handle_led)
-    hass.services.async_register(DOMAIN, SERVICE_SETLOCKED, service_handle_lock)
-    hass.services.async_register(DOMAIN, SERVICE_SETUNLOCKED, service_handle_unlock)
+
 
     return True
 
