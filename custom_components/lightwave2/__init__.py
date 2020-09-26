@@ -68,11 +68,11 @@ async def async_setup_entry(hass, config_entry):
     password = config_entry.data[CONF_PASSWORD]
     config_entry.add_update_listener(reload_lw)
 
+    _LOGGER.debug("DOMAIN: %s, config_entry.entry_id %s, CONF_PUBLIC_API %s", DOMAIN, config_entry.entry_id, CONF_PUBLICAPI)
     if CONF_PUBLICAPI in config_entry.options:
         hass.data[DOMAIN][config_entry.entry_id][CONF_PUBLICAPI] = config_entry.options[CONF_PUBLICAPI]
     else:
         hass.data[DOMAIN][config_entry.entry_id][CONF_PUBLICAPI] = False
-    #todo, set up config options
 
     if hass.data[DOMAIN][config_entry.entry_id][CONF_PUBLICAPI]:
         link = lightwave2.LWLink2Public(email, password)
