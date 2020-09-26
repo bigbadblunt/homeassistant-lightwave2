@@ -64,6 +64,7 @@ async def async_setup_entry(hass, config_entry):
             await link.async_write_feature(feature_id, 0)
 
     hass.data.setdefault(DOMAIN, {})
+    hass.data[DOMAIN].setdefault(config_entry.entry_id, {})
     email = config_entry.data[CONF_USERNAME]
     password = config_entry.data[CONF_PASSWORD]
     config_entry.add_update_listener(reload_lw)
