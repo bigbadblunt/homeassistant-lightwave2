@@ -21,7 +21,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     for featureset_id, name in link.get_switches():
         switches.append(LWRF2Switch(name, featureset_id, link, url))
 
-    hass.data[DOMAIN][LIGHTWAVE_ENTITIES].extend(switches)
+    hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES].extend(switches)
     async_add_entities(switches)
 
 class LWRF2Switch(SwitchEntity):

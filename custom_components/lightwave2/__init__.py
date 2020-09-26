@@ -37,14 +37,18 @@ async def async_setup(hass, config):
 
     async def service_handle_lock(call):
         entity_ids = call.data.get("entity_id")
-        entities = hass.data[DOMAIN][LIGHTWAVE_ENTITIES]
-        entities = [e for e in entities if e.entity_id in entity_ids]
+        for entry_id in hass.data[DOMAIN]:
+                
+            entities = hass.data[DOMAIN][entry_id][LIGHTWAVE_ENTITIES]
+            entities = [e for e in entities if e.entity_id in entity_ids]
+            
+            link = hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_LINK2]
 
-        for ent in entities:
-            feature_id = link.get_featureset_by_id(ent._featureset_id).features['protection'][0]
-            _LOGGER.debug("Received service call lock")
-            _LOGGER.debug("Setting feature ID: %s ", feature_id)
-            await link.async_write_feature(feature_id, 1)
+            for ent in entities:
+                feature_id = link.get_featureset_by_id(ent._featureset_id).features['protection'][0]
+                _LOGGER.debug("Received service call lock")
+                _LOGGER.debug("Setting feature ID: %s ", feature_id)
+                await link.async_write_feature(feature_id, 1)
 
     async def service_handle_unlock(call):
         entity_ids = call.data.get("entity_id")
