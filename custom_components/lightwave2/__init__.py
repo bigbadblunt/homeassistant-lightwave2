@@ -95,7 +95,7 @@ async def async_setup_entry(hass, config_entry):
     await link.async_get_hierarchy()
 
     hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_LINK2] = link
-    hass.data[DOMAIN].setdefault(LIGHTWAVE_ENTITIES, [])
+    hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES] = []
     if not hass.data[DOMAIN][config_entry.entry_id][CONF_PUBLICAPI]:
         url = None
     else:
