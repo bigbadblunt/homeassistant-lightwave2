@@ -42,7 +42,7 @@ async def async_setup(hass, config):
             entities = hass.data[DOMAIN][entry_id][LIGHTWAVE_ENTITIES]
             entities = [e for e in entities if e.entity_id in entity_ids]
             
-            link = hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_LINK2]
+            link = hass.data[DOMAIN][entry_id][LIGHTWAVE_LINK2]
 
             for ent in entities:
                 feature_id = link.get_featureset_by_id(ent._featureset_id).features['protection'][0]
