@@ -6,7 +6,6 @@ import homeassistant.helpers.config_validation as cv
 from .const import DOMAIN, CONF_PUBLICAPI, LIGHTWAVE_LINK2,  LIGHTWAVE_ENTITIES, \
     LIGHTWAVE_WEBHOOK, LIGHTWAVE_WEBHOOKID, SERVICE_SETLEDRGB, SERVICE_SETLOCKED, SERVICE_SETUNLOCKED
 from homeassistant.const import (CONF_USERNAME, CONF_PASSWORD)
-from homeassistant.config_entries import SOURCE_IMPORT
 from homeassistant.helpers import device_registry as dr
 
 _LOGGER = logging.getLogger(__name__)
@@ -22,12 +21,12 @@ async def handle_webhook(hass, webhook_id, request):
             ent.async_schedule_update_ha_state(True)
 
 async def async_setup(hass, config):
+
     async def service_handle_led(call):
         entity_ids = call.data.get("entity_id")
         for entry_id in hass.data[DOMAIN]:
             entities = hass.data[DOMAIN][entry_id][LIGHTWAVE_ENTITIES]
             entities = [e for e in entities if e.entity_id in entity_ids]
-            link = hass.data[DOMAIN][entry_id][LIGHTWAVE_LINK2]
             rgb = call.data.get("rgb")
             if str(rgb)[0:1] == "#":
                 rgb = int("0x" + rgb[1:7], 16)
@@ -83,13 +82,8 @@ async def async_setup_entry(hass, config_entry):
     password = config_entry.data[CONF_PASSWORD]
     config_entry.add_update_listener(reload_lw)
 
-    _LOGGER.debug("DOMAIN: %s, config_entry.entry_id %s, CONF_PUBLIC_API %s", DOMAIN, config_entry.entry_id, CONF_PUBLICAPI)
-    if CONF_PUBLICAPI in config_entry.options:
-        hass.data[DOMAIN][config_entry.entry_id][CONF_PUBLICAPI] = config_entry.options[CONF_PUBLICAPI]
-    else:
-        hass.data[DOMAIN][config_entry.entry_id][CONF_PUBLICAPI] = False
-
-    if hass.data[DOMAIN][config_entry.entry_id][CONF_PUBLICAPI]:
+    publicapi = config_entry.options.get(CONF_PUBLICAPI, False)
+    if publicapi:
         link = lightwave2.LWLink2Public(email, password)
     else:
         link = lightwave2.LWLink2(email, password)
@@ -100,7 +94,7 @@ async def async_setup_entry(hass, config_entry):
 
     hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_LINK2] = link
     hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES] = []
-    if not hass.data[DOMAIN][config_entry.entry_id][CONF_PUBLICAPI]:
+    if not publicapi:
         url = None
     else:
         webhook_id = hass.components.webhook.async_generate_id()
