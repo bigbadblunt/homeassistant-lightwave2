@@ -17,7 +17,7 @@ async def handle_webhook(hass, webhook_id, request):
     body = await request.json()
     _LOGGER.debug("Received webhook: %s ", body)
     link.process_webhook_received(body)
-    for ent in hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES]:
+    for ent in hass.data[DOMAIN][LIGHTWAVE_ENTITIES]:
         ent.async_schedule_update_ha_state(True)
 
 async def async_setup(hass, config):
@@ -29,7 +29,7 @@ async def async_setup_entry(hass, config_entry):
 
     async def service_handle_led(call):
         entity_ids = call.data.get("entity_id")
-        entities = hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES]
+        entities = hass.data[DOMAIN][LIGHTWAVE_ENTITIES]
         entities = [e for e in entities if e.entity_id in entity_ids]
         rgb = call.data.get("rgb")
         if str(rgb)[0:1] == "#":
@@ -43,7 +43,7 @@ async def async_setup_entry(hass, config_entry):
 
     async def service_handle_lock(call):
         entity_ids = call.data.get("entity_id")
-        entities = hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES]
+        entities = hass.data[DOMAIN][LIGHTWAVE_ENTITIES]
         entities = [e for e in entities if e.entity_id in entity_ids]
 
         for ent in entities:
@@ -54,7 +54,7 @@ async def async_setup_entry(hass, config_entry):
 
     async def service_handle_unlock(call):
         entity_ids = call.data.get("entity_id")
-        entities = hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES]
+        entities = hass.data[DOMAIN][LIGHTWAVE_ENTITIES]
         entities = [e for e in entities if e.entity_id in entity_ids]
 
         for ent in entities:
@@ -85,7 +85,7 @@ async def async_setup_entry(hass, config_entry):
     await link.async_get_hierarchy()
 
     hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_LINK2] = link
-    hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES] = []
+    hass.data[DOMAIN].setdefault(LIGHTWAVE_ENTITIES, [])
     if not hass.data[DOMAIN][config_entry.entry_id][CONF_PUBLICAPI]:
         url = None
     else:
