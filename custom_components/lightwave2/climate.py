@@ -1,6 +1,9 @@
 import logging
 from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES, LIGHTWAVE_WEBHOOK
-from homeassistant.components.climate import ClimateEntity
+try:
+    from homeassistant.components.climate import ClimateEntity
+except ImportError:
+    from homeassistant.components.climate import ClimateDevice as ClimateEntity
 from homeassistant.components.climate.const import (
     HVAC_MODE_OFF, HVAC_MODE_HEAT, SUPPORT_TARGET_TEMPERATURE, SUPPORT_PRESET_MODE, CURRENT_HVAC_HEAT, CURRENT_HVAC_IDLE, CURRENT_HVAC_OFF)
 from homeassistant.const import (

@@ -1,8 +1,12 @@
 import logging
 from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES, LIGHTWAVE_WEBHOOK
+try:
+    from homeassistant.components.cover import CoverEntity
+except ImportError:
+    from homeassistant.components.cover import CoverDevice as CoverEntity
 from homeassistant.components.cover import (
     SUPPORT_CLOSE, SUPPORT_OPEN,
-    SUPPORT_STOP, CoverEntity)
+    SUPPORT_STOP)
 from homeassistant.core import callback
 from .const import DOMAIN
 

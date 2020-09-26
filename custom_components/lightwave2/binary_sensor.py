@@ -1,6 +1,10 @@
 import logging
 from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES, LIGHTWAVE_WEBHOOK
-from homeassistant.components.binary_sensor import (BinarySensorEntity, DEVICE_CLASS_DOOR)
+try:
+    from homeassistant.components.binary_sensor import BinarySensorEntity
+except ImportError:
+    from homeassistant.components.binary_sensor import BinarySensorDevice as BinarySensorEntity
+from homeassistant.components.binary_sensor import (DEVICE_CLASS_DOOR)
 from homeassistant.core import callback
 from .const import DOMAIN
 
