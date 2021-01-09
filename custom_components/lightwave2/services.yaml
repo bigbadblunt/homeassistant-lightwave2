@@ -19,7 +19,7 @@ unlock:
     entity_id:
       description: Name(s) of entities.
       example: 'light.bedroom'
-unlock:
+set_brightness:
   description: Set brightness without changing light state
   fields:
     entity_id:
