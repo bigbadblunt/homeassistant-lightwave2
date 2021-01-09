@@ -39,7 +39,7 @@ async def async_setup(hass, config):
 
     async def service_handle_lock(call):
         entity_ids = call.data.get("entity_id")
-        for entry_id in hass.data[DOMAIN]:
+        for entry_id in hass.data[DOvc MAIN]:
                 
             entities = hass.data[DOMAIN][entry_id][LIGHTWAVE_ENTITIES]
             entities = [e for e in entities if e.entity_id in entity_ids]
@@ -67,9 +67,27 @@ async def async_setup(hass, config):
                 _LOGGER.debug("Setting feature ID: %s ", feature_id)
                 await link.async_write_feature(feature_id, 0)
 
+    async def service_handle_brightness(call):
+        entity_ids = call.data.get("entity_id")
+        for entry_id in hass.data[DOMAIN]:
+
+            entities = hass.data[DOMAIN][entry_id][LIGHTWAVE_ENTITIES]
+            entities = [e for e in entities if e.entity_id in entity_ids]
+            brightness = int(round(call.data.get("brightness") / 255 * 100))
+
+            link = hass.data[DOMAIN][entry_id][LIGHTWAVE_LINK2]
+
+            for ent in entities:
+                feature_id = link.get_featureset_by_id(ent._featureset_id).features['dimLevel'][0]
+                _LOGGER.debug("Received service call set brightness")
+                _LOGGER.debug("Setting feature ID: %s ", feature_id)
+                await link.async_write_feature(feature_id, brightness)
+                await ent.async_update()
+
     hass.services.async_register(DOMAIN, SERVICE_SETLEDRGB, service_handle_led)
     hass.services.async_register(DOMAIN, SERVICE_SETLOCKED, service_handle_lock)
     hass.services.async_register(DOMAIN, SERVICE_SETUNLOCKED, service_handle_unlock)
+    hass.services.async_register(DOMAIN, SERVICE_SETUNLOCKED, service_handle_brightness)
 
     return True
 
