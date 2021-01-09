@@ -4,7 +4,7 @@ import voluptuous as vol
 
 import homeassistant.helpers.config_validation as cv
 from .const import DOMAIN, CONF_PUBLICAPI, LIGHTWAVE_LINK2,  LIGHTWAVE_ENTITIES, \
-    LIGHTWAVE_WEBHOOK, LIGHTWAVE_WEBHOOKID, SERVICE_SETLEDRGB, SERVICE_SETLOCKED, SERVICE_SETUNLOCKED
+    LIGHTWAVE_WEBHOOK, LIGHTWAVE_WEBHOOKID, SERVICE_SETLEDRGB, SERVICE_SETLOCKED, SERVICE_SETUNLOCKED, SERVICE_SETBRIGHTNESS
 from homeassistant.const import (CONF_USERNAME, CONF_PASSWORD)
 from homeassistant.helpers import device_registry as dr
 
@@ -87,7 +87,7 @@ async def async_setup(hass, config):
     hass.services.async_register(DOMAIN, SERVICE_SETLEDRGB, service_handle_led)
     hass.services.async_register(DOMAIN, SERVICE_SETLOCKED, service_handle_lock)
     hass.services.async_register(DOMAIN, SERVICE_SETUNLOCKED, service_handle_unlock)
-    hass.services.async_register(DOMAIN, SERVICE_SETUNLOCKED, service_handle_brightness)
+    hass.services.async_register(DOMAIN, SERVICE_SETBRIGHTNESS, service_handle_brightness)
 
     return True
 
