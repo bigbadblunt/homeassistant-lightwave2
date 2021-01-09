@@ -39,7 +39,7 @@ async def async_setup(hass, config):
 
     async def service_handle_lock(call):
         entity_ids = call.data.get("entity_id")
-        for entry_id in hass.data[DOvc MAIN]:
+        for entry_id in hass.data[DOMAIN]:
                 
             entities = hass.data[DOMAIN][entry_id][LIGHTWAVE_ENTITIES]
             entities = [e for e in entities if e.entity_id in entity_ids]
