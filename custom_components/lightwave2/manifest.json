@@ -1,10 +1,10 @@
 {
   "domain": "lightwave2",
   "name": "Lightwave v2 (Smart Series) custom component",
-  "version": "3.2.1beta",
+  "version": "3.2.1beta2",
   "documentation": "https://github.com/bigbadblunt/homeassistant-lightwave2",
   "dependencies": [],
   "codeowners": ["@bigbadblunt"],
-  "requirements": ["lightwave2==0.6.25"],
+  "requirements": ["lightwave2==0.6.27"],
   "config_flow": true
 }
