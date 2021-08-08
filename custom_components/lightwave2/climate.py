@@ -82,7 +82,7 @@ class LWRF2Climate(ClimateEntity):
                 req = await self._lwlink.async_register_webhook(self._url, featureid, "hass" + featureid.replace("+", "P"), overwrite = True)
 
     @callback
-    def async_update_callback(self):
+    def async_update_callback(self, **kwargs):
         """Update the component's state."""
         self.async_schedule_update_ha_state(True)
 

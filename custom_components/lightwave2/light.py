@@ -68,7 +68,7 @@ class LWRF2Light(LightEntity):
     #TODO add async_will_remove_from_hass() to clean up
 
     @callback
-    def async_update_callback(self):
+    def async_update_callback(self, **kwargs):
         """Update the component's state."""
         self.async_schedule_update_ha_state(True)
 
