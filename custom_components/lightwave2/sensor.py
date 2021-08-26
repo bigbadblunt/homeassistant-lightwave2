@@ -1,6 +1,6 @@
 import logging
 from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES, LIGHTWAVE_WEBHOOK
-from homeassistant.components.binary_sensor import DEVICE_CLASS_POWER
+from homeassistant.components.sensor import DEVICE_CLASS_POWER, STATE_CLASS_MEASUREMENT
 from homeassistant.const import POWER_WATT
 from homeassistant.helpers.entity import Entity
 from homeassistant.core import callback
@@ -23,7 +23,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     async_add_entities(sensors)
 
 class LWRF2Sensor(Entity):
-    """Representation of a LightWaveRF window sensor."""
+    """Representation of a LightWaveRF power usage sensor."""
 
     def __init__(self, name, featureset_id, link, url=None):
         self._name = name
@@ -82,13 +82,17 @@ class LWRF2Sensor(Entity):
         return DEVICE_CLASS_POWER
 
     @property
-    def state(self):
+    def native_value(self):
         return self._state
 
     @property
-    def unit_of_measurement(self):
+    def native_unit_of_measurement(self):
         """Return the unit of measurement of this entity, if any."""
         return POWER_WATT
+
+    @property
+    def state_class(self):
+        return STATE_CLASS_MEASUREMENT
 
     @property
     def device_state_attributes(self):
