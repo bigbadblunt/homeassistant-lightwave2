@@ -42,7 +42,7 @@ In Home Assistant:
 6. This should automatically find all your devices
 
 ## Usage:
-Once configured this should then automatically add all switches, lights, thermostats and blinds/covers that are configured in your Lightwave app. If you add a new device you will need to restart Home Assistant, or remove and re-add the integration.
+Once configured this should then automatically add all switches, lights, thermostats, blinds/covers, sensors and energy monitors that are configured in your Lightwave app. If you add a new device you will need to restart Home Assistant, or remove and re-add the integration.
 
 Generation 2 devices have the attribute `current_power_w` for current power usage.
 
