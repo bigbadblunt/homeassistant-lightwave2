@@ -18,6 +18,14 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     for featureset_id, name in link.get_energy():
         sensors.append(LWRF2Sensor(name, featureset_id, link, url))
 
+    for featureset_id, name in link.get_switches():
+        if link.get_featureset_by_id(featureset_id).reports_energy():
+            sensors.append(LWRF2Sensor(name, featureset_id, link, url))
+
+    for featureset_id, name in link.get_lights():
+        if link.get_featureset_by_id(featureset_id).reports_energy():
+            sensors.append(LWRF2Sensor(name, featureset_id, link, url))
+
     hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES].extend(sensors)
     async_add_entities(sensors)
 
