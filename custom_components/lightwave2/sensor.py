@@ -41,6 +41,7 @@ class LWRF2Sensor(Entity):
         self._state = \
             self._lwlink.get_featureset_by_id(self._featureset_id).features[
                 "power"][1]
+        _LOGGER.debug("Initial state %s ", self._state)
         self._gen2 = self._lwlink.get_featureset_by_id(
             self._featureset_id).is_gen2()
 
