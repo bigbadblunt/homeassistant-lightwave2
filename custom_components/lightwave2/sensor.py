@@ -7,24 +7,22 @@ from homeassistant.core import callback
 DEPENDENCIES = ['lightwave2']
 _LOGGER = logging.getLogger(__name__)
 
-ATTR_CURRENT_POWER_W = "current_power_w"
-ATTR_TOTAL_ENERGY_KWH = "total_energy_kwh"
-
-LRWF2POWERSENSORDESC = SensorEntityDescription(
-        key=ATTR_CURRENT_POWER_W,
+ENERGY_SENSORS = [
+    SensorEntityDescription(
+        key="power",
         native_unit_of_measurement=POWER_WATT,
         device_class=DEVICE_CLASS_POWER,
         state_class=STATE_CLASS_MEASUREMENT,
         name="Current Consumption",
-    )
-
-LRWF2ENERGYSENSORDESC = SensorEntityDescription(
-        key=ATTR_TOTAL_ENERGY_KWH,
+    ),
+    SensorEntityDescription(
+        key="energy",
         native_unit_of_measurement=ENERGY_KILO_WATT_HOUR,
         device_class=DEVICE_CLASS_ENERGY,
         state_class=STATE_CLASS_TOTAL_INCREASING,
         name="Total Consumption",
     )
+]
 
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
@@ -35,18 +33,18 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     url = hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_WEBHOOK]
 
     for featureset_id, name in link.get_energy():
-        sensors.append(LWRF2Sensor(name, featureset_id, link, url, DEVICE_CLASS_POWER))
-        sensors.append(LWRF2Sensor(name, featureset_id, link, url, DEVICE_CLASS_ENERGY))
+        for description in ENERGY_SENSORS:
+            sensors.append(LWRF2Sensor(name, featureset_id, link, url, description))
 
     for featureset_id, name in link.get_switches():
         if link.get_featureset_by_id(featureset_id).reports_power():
-            sensors.append(LWRF2Sensor(name, featureset_id, link, url, DEVICE_CLASS_POWER))
-            sensors.append(LWRF2Sensor(name, featureset_id, link, url, DEVICE_CLASS_ENERGY))
+            for description in ENERGY_SENSORS:
+                sensors.append(LWRF2Sensor(name, featureset_id, link, url, description))
 
     for featureset_id, name in link.get_lights():
         if link.get_featureset_by_id(featureset_id).reports_power():
-            sensors.append(LWRF2Sensor(name, featureset_id, link, url, DEVICE_CLASS_POWER))
-            sensors.append(LWRF2Sensor(name, featureset_id, link, url, DEVICE_CLASS_ENERGY))
+            for description in ENERGY_SENSORS:
+                sensors.append(LWRF2Sensor(name, featureset_id, link, url, description))
 
     hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES].extend(sensors)
     async_add_entities(sensors)
@@ -54,19 +52,14 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 class LWRF2Sensor(SensorEntity):
     """Representation of a LightWaveRF power usage sensor."""
 
-    def __init__(self, name, featureset_id, link, url, type):
+    def __init__(self, name, featureset_id, link, url, description):
         self._name = name
         _LOGGER.debug("Adding sensor: %s ", self._name)
         self._featureset_id = featureset_id
         self._lwlink = link
         self._url = url
-        self._type = type
-        if self._type == DEVICE_CLASS_POWER:
-            self._state = self._lwlink.get_featureset_by_id(self._featureset_id).features["power"][1]
-            self.entity_description = LRWF2POWERSENSORDESC
-        elif self._type == DEVICE_CLASS_ENERGY:
-            self._state = self._lwlink.get_featureset_by_id(self._featureset_id).features["energy"][1]
-            self.entity_description = LRWF2POWERSENSORDESC
+        self.entity_description = description
+        self._state = self._lwlink.get_featureset_by_id(self._featureset_id).features[self.entity_description.key][1]
         self._gen2 = self._lwlink.get_featureset_by_id(
             self._featureset_id).is_gen2()
 
@@ -96,10 +89,7 @@ class LWRF2Sensor(SensorEntity):
 
     async def async_update(self):
         """Update state"""
-        if self._type == DEVICE_CLASS_POWER:
-            self._state = self._lwlink.get_featureset_by_id(self._featureset_id).features["power"][1]
-        elif self._type == DEVICE_CLASS_ENERGY:
-            self._state = self._lwlink.get_featureset_by_id(self._featureset_id).features["energy"][1]
+            self._state = self._lwlink.get_featureset_by_id(self._featureset_id).features[self.entity_description.key][1]
 
     @property
     def name(self):
