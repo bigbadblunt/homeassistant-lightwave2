@@ -7,9 +7,7 @@ from homeassistant.core import callback
 DEPENDENCIES = ['lightwave2']
 _LOGGER = logging.getLogger(__name__)
 
-ATTR_CURRENT_POWER_W = "current_power_w"
 LRWF2SENSORDESC = SensorEntityDescription(
-        key=ATTR_CURRENT_POWER_W,
         native_unit_of_measurement=POWER_WATT,
         device_class=DEVICE_CLASS_POWER,
         state_class=STATE_CLASS_MEASUREMENT,
@@ -49,7 +47,6 @@ class LWRF2Sensor(SensorEntity):
         self._state = \
             self._lwlink.get_featureset_by_id(self._featureset_id).features[
                 "power"][1]
-        _LOGGER.debug("Initial state %s ", POWER_WATT)
         self._gen2 = self._lwlink.get_featureset_by_id(
             self._featureset_id).is_gen2()
         self.entity_description = LRWF2SENSORDESC
@@ -94,22 +91,9 @@ class LWRF2Sensor(SensorEntity):
         """Unique identifier. Provided by hub."""
         return self._featureset_id
 
-    #@property
-    #def device_class(self):
-    #    return DEVICE_CLASS_POWER
-
     @property
     def native_value(self):
-        return 12 #self._state
-
-    #@property
-    #def native_unit_of_measurement(self):
-    #    """Return the unit of measurement of this entity, if any."""
-     #   return POWER_WATT
-
-    #@property
-    #def state_class(self):
-    #    return STATE_CLASS_MEASUREMENT
+        return self._state
 
     @property
     def device_state_attributes(self):
