@@ -54,6 +54,7 @@ class LWRF2Sensor(SensorEntity):
 
     def __init__(self, name, featureset_id, link, url, description):
         self._name = f"{name} {description.name}"
+        self._device = name
         _LOGGER.debug("Adding sensor: %s ", self._name)
         self._featureset_id = featureset_id
         self._lwlink = link
@@ -125,7 +126,7 @@ class LWRF2Sensor(SensorEntity):
                 # Serial numbers are unique identifiers within a specific domain
                 (DOMAIN, self._featureset_id)
             },
-            'name': self.name,
+            'name': self._device,
             'manufacturer': "Lightwave RF",
             'model': self._lwlink.get_featureset_by_id(
                 self._featureset_id).product_code
