@@ -1,11 +1,20 @@
 import logging
 from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES, LIGHTWAVE_WEBHOOK, DOMAIN
-from homeassistant.components.sensor import DEVICE_CLASS_POWER, STATE_CLASS_MEASUREMENT, SensorEntity
+from homeassistant.components.sensor import DEVICE_CLASS_POWER, STATE_CLASS_MEASUREMENT, SensorEntity, SensorEntityDescription
 from homeassistant.const import POWER_WATT
 from homeassistant.core import callback
 
 DEPENDENCIES = ['lightwave2']
 _LOGGER = logging.getLogger(__name__)
+
+ATTR_CURRENT_POWER_W = "current_power_w"
+LRWF2SENSORDESC = SensorEntityDescription(
+        key=ATTR_CURRENT_POWER_W,
+        native_unit_of_measurement=POWER_WATT,
+        device_class=DEVICE_CLASS_POWER,
+        state_class=STATE_CLASS_MEASUREMENT,
+        name="Current Consumption",
+    )
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
     """Find and return LightWave sensors."""
@@ -43,7 +52,7 @@ class LWRF2Sensor(SensorEntity):
         _LOGGER.debug("Initial state %s ", POWER_WATT)
         self._gen2 = self._lwlink.get_featureset_by_id(
             self._featureset_id).is_gen2()
-        self._attr_native_unit_of_measurement = POWER_WATT
+        self.entity_description = LRWF2SENSORDESC
 
     async def async_added_to_hass(self):
         """Subscribe to events."""
@@ -85,9 +94,9 @@ class LWRF2Sensor(SensorEntity):
         """Unique identifier. Provided by hub."""
         return self._featureset_id
 
-    @property
-    def device_class(self):
-        return DEVICE_CLASS_POWER
+    #@property
+    #def device_class(self):
+    #    return DEVICE_CLASS_POWER
 
     @property
     def native_value(self):
@@ -98,9 +107,9 @@ class LWRF2Sensor(SensorEntity):
     #    """Return the unit of measurement of this entity, if any."""
      #   return POWER_WATT
 
-    @property
-    def state_class(self):
-        return STATE_CLASS_MEASUREMENT
+    #@property
+    #def state_class(self):
+    #    return STATE_CLASS_MEASUREMENT
 
     @property
     def device_state_attributes(self):
