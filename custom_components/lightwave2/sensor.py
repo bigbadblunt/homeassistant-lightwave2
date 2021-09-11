@@ -109,7 +109,7 @@ class LWRF2Sensor(SensorEntity):
     @property
     def unique_id(self):
         """Unique identifier. Provided by hub."""
-        return self._featureset_id
+        return f"{self._featureset_id}_{self.entity_description.key}"
 
     @property
     def native_value(self):
