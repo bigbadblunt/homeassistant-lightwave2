@@ -91,7 +91,7 @@ class LWRF2Sensor(Entity):
 
     @property
     def native_value(self):
-        return self._state
+        return 12 #self._state
 
     @property
     def native_unit_of_measurement(self):
