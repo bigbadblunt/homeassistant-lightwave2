@@ -53,7 +53,7 @@ class LWRF2Sensor(SensorEntity):
     """Representation of a LightWaveRF power usage sensor."""
 
     def __init__(self, name, featureset_id, link, url, description):
-        self._name = name
+        self._name = f"{name} {description.name}"
         _LOGGER.debug("Adding sensor: %s ", self._name)
         self._featureset_id = featureset_id
         self._lwlink = link
