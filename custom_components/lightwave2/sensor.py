@@ -1,8 +1,7 @@
 import logging
 from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES, LIGHTWAVE_WEBHOOK, DOMAIN
-from homeassistant.components.sensor import DEVICE_CLASS_POWER, STATE_CLASS_MEASUREMENT
+from homeassistant.components.sensor import DEVICE_CLASS_POWER, STATE_CLASS_MEASUREMENT, SensorEntity
 from homeassistant.const import POWER_WATT
-from homeassistant.helpers.entity import Entity
 from homeassistant.core import callback
 
 DEPENDENCIES = ['lightwave2']
@@ -29,7 +28,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES].extend(sensors)
     async_add_entities(sensors)
 
-class LWRF2Sensor(Entity):
+class LWRF2Sensor(SensorEntity):
     """Representation of a LightWaveRF power usage sensor."""
 
     def __init__(self, name, featureset_id, link, url=None):
