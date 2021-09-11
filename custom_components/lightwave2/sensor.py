@@ -51,10 +51,10 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES].extend(sensors)
     async_add_entities(sensors)
 
-class LWRF2Sensor(SensorEntity, type):
+class LWRF2Sensor(SensorEntity):
     """Representation of a LightWaveRF power usage sensor."""
 
-    def __init__(self, name, featureset_id, link, url=None):
+    def __init__(self, name, featureset_id, link, url, type):
         self._name = name
         _LOGGER.debug("Adding sensor: %s ", self._name)
         self._featureset_id = featureset_id
