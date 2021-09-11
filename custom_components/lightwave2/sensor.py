@@ -43,7 +43,7 @@ class LWRF2Sensor(SensorEntity):
         _LOGGER.debug("Initial state %s ", POWER_WATT)
         self._gen2 = self._lwlink.get_featureset_by_id(
             self._featureset_id).is_gen2()
-        self.entity_description.native_unit_of_measurement = POWER_WATT
+        self._attr_native_unit_of_measurement = POWER_WATT
 
     async def async_added_to_hass(self):
         """Subscribe to events."""
