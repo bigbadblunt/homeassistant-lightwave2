@@ -89,7 +89,7 @@ class LWRF2Sensor(SensorEntity):
 
     async def async_update(self):
         """Update state"""
-            self._state = self._lwlink.get_featureset_by_id(self._featureset_id).features[self.entity_description.key][1]
+        self._state = self._lwlink.get_featureset_by_id(self._featureset_id).features[self.entity_description.key][1]
 
     @property
     def name(self):
