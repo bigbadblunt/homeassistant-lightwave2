@@ -17,7 +17,7 @@ ENERGY_SENSORS = [
     ),
     SensorEntityDescription(
         key="energy",
-        native_unit_of_measurement=ENERGY_KILO_WATT_HOUR,
+        native_unit_of_measurement=ENERGY_WATT_HOUR,
         device_class=DEVICE_CLASS_ENERGY,
         state_class=STATE_CLASS_TOTAL_INCREASING,
         name="Total Consumption",
