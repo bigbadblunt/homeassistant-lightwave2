@@ -44,9 +44,7 @@ In Home Assistant:
 ## Usage:
 Once configured this should then automatically add all switches, lights, thermostats, blinds/covers, sensors and energy monitors that are configured in your Lightwave app. If you add a new device you will need to restart Home Assistant, or remove and re-add the integration.
 
-Generation 2 devices have the attribute `current_power_w` for current power usage.
-
-Gen 2 devices also produce energy sensors entities (1 for current power draw, 1 for total cumulative energy usage)
+Generation 2 devices have the attribute `current_power_w` for current power usage. These devices also generate energy sensor entities within the corresponding devices (1 entity for current power draw, 1 entity for total cumulative energy usage)
 
 Various other attributes are exposed with the names `lwrf_*`.
 
