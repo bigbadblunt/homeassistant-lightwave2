@@ -71,10 +71,6 @@ class LWRF2Light(LightEntity):
     @callback
     def async_update_callback(self, **kwargs):
         """Update the component's state."""
-        _LOGGER.debug(kwargs["feature"])
-        _LOGGER.debug(self._lwlink.get_featureset_by_featureid(kwargs["feature_id"]).featureset_id)
-        _LOGGER.debug(self._featureset_id)
-        _LOGGER.debug(self._lwlink.get_featureset_by_featureid(kwargs["feature_id"]) == self._featureset_id)
         if kwargs["feature"] == "uiButtonPair" and self._lwlink.get_featureset_by_featureid(kwargs["feature_id"]).featureset_id == self._featureset_id:
             self._hass.bus.fire(
             "lightwave2.click",
