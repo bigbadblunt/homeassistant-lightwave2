@@ -19,7 +19,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     url = hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_WEBHOOK]
 
     for featureset_id, name in link.get_switches():
-        switches.append(LWRF2Switch(name, featureset_id, link, url))
+        switches.append(LWRF2Switch(name, featureset_id, link, url, hass))
 
     hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES].extend(switches)
     async_add_entities(switches)
@@ -27,9 +27,10 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 class LWRF2Switch(SwitchEntity):
     """Representation of a LightWaveRF switch."""
 
-    def __init__(self, name, featureset_id, link, url=None):
+    def __init__(self, name, featureset_id, link, url, hass):
         """Initialize LWRFSwitch entity."""
         self._name = name
+        self._hass = hass
         _LOGGER.debug("Adding switch: %s ", self._name)
         self._featureset_id = featureset_id
         self._lwlink = link
@@ -58,6 +59,11 @@ class LWRF2Switch(SwitchEntity):
     @callback
     def async_update_callback(self, **kwargs):
         """Update the component's state."""
+        if kwargs["feature"] == "uiButtonPair" and self._lwlink.get_featureset_by_featureid(kwargs["feature_id"]).featureset_id == self._featureset_id:
+            self._hass.bus.fire(
+            "lightwave2.click",
+            {"entity_id": self.entity_id, "code": kwargs["new_value"]},
+        )
         self.async_schedule_update_ha_state(True)
 
     @property
