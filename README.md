@@ -71,5 +71,7 @@ Code|Hex|Meaning
 4608|1200|Down button press and hold
 4864|1300|Down button release after long press
 
+For sockets the codes are the "up button" versions.
+
 ## Thanks
 Credit to Warren Ashcroft whose code I used as a base https://github.com/washcroft/LightwaveRF-LinkPlus

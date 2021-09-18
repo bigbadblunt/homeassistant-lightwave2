@@ -37,3 +37,5 @@ Code|Hex|Meaning
 4356|1104|Down button quad press
 4608|1200|Down button press and hold
 4864|1300|Down button release after long press
+
+For sockets the codes are the "up button" versions.
