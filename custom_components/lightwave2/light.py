@@ -5,7 +5,7 @@ try:
 except ImportError:
     from homeassistant.components.light import Light as LightEntity
 from homeassistant.components.light import (
-    ATTR_BRIGHTNESS, SUPPORT_BRIGHTNESS)
+    ATTR_BRIGHTNESS, COLOR_MODE_BRIGHTNESS)
 from homeassistant.core import callback
 from .const import DOMAIN
 
@@ -79,9 +79,14 @@ class LWRF2Light(LightEntity):
         self.async_schedule_update_ha_state(True)
 
     @property
-    def supported_features(self):
+    def supported_color_modes(self):
         """Flag supported features."""
-        return SUPPORT_BRIGHTNESS
+        return {COLOR_MODE_BRIGHTNESS}
+
+    @property
+    def color_mode(self):
+        """Flag supported features."""
+        return COLOR_MODE_BRIGHTNESS
 
     @property
     def should_poll(self):
