@@ -52,6 +52,8 @@ The color of the LED for generation 2 devices can be changed using the service c
 
 Devices can be locked/unlocked using the service calls `lightwave2.lock` and `lightwave2.unlock`.
 
+For gen2 devices, the brightness can be set without turning thelight on using `lightwave2.set_brightness`.
+
 Firmware 5+ devices generate `lightwave2.click` events when the buttons are pressed. The "code" returned is the type of click:
 
 Code|Hex|Meaning

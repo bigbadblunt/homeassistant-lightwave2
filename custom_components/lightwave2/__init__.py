@@ -142,8 +142,6 @@ async def async_setup_entry(hass, config_entry):
     hass.async_create_task(forward_setup(config_entry, "binary_sensor"))
     hass.async_create_task(forward_setup(config_entry, "sensor"))
 
-
-
     return True
 
 async def async_remove_entry(hass, config_entry):
@@ -157,6 +155,6 @@ async def async_remove_entry(hass, config_entry):
     await hass.config_entries.async_forward_entry_unload(config_entry, "sensor")
 
 async def reload_lw(hass, config_entry):
-    """Reload HACS."""
+
     await async_remove_entry(hass, config_entry)
     await async_setup_entry(hass, config_entry)
