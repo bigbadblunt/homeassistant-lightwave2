@@ -25,7 +25,7 @@ This component is available through the Home Assistant Community Store HACS (htt
 If you use this method, your component will always update to the latest version. But you'll need to set up HACS first.
 
 #### 2. Manual
-Copy all files from custom_components/lightwave2 to a `<ha_config_dir>/custom_components/lightwave2` directory. (i.e. you should have `<ha_config_dir>/custom_components/lightwave2/__init__.py`, `<ha_config_dir>/custom_components/lightwave2/switch.py` etc)
+Copy all files and folders from custom_components/lightwave2 to a `<ha_config_dir>/custom_components/lightwave2` directory. (i.e. you should have `<ha_config_dir>/custom_components/lightwave2/__init__.py`, `<ha_config_dir>/custom_components/lightwave2/switch.py`, `<ha_config_dir>/custom_components/lightwave2/translations/en.json` etc)
 
 The latest version is at https://github.com/bigbadblunt/homeassistant-lightwave2/releases/latest
 
