@@ -101,6 +101,7 @@ async def async_setup_entry(hass, config_entry):
 
     publicapi = config_entry.options.get(CONF_PUBLICAPI, False)
     if publicapi:
+        _LOGGER.debug("Using Public API")
         link = lightwave2.LWLink2Public(email, password)
     else:
         link = lightwave2.LWLink2(email, password)
@@ -108,12 +109,13 @@ async def async_setup_entry(hass, config_entry):
     debugmode = config_entry.options.get(CONF_DEBUG, False)
 
     if debugmode:
-        hass.services.call(
-            "logger",
-            "set_level",
-            {"data": {"custom_components.lightwave2": "debug", "lightwave2.lightwave2": "debug"}},
-            blocking=True,
-        )
+        _LOGGER.debug("Logging turned on")
+        #hass.services.call(
+        #    "logger",
+        #    "set_level",
+        #    {"data": {"custom_components.lightwave2": "debug", "lightwave2.lightwave2": "debug"}},
+        #    blocking=True,
+        #)
 
     if not await link.async_connect(max_tries = 1):
         return False
