@@ -110,11 +110,11 @@ async def async_setup_entry(hass, config_entry):
 
     if debugmode:
         _LOGGER.warning("Logging turned on")
-        hass.services.call(
-            "logger",
-            "set_level",
-            {"data": {"custom_components.lightwave2": "debug", "lightwave2.lightwave2": "debug"}}
-        )
+        #hass.services.call(
+        #    "logger",
+        #    "set_level",
+        #    {"data": {"custom_components.lightwave2": "debug", "lightwave2.lightwave2": "debug"}}
+        #)
 
     if not await link.async_connect(max_tries = 1):
         return False
