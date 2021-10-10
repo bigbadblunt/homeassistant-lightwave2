@@ -8,7 +8,7 @@ from homeassistant.const import (CONF_USERNAME, CONF_PASSWORD)
 from homeassistant.helpers import device_registry as dr
 
 _LOGGER = logging.getLogger(__name__)
-_LOGGER.setLevel(logging.DEBUG)
+
 
 async def handle_webhook(hass, webhook_id, request):
     """Handle webhook callback."""
@@ -93,7 +93,6 @@ async def async_setup(hass, config):
 
 async def async_setup_entry(hass, config_entry):
     from lightwave2 import lightwave2
-    logging.getLogger("lightwave2").setLevel(logging.DEBUG)
 
     hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN].setdefault(config_entry.entry_id, {})
@@ -112,11 +111,8 @@ async def async_setup_entry(hass, config_entry):
 
     if debugmode:
         _LOGGER.warning("Logging turned on")
-        #hass.services.call(
-        #    "logger",
-        #    "set_level",
-        #    {"data": {"custom_components.lightwave2": "debug", "lightwave2.lightwave2": "debug"}}
-        #)
+        _LOGGER.setLevel(logging.DEBUG)
+        logging.getLogger("lightwave2").setLevel(logging.DEBUG)
 
     if not await link.async_connect(max_tries = 1):
         return False
