@@ -2,8 +2,7 @@
 import logging
 import voluptuous as vol
 
-import homeassistant.helpers.config_validation as cv
-from .const import DOMAIN, CONF_PUBLICAPI, LIGHTWAVE_LINK2,  LIGHTWAVE_ENTITIES, \
+from .const import DOMAIN, CONF_PUBLICAPI, CONF_DEBUG, LIGHTWAVE_LINK2,  LIGHTWAVE_ENTITIES, \
     LIGHTWAVE_WEBHOOK, LIGHTWAVE_WEBHOOKID, SERVICE_SETLEDRGB, SERVICE_SETLOCKED, SERVICE_SETUNLOCKED, SERVICE_SETBRIGHTNESS
 from homeassistant.const import (CONF_USERNAME, CONF_PASSWORD)
 from homeassistant.helpers import device_registry as dr
@@ -105,6 +104,15 @@ async def async_setup_entry(hass, config_entry):
         link = lightwave2.LWLink2Public(email, password)
     else:
         link = lightwave2.LWLink2(email, password)
+
+    debugmode = config_entry.options.get(CONF_DEBUG, False)
+    if debugmode:
+        hass.services.call(
+            "logger",
+            "set_level",
+            {"data": {"custom_components.lightwave2": "debug", "lightwave2.lightwave2": "debug"}},
+            blocking=True,
+        )
 
     if not await link.async_connect(max_tries = 1):
         return False

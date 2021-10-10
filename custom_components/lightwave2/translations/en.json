@@ -19,7 +19,8 @@
         "step": {
             "user": {
                 "data": {
-                    "lightwave_publicapi": "Use public API?"
+                    "lightwave_publicapi": "Use public API?",
+                    "lightwave_debug": "Log extra debugging info?"
                 }
             }
         }
