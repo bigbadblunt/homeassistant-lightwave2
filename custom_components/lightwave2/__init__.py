@@ -106,6 +106,7 @@ async def async_setup_entry(hass, config_entry):
         link = lightwave2.LWLink2(email, password)
 
     debugmode = config_entry.options.get(CONF_DEBUG, False)
+
     if debugmode:
         hass.services.call(
             "logger",
