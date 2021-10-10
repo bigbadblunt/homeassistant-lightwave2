@@ -39,6 +39,7 @@ class Lightwave2OptionsFlowHandler(config_entries.OptionsFlow):
 
     async def async_step_user(self, user_input=None):
         if user_input is not None:
+            _LOGGER.debug("Received user input: %s ", user_input)
             return self.async_create_entry(title="", data=user_input)
 
         if self.config_entry.options:
