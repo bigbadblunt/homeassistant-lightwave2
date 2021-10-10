@@ -93,6 +93,7 @@ async def async_setup(hass, config):
 
 async def async_setup_entry(hass, config_entry):
     from lightwave2 import lightwave2
+    logging.getlogger("lightwave2").setLevel(logging.DEBUG)
 
     hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN].setdefault(config_entry.entry_id, {})
