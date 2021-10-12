@@ -149,6 +149,7 @@ async def async_setup_entry(hass, config_entry):
     hass.async_create_task(forward_setup(config_entry, "cover"))
     hass.async_create_task(forward_setup(config_entry, "binary_sensor"))
     hass.async_create_task(forward_setup(config_entry, "sensor"))
+    hass.async_create_task(forward_setup(config_entry, "lock"))
 
     return True
 
@@ -161,6 +162,7 @@ async def async_remove_entry(hass, config_entry):
     await hass.config_entries.async_forward_entry_unload(config_entry, "cover")
     await hass.config_entries.async_forward_entry_unload(config_entry, "binary_sensor")
     await hass.config_entries.async_forward_entry_unload(config_entry, "sensor")
+    await hass.config_entries.async_forward_entry_unload(config_entry, "lock")
 
 async def reload_lw(hass, config_entry):
 
