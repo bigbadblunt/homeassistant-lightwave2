@@ -23,6 +23,10 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     for featureset_id, name in link.get_lights():
         lights.append(LWRF2Light(name, featureset_id, link, url, hass))
 
+    for featureset_id, name in link.get_lights():
+        if link.featuresets[featureset_id].has_led():
+            lights.append(LWRF2LED(name, featureset_id, link, url, hass))
+
     hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES].extend(lights)
     async_add_entities(lights)
 
@@ -190,6 +194,125 @@ class LWRF2Light(LightEntity):
                 (DOMAIN, self.unique_id)
             },
             'name': self.name,
+            'manufacturer': "Lightwave RF",
+            'model': self._lwlink.get_featureset_by_id(
+                self._featureset_id).product_code
+            #TODO 'via_device': (hue.DOMAIN, self.api.bridgeid),
+        }
+
+class LWRF2LED(LightEntity):
+    """Representation of a LightWaveRF LED."""
+
+    def __init__(self, name, featureset_id, link, url, hass):
+        self._name = f"{name} LED"
+        self._device = name
+        self._hass = hass
+        _LOGGER.debug("Adding LED: %s ", self._name)
+        self._featureset_id = featureset_id
+        self._lwlink = link
+        self._url = url
+        self._state = \
+            self._lwlink.get_featureset_by_id(self._featureset_id).features[
+                "rgbColor"][1]
+
+    async def async_added_to_hass(self):
+        """Subscribe to events."""
+        await self._lwlink.async_register_callback(self.async_update_callback)
+        if self._url is not None:
+            for featurename in self._lwlink.get_featureset_by_id(self._featureset_id).features:
+                featureid = self._lwlink.get_featureset_by_id(self._featureset_id).features[featurename][0]
+                _LOGGER.debug("Registering webhook: %s %s", featurename, featureid.replace("+", "P"))
+                req = await self._lwlink.async_register_webhook(self._url, featureid, "hass" + featureid.replace("+", "P"), overwrite = True)
+
+    #TODO add async_will_remove_from_hass() to clean up
+
+    @callback
+    def async_update_callback(self, **kwargs):
+        """Update the component's state."""
+        self.async_schedule_update_ha_state(True)
+
+    @property
+    def supported_color_modes(self):
+        """Flag supported features."""
+        return {COLOR_MODE_RGB}
+
+    @property
+    def color_mode(self):
+        """Flag supported features."""
+        return COLOR_MODE_RGB
+
+    @property
+    def should_poll(self):
+        """Lightwave2 library will push state, no polling needed"""
+        return False
+
+    @property
+    def assumed_state(self):
+        """Gen 2 devices will report state changes, gen 1 doesn't"""
+        return not self._gen2
+
+    async def async_update(self):
+        """Update state"""
+        self._state = \
+            self._lwlink.get_featureset_by_id(self._featureset_id).features[
+                "rgbColor"][1]
+
+    @property
+    def name(self):
+        """Lightwave switch name."""
+        return self._name
+
+    @property
+    def rgb_color(self):
+        """Return the brightness of the group lights."""
+        return self._state
+
+    @property
+    def unique_id(self):
+        """Unique identifier. Provided by hub."""
+        return self._featureset_id
+
+    @property
+    def is_on(self):
+        """Lightwave switch is on state."""
+        return True
+
+    async def async_turn_on(self, **kwargs):
+        """Turn the LightWave light on."""
+        _LOGGER.debug("HA led.turn_on received, kwargs: %s", kwargs)
+
+        if 'rgb_color' in kwargs:
+            _LOGGER.debug("Changing LED color from %s to %s", self._state, kwargs['rgb_color'])
+            self._state = kwargs['rgb_color']
+            await self._lwlink.async_set_rgb(led_rgb=kwargs['rgb_color'])
+
+        self.async_schedule_update_ha_state()
+
+    async def async_turn_off(self, **kwargs):
+        """Turn the LightWave light off."""
+        _LOGGER.debug("HA light.turn_off received, kwargs: %s", kwargs)
+
+        self.async_schedule_update_ha_state()
+
+    @property
+    def device_state_attributes(self):
+        """Return the optional state attributes."""
+
+        attribs = {}
+
+        for featurename, featuredict in self._lwlink.get_featureset_by_id(self._featureset_id).features.items():
+            attribs['lwrf_' + featurename] = featuredict[1]
+
+        return attribs
+
+    @property
+    def device_info(self):
+        return {
+            'identifiers': {
+                # Serial numbers are unique identifiers within a specific domain
+                (DOMAIN, self.unique_id)
+            },
+            'name': self._device,
             'manufacturer': "Lightwave RF",
             'model': self._lwlink.get_featureset_by_id(
                 self._featureset_id).product_code
