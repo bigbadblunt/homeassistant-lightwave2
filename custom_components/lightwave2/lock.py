@@ -15,11 +15,11 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     url = hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_WEBHOOK]
 
     for featureset_id, name in link.get_lights():
-        if 'protection' in featureset_id.features.keys():
+        if 'protection' in link.featuresets[featureset_id].features.keys():
             locks.append(LWRF2Lock(name, featureset_id, link, url, hass))
 
     for featureset_id, name in link.get_switches():
-        if 'protection' in featureset_id.features.keys():
+        if 'protection' in link.featuresets[featureset_id].features.keys():
             locks.append(LWRF2Lock(name, featureset_id, link, url, hass))
 
     hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES].extend(locks)
@@ -94,7 +94,7 @@ class LWRF2Lock(LockEntity):
 
         self._state = 1
         feature_id = self._lwlink.get_featureset_by_id(self._featureset_id).features['protection'][0]
-        await link.async_write_feature(feature_id, 1)
+        await self._lwlink.async_write_feature(feature_id, 1)
 
         self.async_schedule_update_ha_state()
 
@@ -104,7 +104,7 @@ class LWRF2Lock(LockEntity):
 
         self._state = 0
         feature_id = self._lwlink.get_featureset_by_id(self._featureset_id).features['protection'][0]
-        await link.async_write_feature(feature_id, 0)
+        await self._lwlink.async_write_feature(feature_id, 0)
 
         self.async_schedule_update_ha_state()
 
