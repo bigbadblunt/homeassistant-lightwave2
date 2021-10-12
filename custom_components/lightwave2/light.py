@@ -270,7 +270,7 @@ class LWRF2LED(LightEntity):
     @property
     def unique_id(self):
         """Unique identifier. Provided by hub."""
-        return self._featureset_id
+        return f"{self._featureset_id}_LED"
 
     @property
     def is_on(self):
