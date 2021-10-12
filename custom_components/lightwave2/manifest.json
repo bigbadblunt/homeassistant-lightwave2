@@ -8,4 +8,5 @@
   "requirements": ["lightwave2==0.7.1"],
   "config_flow": true,
   "iot_class": "cloud_push"
+  
 }
