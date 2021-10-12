@@ -5,7 +5,7 @@ try:
 except ImportError:
     from homeassistant.components.light import Light as LightEntity
 from homeassistant.components.light import (
-    ATTR_BRIGHTNESS, COLOR_MODE_BRIGHTNESS)
+    ATTR_BRIGHTNESS, COLOR_MODE_BRIGHTNESS, COLOR_MODE_RGB)
 from homeassistant.core import callback
 from .const import DOMAIN
 
