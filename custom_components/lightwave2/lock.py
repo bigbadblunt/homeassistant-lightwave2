@@ -30,6 +30,7 @@ class LWRF2Lock(LockEntity):
 
     def __init__(self, name, featureset_id, link, url, hass):
         self._name = f"{name} Lock"
+        self._device = name
         self._hass = hass
         _LOGGER.debug("Adding lock: %s ", self._name)
         self._featureset_id = featureset_id
@@ -128,7 +129,7 @@ class LWRF2Lock(LockEntity):
                 # Serial numbers are unique identifiers within a specific domain
                 (DOMAIN, self.unique_id)
             },
-            'name': self.name,
+            'name': self._device,
             'manufacturer': "Lightwave RF",
             'model': self._lwlink.get_featureset_by_id(
                 self._featureset_id).product_code
