@@ -211,9 +211,14 @@ class LWRF2LED(LightEntity):
         self._featureset_id = featureset_id
         self._lwlink = link
         self._url = url
-        self._state = \
+        self._color = \
             self._lwlink.get_featureset_by_id(self._featureset_id).features[
                 "rgbColor"][1]
+        if self._color == 0:
+            self._state = False
+            self._color = 16711680
+        else:
+            self._state = True
         self._gen2 = self._lwlink.get_featureset_by_id(
             self._featureset_id).is_gen2()
 
@@ -255,9 +260,14 @@ class LWRF2LED(LightEntity):
 
     async def async_update(self):
         """Update state"""
-        self._state = \
+        color = \
             self._lwlink.get_featureset_by_id(self._featureset_id).features[
                 "rgbColor"][1]
+        if self._temp == 0:
+            self._state = False
+        else:
+            self._state = True
+            self._color = color
 
     @property
     def name(self):
@@ -280,7 +290,7 @@ class LWRF2LED(LightEntity):
     @property
     def is_on(self):
         """Lightwave switch is on state."""
-        return True
+        return self._state
 
     @property
     def brightness(self):
@@ -290,16 +300,19 @@ class LWRF2LED(LightEntity):
         """Turn the LightWave light on."""
         _LOGGER.debug("HA led.turn_on received, kwargs: %s", kwargs)
 
+        self._state = True
         if 'rgb_color' in kwargs:
             _LOGGER.debug("Changing LED color from %s to %s", self._state, kwargs['rgb_color'])
-            self._state = kwargs['rgb_color'][0]*65536 + kwargs['rgb_color'][1]*256 + kwargs['rgb_color'][2]
-            await self._lwlink.async_set_led_rgb_by_featureset_id(self._featureset_id, self._state)
+            self._color = kwargs['rgb_color'][0]*65536 + kwargs['rgb_color'][1]*256 + kwargs['rgb_color'][2]
+            await self._lwlink.async_set_led_rgb_by_featureset_id(self._featureset_id, self._color)
 
         self.async_schedule_update_ha_state()
 
     async def async_turn_off(self, **kwargs):
         """Turn the LightWave light off."""
         _LOGGER.debug("HA light.turn_off received, kwargs: %s", kwargs)
+        self._state = False
+        await self._lwlink.async_set_led_rgb_by_featureset_id(self._featureset_id, 0)
 
         self.async_schedule_update_ha_state()
 
