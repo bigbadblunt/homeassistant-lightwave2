@@ -287,7 +287,7 @@ class LWRF2LED(LightEntity):
     @property
     def brightness(self):
         """Return the brightness of the group lights."""
-        self._brightness
+        return self._brightness
 
     @property
     def rgb_color(self):
