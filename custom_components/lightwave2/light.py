@@ -272,6 +272,10 @@ class LWRF2LED(LightEntity):
         else:
             self._state = True
             self._color = color
+            r = self._color // 65536
+            g = (self._color - r * 65536) //256
+            b = (self._color - r * 65536 - g * 256)
+            self._brightness = max(r, g, b)
 
     @property
     def name(self):
