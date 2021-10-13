@@ -263,7 +263,7 @@ class LWRF2LED(LightEntity):
         color = \
             self._lwlink.get_featureset_by_id(self._featureset_id).features[
                 "rgbColor"][1]
-        if self._temp == 0:
+        if color == 0:
             self._state = False
         else:
             self._state = True
