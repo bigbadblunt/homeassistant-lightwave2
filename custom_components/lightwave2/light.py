@@ -278,13 +278,12 @@ class LWRF2LED(LightEntity):
     def brightness(self):
         """Return the brightness of the group lights."""
         r = self._color // 65536
-        g = (self._color - r * 65536) //256
+        g = (self._color - r * 65536) // 256
         b = (self._color - r * 65536 - g * 256)
-        return max(r, g, b)
+        return 255
 
     @property
     def rgb_color(self):
-        """Return the brightness of the group lights."""
         r = self._color // 65536
         g = (self._color - r * 65536) //256
         b = (self._color - r * 65536 - g * 256)
