@@ -305,9 +305,14 @@ class LWRF2LED(LightEntity):
         _LOGGER.debug("HA led.turn_on received, kwargs: %s", kwargs)
 
         self._state = True
+        if 'brightness' in kwargs:
+            scalar = kwargs['brightness']/255
+        else:
+            scalar = 1
+
         if 'rgb_color' in kwargs:
-            _LOGGER.debug("Changing LED color from %s to %s", self._state, kwargs['rgb_color'])
-            self._color = kwargs['rgb_color'][0]*65536 + kwargs['rgb_color'][1]*256 + kwargs['rgb_color'][2]
+            _LOGGER.debug("Changing LED color from %s to %s", self._color, kwargs['rgb_color'])
+            self._color = (kwargs['rgb_color'][0]*65536 + kwargs['rgb_color'][1]*256 + kwargs['rgb_color'][2]) * scalar
         
         await self._lwlink.async_set_led_rgb_by_featureset_id(self._featureset_id, self._color)
 
