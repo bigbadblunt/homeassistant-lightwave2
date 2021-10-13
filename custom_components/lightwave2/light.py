@@ -271,11 +271,11 @@ class LWRF2LED(LightEntity):
             self._state = False
         else:
             self._state = True
-            self._color = color
-            r = self._color // 65536
-            g = (self._color - r * 65536) //256
-            b = (self._color - r * 65536 - g * 256)
+            r = color // 65536
+            g = (color - r * 65536) //256
+            b = (color - r * 65536 - g * 256)
             self._brightness = max(r, g, b)
+            self._color = int(color * 255 / self._brightness)
 
     @property
     def name(self):
@@ -285,7 +285,7 @@ class LWRF2LED(LightEntity):
     @property
     def brightness(self):
         """Return the brightness of the group lights."""
-        return 255
+        self._brightness
 
     @property
     def rgb_color(self):
@@ -309,21 +309,15 @@ class LWRF2LED(LightEntity):
         _LOGGER.debug("HA led.turn_on received, kwargs: %s", kwargs)
 
         self._state = True
-        if 'brightness' in kwargs and 'rgb_color' in kwargs:
-            rgb = (kwargs['rgb_color'][0]*65536 + kwargs['rgb_color'][1]*256 + kwargs['rgb_color'][2])
+        if 'rgb_color' in kwargs:
+            self._color = (kwargs['rgb_color'][0]*65536 + kwargs['rgb_color'][1]*256 + kwargs['rgb_color'][2])
+        
+        if 'brightness' in kwargs:
             self._brightness = kwargs['brightness']
-            self._color = int(rgb * self._brightness / 255)
-        elif 'rgb_color' in kwargs:
-            rgb = (kwargs['rgb_color'][0]*65536 + kwargs['rgb_color'][1]*256 + kwargs['rgb_color'][2])
-            self._color = int(rgb * self._brightness / 255)
-        elif 'brightness' in kwargs:
-            self._color = int(self._color * kwargs['brightness'] / self._brightness)
-            self._brightness = kwargs['brightness']
-        else:
-            pass
 
+        rgb = int(rgb * self._brightness / 255)
         _LOGGER.debug("Changing LED color: %s brightness: %s", self._color, self._brightness)
-        await self._lwlink.async_set_led_rgb_by_featureset_id(self._featureset_id, self._color)
+        await self._lwlink.async_set_led_rgb_by_featureset_id(self._featureset_id, rgb)
 
         self.async_schedule_update_ha_state()
 
