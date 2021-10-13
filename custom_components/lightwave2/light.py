@@ -214,6 +214,8 @@ class LWRF2LED(LightEntity):
         self._state = \
             self._lwlink.get_featureset_by_id(self._featureset_id).features[
                 "rgbColor"][1]
+        self._gen2 = self._lwlink.get_featureset_by_id(
+            self._featureset_id).is_gen2()
 
     async def async_added_to_hass(self):
         """Subscribe to events."""
