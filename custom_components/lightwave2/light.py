@@ -216,14 +216,18 @@ class LWRF2LED(LightEntity):
                 "rgbColor"][1]
         if color == 0:
             self._state = False
-            color = 16711680
+            self._r = 255
+            self._g = 255
+            self._b = 255
         else:
             self._state = True
-        r = color // 65536
-        g = (color - r * 65536) //256
-        b = (color - r * 65536 - g * 256)
-        self._brightness = max(r, g, b)
-        self._color = int(color * 255 / self._brightness)
+            self._r = color // 65536
+            self._g = (color - self._r * 65536) //256
+            self._b = (color - self._r * 65536 - self._g * 256)
+        self._brightness = max(self._r, self._g, self._b)
+        self._r = int(self._r * 255 / self._brightness)
+        self._g = int(self._g * 255 / self._brightness)
+        self._b = int(self._b * 255 / self._brightness)
         self._gen2 = self._lwlink.get_featureset_by_id(
             self._featureset_id).is_gen2()
 
@@ -272,12 +276,13 @@ class LWRF2LED(LightEntity):
             self._state = False
         else:
             self._state = True
-            r = color // 65536
-            g = (color - r * 65536) //256
-            b = (color - r * 65536 - g * 256)
-            self._brightness = max(r, g, b)
-            self._color = int(color * 255 / self._brightness)
-        _LOGGER.debug("LED state update color: %s brightness: %s", self._color, self._brightness)
+            self._r = color // 65536
+            self._g = (color - self._r * 65536) //256
+            self._b = (color - self._r * 65536 - self._g * 256)
+            self._brightness = max(self._r, self._g, self._b)
+            self._r = int(self._r * 255 / self._brightness)
+            self._g = int(self._g * 255 / self._brightness)
+            self._b = int(self._b * 255 / self._brightness)
 
     @property
     def name(self):
@@ -291,10 +296,7 @@ class LWRF2LED(LightEntity):
 
     @property
     def rgb_color(self):
-        r = self._color // 65536
-        g = (self._color - r * 65536) //256
-        b = (self._color - r * 65536 - g * 256)
-        return (r, g, b)
+        return (self._r, self._g, self._b)
 
     @property
     def unique_id(self):
@@ -312,12 +314,18 @@ class LWRF2LED(LightEntity):
 
         self._state = True
         if 'rgb_color' in kwargs:
-            self._color = (kwargs['rgb_color'][0]*65536 + kwargs['rgb_color'][1]*256 + kwargs['rgb_color'][2])
+            self._r = kwargs['rgb_color'][0]
+            self._g = kwargs['rgb_color'][1]
+            self._b = kwargs['rgb_color'][2]
         
         if 'brightness' in kwargs:
             self._brightness = kwargs['brightness']
 
-        rgb = int(self._color * self._brightness / 255)
+        r = int(self._r * self._brightness /255)
+        g = int(self._g * self._brightness /255)
+        b = int(self._b * self._brightness /255)
+        rgb = r * 65536 + g * 256 + b
+
         _LOGGER.debug("Changing LED color: %s brightness: %s", self._color, self._brightness)
         await self._lwlink.async_set_led_rgb_by_featureset_id(self._featureset_id, rgb)
 
