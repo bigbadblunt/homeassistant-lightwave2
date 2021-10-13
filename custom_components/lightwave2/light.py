@@ -310,9 +310,9 @@ class LWRF2LED(LightEntity):
 
         if 'rgb_color' in kwargs:
             _LOGGER.debug("Changing LED color from %s to %s", self._color, kwargs['rgb_color'])
-            self._color = (kwargs['rgb_color'][0]*65536 + kwargs['rgb_color'][1]*256 + kwargs['rgb_color'][2])
+            rgb = (kwargs['rgb_color'][0]*65536 + kwargs['rgb_color'][1]*256 + kwargs['rgb_color'][2])
         
-        newcolor = int(self._color * self._brightness / 255)
+        newcolor = int(rgb * self._brightness / 255)
         await self._lwlink.async_set_led_rgb_by_featureset_id(self._featureset_id, newcolor)
 
         self.async_schedule_update_ha_state()
