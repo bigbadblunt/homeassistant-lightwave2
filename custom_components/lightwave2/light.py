@@ -309,15 +309,21 @@ class LWRF2LED(LightEntity):
         _LOGGER.debug("HA led.turn_on received, kwargs: %s", kwargs)
 
         self._state = True
-        if 'brightness' in kwargs:
-            self._brightness = kwargs['brightness']
-
-        if 'rgb_color' in kwargs:
-            _LOGGER.debug("Changing LED color from %s to %s", self._color, kwargs['rgb_color'])
+        if 'brightness' in kwargs and 'rgb_color' in kwargs:
             rgb = (kwargs['rgb_color'][0]*65536 + kwargs['rgb_color'][1]*256 + kwargs['rgb_color'][2])
-        
-        newcolor = int(rgb * self._brightness / 255)
-        await self._lwlink.async_set_led_rgb_by_featureset_id(self._featureset_id, newcolor)
+            self._brightness = kwargs['brightness']
+            self.color = int(rgb * self._brightness / 255)
+        elif 'rgb_color' in kwargs:
+            rgb = (kwargs['rgb_color'][0]*65536 + kwargs['rgb_color'][1]*256 + kwargs['rgb_color'][2])
+            self.color = int(rgb * self._brightness / 255)
+        elif 'brightness' in kwargs:
+            self._color = self._color * kwargs['brightness'] / self._brightness
+            self._brightness = kwargs['brightness']
+        else:
+            pass
+
+        _LOGGER.debug("Changing LED color from %s to %s", self._color, kwargs['rgb_color'])
+        await self._lwlink.async_set_led_rgb_by_featureset_id(self._featureset_id, self._color)
 
         self.async_schedule_update_ha_state()
 
