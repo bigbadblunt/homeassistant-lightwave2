@@ -292,10 +292,6 @@ class LWRF2LED(LightEntity):
         """Lightwave switch is on state."""
         return self._state
 
-    @property
-    def brightness(self):
-        return 255
-
     async def async_turn_on(self, **kwargs):
         """Turn the LightWave light on."""
         _LOGGER.debug("HA led.turn_on received, kwargs: %s", kwargs)
