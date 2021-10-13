@@ -317,7 +317,7 @@ class LWRF2LED(LightEntity):
             rgb = (kwargs['rgb_color'][0]*65536 + kwargs['rgb_color'][1]*256 + kwargs['rgb_color'][2])
             self.color = int(rgb * self._brightness / 255)
         elif 'brightness' in kwargs:
-            self._color = self._color * kwargs['brightness'] / self._brightness
+            self._color = int(self._color * kwargs['brightness'] / self._brightness)
             self._brightness = kwargs['brightness']
         else:
             pass
