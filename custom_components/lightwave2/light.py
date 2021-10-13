@@ -277,6 +277,7 @@ class LWRF2LED(LightEntity):
             b = (color - r * 65536 - g * 256)
             self._brightness = max(r, g, b)
             self._color = int(color * 255 / self._brightness)
+        _LOGGER.debug("LED state update color: %s brightness: %s", self._color, self._brightness)
 
     @property
     def name(self):
