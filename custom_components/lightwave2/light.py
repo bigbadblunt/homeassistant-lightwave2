@@ -284,7 +284,7 @@ class LWRF2LED(LightEntity):
 
     @property
     def brightness(self):
-        return 100
+        return 255
 
     async def async_turn_on(self, **kwargs):
         """Turn the LightWave light on."""
@@ -293,7 +293,7 @@ class LWRF2LED(LightEntity):
         if 'rgb_color' in kwargs:
             _LOGGER.debug("Changing LED color from %s to %s", self._state, kwargs['rgb_color'])
             self._state = kwargs['rgb_color'][0]*65536 + kwargs['rgb_color'][1]*256 + kwargs['rgb_color'][2]
-            self._lwlink.async_set_led_rgb_by_featureset_id(self._featureset_id, self._state)
+            await self._lwlink.async_set_led_rgb_by_featureset_id(self._featureset_id, self._state)
 
         self.async_schedule_update_ha_state()
 
