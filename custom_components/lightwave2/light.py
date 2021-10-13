@@ -219,6 +219,10 @@ class LWRF2LED(LightEntity):
             self._color = 16711680
         else:
             self._state = True
+        r = self._color // 65536
+        g = (self._color - r * 65536) //256
+        b = (self._color - r * 65536 - g * 256)
+        self._brightness = max(r, g, b)
         self._gen2 = self._lwlink.get_featureset_by_id(
             self._featureset_id).is_gen2()
 
@@ -277,9 +281,6 @@ class LWRF2LED(LightEntity):
     @property
     def brightness(self):
         """Return the brightness of the group lights."""
-        r = self._color // 65536
-        g = (self._color - r * 65536) // 256
-        b = (self._color - r * 65536 - g * 256)
         return 255
 
     @property
@@ -305,15 +306,14 @@ class LWRF2LED(LightEntity):
 
         self._state = True
         if 'brightness' in kwargs:
-            scalar = kwargs['brightness']/255
-        else:
-            scalar = 1
+            self._brightness = kwargs['brightness']
 
         if 'rgb_color' in kwargs:
             _LOGGER.debug("Changing LED color from %s to %s", self._color, kwargs['rgb_color'])
-            self._color = int((kwargs['rgb_color'][0]*65536 + kwargs['rgb_color'][1]*256 + kwargs['rgb_color'][2]) * scalar)
+            self._color = (kwargs['rgb_color'][0]*65536 + kwargs['rgb_color'][1]*256 + kwargs['rgb_color'][2])
         
-        await self._lwlink.async_set_led_rgb_by_featureset_id(self._featureset_id, self._color)
+        newcolor = int(self._color * self._brightness / 255)
+        await self._lwlink.async_set_led_rgb_by_featureset_id(self._featureset_id, newcolor)
 
         self.async_schedule_update_ha_state()
 
