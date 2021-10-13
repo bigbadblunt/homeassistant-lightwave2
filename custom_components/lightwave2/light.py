@@ -326,7 +326,6 @@ class LWRF2LED(LightEntity):
         b = int(self._b * self._brightness /255)
         rgb = r * 65536 + g * 256 + b
 
-        _LOGGER.debug("Changing LED color: %s brightness: %s", self._color, self._brightness)
         await self._lwlink.async_set_led_rgb_by_featureset_id(self._featureset_id, rgb)
 
         self.async_schedule_update_ha_state()
