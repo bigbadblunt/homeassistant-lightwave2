@@ -27,6 +27,10 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         if link.featuresets[featureset_id].has_led():
             lights.append(LWRF2LED(name, featureset_id, link, url, hass))
 
+    for featureset_id, name in link.get_hubs():
+        if link.featuresets[featureset_id].has_led():
+            lights.append(LWRF2LED(name, featureset_id, link, url, hass))
+
     hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES].extend(lights)
     async_add_entities(lights)
 
