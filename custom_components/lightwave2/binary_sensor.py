@@ -4,7 +4,7 @@ try:
     from homeassistant.components.binary_sensor import BinarySensorEntity
 except ImportError:
     from homeassistant.components.binary_sensor import BinarySensorDevice as BinarySensorEntity
-from homeassistant.components.binary_sensor import (DEVICE_CLASS_DOOR, DEVICE_CLASS_PLUG)
+from homeassistant.components.binary_sensor import (DEVICE_CLASS_WINDOW, DEVICE_CLASS_PLUG)
 from homeassistant.core import callback
 from .const import DOMAIN
 
@@ -92,7 +92,7 @@ class LWRF2BinarySensor(BinarySensorEntity):
 
     @property
     def device_class(self):
-        return DEVICE_CLASS_DOOR
+        return DEVICE_CLASS_WINDOW
 
     @property
     def device_state_attributes(self):
