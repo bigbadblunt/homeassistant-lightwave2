@@ -27,7 +27,7 @@ ENERGY_SENSORS = [
 
 SIGNAL_SENSORS = [
     SensorEntityDescription(
-        key="signal_strength",
+        key="rssi",
         native_unit_of_measurement=SIGNAL_STRENGTH_DECIBELS,
         device_class=DEVICE_CLASS_SIGNAL_STRENGTH,
         state_class=STATE_CLASS_MEASUREMENT,
@@ -37,7 +37,7 @@ SIGNAL_SENSORS = [
 
 BATTERY_SENSORS = [
     SensorEntityDescription(
-        key="battery",
+        key="batteryLevel",
         native_unit_of_measurement=PERCENTAGE,
         device_class=DEVICE_CLASS_BATTERY,
         state_class=STATE_CLASS_MEASUREMENT,
