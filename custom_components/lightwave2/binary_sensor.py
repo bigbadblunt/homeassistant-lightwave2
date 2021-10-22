@@ -125,7 +125,7 @@ class LWRF2SocketBinarySensor(BinarySensorEntity):
     """Representation of a LightWaveRF window sensor."""
 
     def __init__(self, name, featureset_id, link, url=None):
-        self._name = name
+        self._name = f"{name} Plug Sensor"
         _LOGGER.debug("Adding sensor: %s ", self._name)
         self._featureset_id = featureset_id
         self._lwlink = link
