@@ -45,13 +45,13 @@ class LWRF2Climate(ClimateEntity):
             self._support_flags = SUPPORT_TARGET_TEMPERATURE
         self._gen2 = self._lwlink.get_featureset_by_id(
             self._featureset_id).is_gen2()
-        if 'valveLevel' in self._lwlink.get_featureset_by_id(self._featureset_id).keys():
+        if 'valveLevel' in self._lwlink.get_featureset_by_id(self._featureset_id).features.keys():
             self._valve_level = \
                 self._lwlink.get_featureset_by_id(self._featureset_id).features[
                     "valveLevel"][1]
         else:
             self._valve_level = 100
-        if 'heatState' in self._lwlink.get_featureset_by_id(self._featureset_id).keys():
+        if 'heatState' in self._lwlink.get_featureset_by_id(self._featureset_id).features.keys():
             self._thermostat = False
         else:
             self._thermostat = True
@@ -179,7 +179,7 @@ class LWRF2Climate(ClimateEntity):
 
     async def async_update(self):
         """Update state"""
-        if 'valveLevel' in self._lwlink.get_featureset_by_id(self._featureset_id).keys():
+        if 'valveLevel' in self._lwlink.get_featureset_by_id(self._featureset_id).features.keys():
             self._valve_level = \
                 self._lwlink.get_featureset_by_id(self._featureset_id).features[
                     "valveLevel"][1]
