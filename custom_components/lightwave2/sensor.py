@@ -2,13 +2,13 @@ import logging
 from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES, LIGHTWAVE_WEBHOOK, DOMAIN
 from homeassistant.components.sensor import  STATE_CLASS_MEASUREMENT, STATE_CLASS_TOTAL_INCREASING, SensorEntity, SensorEntityDescription
 from homeassistant.const import (POWER_WATT, ENERGY_WATT_HOUR, DEVICE_CLASS_POWER, DEVICE_CLASS_ENERGY, 
-    DEVICE_CLASS_SIGNAL_STRENGTH, SIGNAL_STRENGTH_DECIBELS, PERCENTAGE, DEVICE_CLASS_BATTERY)
+    DEVICE_CLASS_SIGNAL_STRENGTH, SIGNAL_STRENGTH_DECIBELS_MILLIWATT, PERCENTAGE, DEVICE_CLASS_BATTERY)
 from homeassistant.core import callback
 
 DEPENDENCIES = ['lightwave2']
 _LOGGER = logging.getLogger(__name__)
 
-ENERGY_SENSORS = [
+SENSORS = [
     SensorEntityDescription(
         key="power",
         native_unit_of_measurement=POWER_WATT,
@@ -23,19 +23,13 @@ ENERGY_SENSORS = [
         state_class=STATE_CLASS_TOTAL_INCREASING,
         name="Total Consumption",
     )
-]
-
-SIGNAL_SENSORS = [
     SensorEntityDescription(
         key="rssi",
-        native_unit_of_measurement=SIGNAL_STRENGTH_DECIBELS,
+        native_unit_of_measurement=SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
         device_class=DEVICE_CLASS_SIGNAL_STRENGTH,
         state_class=STATE_CLASS_MEASUREMENT,
         name="Signal Strength",
-    )
-]
-
-BATTERY_SENSORS = [
+    ),
     SensorEntityDescription(
         key="batteryLevel",
         native_unit_of_measurement=PERCENTAGE,
@@ -52,28 +46,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     link = hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_LINK2]
     url = hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_WEBHOOK]
 
-    for featureset_id, name in link.get_energy():
-        for description in ENERGY_SENSORS:
-            sensors.append(LWRF2Sensor(name, featureset_id, link, url, description))
-
-    for featureset_id, name in link.get_switches():
-        if link.get_featureset_by_id(featureset_id).reports_power():
-            for description in ENERGY_SENSORS:
-                sensors.append(LWRF2Sensor(name, featureset_id, link, url, description))
-
-    for featureset_id, name in link.get_lights():
-        if link.get_featureset_by_id(featureset_id).reports_power():
-            for description in ENERGY_SENSORS:
-                sensors.append(LWRF2Sensor(name, featureset_id, link, url, description))
-
     for featureset_id, featureset in link.featuresets.items():
-        if  featureset.has_feature('rssi'):
-            for description in SIGNAL_SENSORS:
-                sensors.append(LWRF2Sensor(featureset.name, featureset_id, link, url, description))
-
-    for featureset_id, featureset in link.featuresets.items():
-        if featureset.has_feature('batteryLevel'):
-            for description in BATTERY_SENSORS:
+        for description in SENSORS:
+            if featureset.has_feature(description.key):
                 sensors.append(LWRF2Sensor(featureset.name, featureset_id, link, url, description))
 
     hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES].extend(sensors)
@@ -126,7 +101,7 @@ class LWRF2Sensor(SensorEntity):
 
     @property
     def name(self):
-        """Lightwave switch name."""
+        """Lightwave name."""
         return self._name
 
     @property
