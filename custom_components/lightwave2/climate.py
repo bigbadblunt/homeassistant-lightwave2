@@ -77,10 +77,10 @@ class LWRF2Climate(ClimateEntity):
         if self._has_humidity:
             self._humidity = \
                 self._lwlink.get_featureset_by_id(self._featureset_id).features[
-                    "humidity"][1] / 10
+                    "humidity"][1]
             self._target_humidity = \
                 self._lwlink.get_featureset_by_id(self._featureset_id).features[
-                    "targetHumiditye"][1] / 10
+                    "targetHumidity"][1] 
 
         if self._valve_level == 100 and self._target_temperature < 40:
             self._preset_mode = "Auto"
@@ -233,6 +233,15 @@ class LWRF2Climate(ClimateEntity):
         if self._valve_level == 100 and self._target_temperature < 40:
             self._preset_mode = "Auto"
             self._last_tt = self._target_temperature
+
+        if self._has_humidity:
+            self._humidity = \
+                self._lwlink.get_featureset_by_id(self._featureset_id).features[
+                    "humidity"][1]
+            self._target_humidity = \
+                self._lwlink.get_featureset_by_id(self._featureset_id).features[
+                    "targetHumidity"][1] 
+
         elif self._valve_level == 100:
             self._preset_mode = "100%"
         elif self._valve_level == 80:
