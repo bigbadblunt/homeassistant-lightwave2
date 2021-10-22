@@ -11,7 +11,6 @@ from .const import DOMAIN
 
 DEPENDENCIES = ['lightwave2']
 _LOGGER = logging.getLogger(__name__)
-ATTR_CURRENT_POWER_W = "current_power_w"
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
     """Find and return LightWave lights."""
@@ -184,9 +183,6 @@ class LWRF2Light(LightEntity):
             attribs['lwrf_' + featurename] = featuredict[1]
 
         attribs['lrwf_product_code'] = self._lwlink.get_featureset_by_id(self._featureset_id).product_code
-
-        if self._power is not None:
-            attribs[ATTR_CURRENT_POWER_W] = self._power
 
         return attribs
 

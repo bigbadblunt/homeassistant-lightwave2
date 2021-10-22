@@ -4,7 +4,6 @@ try:
     from homeassistant.components.switch import SwitchEntity
 except ImportError:
     from homeassistant.components.switch import SwitchDevice as SwitchEntity
-from homeassistant.components.switch import ATTR_CURRENT_POWER_W
 from homeassistant.core import callback
 from .const import DOMAIN
 
@@ -129,9 +128,6 @@ class LWRF2Switch(SwitchEntity):
 
         attribs['lrwf_product_code'] = self._lwlink.get_featureset_by_id(
             self._featureset_id).product_code
-
-        if self._power is not None:
-            attribs[ATTR_CURRENT_POWER_W] = self._power
 
         return attribs
 
