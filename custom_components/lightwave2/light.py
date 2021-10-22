@@ -191,7 +191,7 @@ class LWRF2Light(LightEntity):
         return {
             'identifiers': {
                 # Serial numbers are unique identifiers within a specific domain
-                (DOMAIN, self.unique_id)
+                (DOMAIN, self._featureset_id)
             },
             'name': self.name,
             'manufacturer': "Lightwave RF",
