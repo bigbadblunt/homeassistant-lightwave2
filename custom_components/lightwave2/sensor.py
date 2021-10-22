@@ -38,6 +38,20 @@ SENSORS = [
         state_class=STATE_CLASS_MEASUREMENT,
         name="Battery Level",
     ),
+        SensorEntityDescription(
+        key="voltage",
+        native_unit_of_measurement=ELECTRIC_POTENTIAL_VOLT,
+        device_class=DEVICE_CLASS_VOLTAGE,
+        state_class=STATE_CLASS_MEASUREMENT,
+        name="Voltage",
+    ),
+        SensorEntityDescription(
+        key="current",
+        native_unit_of_measurement=ELECTRIC_CURRENT_AMPERE,
+        device_class=DEVICE_CLASS_CURRENT,
+        state_class=STATE_CLASS_MEASUREMENT,
+        name="Current",
+    ),
     SensorEntityDescription(
         key="dawnTime",
         device_class=DEVICE_CLASS_TIMESTAMP,
