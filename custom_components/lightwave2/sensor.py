@@ -78,11 +78,11 @@ class LWRF2Sensor(SensorEntity):
         self.entity_description = description
         self._state = self._lwlink.get_featureset_by_id(self._featureset_id).features[self.entity_description.key][1]
         if self.entity_description.key == 'duskTime' or self.entity_description.key == 'dawnTime':
-            hour = _state // 3600
-            _state = state - hour * 3600
-            min = _state // 60
-            second = _state - min * 60
-            _state = f'T{hour:02}{min:02}{second:02}'
+            hour = self._state // 3600
+            self._state = self._state - hour * 3600
+            min = self._state // 60
+            second = self._state - min * 60
+            self._state = f'T{hour:02}{min:02}{second:02}'
         for featureset_id, hubname in link.get_hubs():
             self._linkid = featureset_id
 
@@ -113,11 +113,11 @@ class LWRF2Sensor(SensorEntity):
         """Update state"""
         self._state = self._lwlink.get_featureset_by_id(self._featureset_id).features[self.entity_description.key][1]
         if self.entity_description.key == 'duskTime' or self.entity_description.key == 'dawnTime':
-            hour = _state // 3600
-            _state = state - hour * 3600
-            min = _state // 60
-            second = _state - min * 60
-            _state = f'T{hour:02}{min:02}{second:02}'
+            hour = self._state // 3600
+            self._state = self._state - hour * 3600
+            min = self._state // 60
+            second = self._state - min * 60
+            self._state = f'T{hour:02}{min:02}{second:02}'
 
     @property
     def name(self):
