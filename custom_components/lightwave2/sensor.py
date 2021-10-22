@@ -66,15 +66,15 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
             for description in ENERGY_SENSORS:
                 sensors.append(LWRF2Sensor(name, featureset_id, link, url, description))
 
-    for featureset_id, featureset in link.featuresets:
+    for featureset_id, featureset in link.featuresets.items():
         if  featureset.has_feature('rssi'):
             for description in SIGNAL_SENSORS:
-                sensors.append(LWRF2Sensor(featureset.name, featureset.featureset_id, link, url, description))
+                sensors.append(LWRF2Sensor(featureset.name, featureset_id, link, url, description))
 
-    for featureset_id, featureset in link.featuresets:
+    for featureset_id, featureset in link.featuresets.items():
         if featureset.has_feature('batteryLevel'):
             for description in BATTERY_SENSORS:
-                sensors.append(LWRF2Sensor(featureset.name, featureset.featureset_id, link, url, description))
+                sensors.append(LWRF2Sensor(featureset.name, featureset_id, link, url, description))
 
     hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES].extend(sensors)
     async_add_entities(sensors)
