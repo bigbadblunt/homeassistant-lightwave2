@@ -82,7 +82,8 @@ class LWRF2Sensor(SensorEntity):
             self._state = self._state - hour * 3600
             min = self._state // 60
             second = self._state - min * 60
-            self._state = f'T{hour:02}{min:02}{second:02}'
+            self._state = f'T{hour:02}:{min:02}:{second:02}'
+        if self.entity_description.key == 'duskTime' or self.entity_description.key == 'dawnTime':
         for featureset_id, hubname in link.get_hubs():
             self._linkid = featureset_id
 
