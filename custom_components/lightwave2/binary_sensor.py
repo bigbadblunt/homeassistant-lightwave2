@@ -4,7 +4,7 @@ try:
     from homeassistant.components.binary_sensor import BinarySensorEntity
 except ImportError:
     from homeassistant.components.binary_sensor import BinarySensorDevice as BinarySensorEntity
-from homeassistant.components.binary_sensor import (DEVICE_CLASS_DOOR)
+from homeassistant.components.binary_sensor import (DEVICE_CLASS_DOOR, DEVICE_CLASS_PLUG)
 from homeassistant.core import callback
 from .const import DOMAIN
 
@@ -20,6 +20,10 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
     for featureset_id, name in link.get_windowsensors():
         sensors.append(LWRF2BinarySensor(name, featureset_id, link, url))
+
+    for featureset_id, name in link.get_switches():
+        if link.featuresets[featureset_id].has_feature('outletInUse'):
+            sensors.append(LWRF2SocketBinarySensor(name, featureset_id, link, url))
 
     hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES].extend(sensors)
     async_add_entities(sensors)
@@ -89,6 +93,96 @@ class LWRF2BinarySensor(BinarySensorEntity):
     @property
     def device_class(self):
         return DEVICE_CLASS_DOOR
+
+    @property
+    def device_state_attributes(self):
+        """Return the optional state attributes."""
+
+        attribs = {}
+
+        for featurename, featuredict in self._lwlink.get_featureset_by_id(self._featureset_id).features.items():
+            attribs['lwrf_' + featurename] = featuredict[1]
+
+        attribs['lrwf_product_code'] = self._lwlink.get_featureset_by_id(self._featureset_id).product_code
+
+        return attribs
+
+    @property
+    def device_info(self):
+        return {
+            'identifiers': {
+                # Serial numbers are unique identifiers within a specific domain
+                (DOMAIN, self._featureset_id)
+            },
+            'name': self.name,
+            'manufacturer': "Lightwave RF",
+            'model': self._lwlink.get_featureset_by_id(
+                self._featureset_id).product_code,
+            'via_device': (DOMAIN, self._linkid)
+        }
+
+class LWRF2SocketBinarySensor(BinarySensorEntity):
+    """Representation of a LightWaveRF window sensor."""
+
+    def __init__(self, name, featureset_id, link, url=None):
+        self._name = name
+        _LOGGER.debug("Adding sensor: %s ", self._name)
+        self._featureset_id = featureset_id
+        self._lwlink = link
+        self._url = url
+        self._state = \
+            self._lwlink.get_featureset_by_id(self._featureset_id).features[
+                "outletInUse"][1]
+        for featureset_id, hubname in link.get_hubs():
+            self._linkid = featureset_id
+
+    async def async_added_to_hass(self):
+        """Subscribe to events."""
+        await self._lwlink.async_register_callback(self.async_update_callback)
+        if self._url is not None:
+            for featurename in self._lwlink.get_featureset_by_id(self._featureset_id).features:
+                featureid = self._lwlink.get_featureset_by_id(self._featureset_id).features[featurename][0]
+                _LOGGER.debug("Registering webhook: %s %s", featurename, featureid.replace("+", "P"))
+                req = await self._lwlink.async_register_webhook(self._url, featureid, "hass" + featureid.replace("+", "P"), overwrite = True)
+
+    @callback
+    def async_update_callback(self, **kwargs):
+        """Update the component's state."""
+        self.async_schedule_update_ha_state(True)
+
+    @property
+    def should_poll(self):
+        """Lightwave2 library will push state, no polling needed"""
+        return False
+
+    @property
+    def assumed_state(self):
+        return False
+
+    async def async_update(self):
+        """Update state"""
+        self._state = \
+            self._lwlink.get_featureset_by_id(self._featureset_id).features[
+                "outletInUse"][1]
+
+    @property
+    def name(self):
+        """Lightwave switch name."""
+        return self._name
+
+    @property
+    def unique_id(self):
+        """Unique identifier. Provided by hub."""
+        return self._featureset_id
+
+    @property
+    def is_on(self):
+        """Lightwave switch is on state."""
+        return self._state
+
+    @property
+    def device_class(self):
+        return DEVICE_CLASS_PLUG
 
     @property
     def device_state_attributes(self):
