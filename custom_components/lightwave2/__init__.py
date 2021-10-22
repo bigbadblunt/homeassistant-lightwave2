@@ -3,7 +3,8 @@ import logging
 import voluptuous as vol
 
 from .const import DOMAIN, CONF_PUBLICAPI, CONF_DEBUG, LIGHTWAVE_LINK2,  LIGHTWAVE_ENTITIES, \
-    LIGHTWAVE_WEBHOOK, LIGHTWAVE_WEBHOOKID, SERVICE_SETLEDRGB, SERVICE_SETLOCKED, SERVICE_SETUNLOCKED, SERVICE_SETBRIGHTNESS
+    LIGHTWAVE_WEBHOOK, LIGHTWAVE_WEBHOOKID, SERVICE_SETLEDRGB, SERVICE_SETLOCKED, SERVICE_SETUNLOCKED, \
+    SERVICE_SETBRIGHTNESS, LIGHTWAVE_LINKID
 from homeassistant.const import (CONF_USERNAME, CONF_PASSWORD)
 from homeassistant.helpers import device_registry as dr
 
@@ -141,6 +142,7 @@ async def async_setup_entry(hass, config_entry):
             name=hubname,
             model=link.get_featureset_by_id(featureset_id).product_code
         )
+        hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_LINKID] = featureset_id
 
     forward_setup = hass.config_entries.async_forward_entry_setup
     hass.async_create_task(forward_setup(config_entry, "switch"))

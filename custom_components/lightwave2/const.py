@@ -3,6 +3,7 @@ CONF_PUBLICAPI = 'lightwave_publicapi'
 CONF_DEBUG = 'lightwave_debug'
 CONF_FORCESEND = 'lightwave_alwayssend'
 LIGHTWAVE_LINK2 = 'lightwave_link2'
+LIGHTWAVE_LINKID = 'lightwave_linkid'
 LIGHTWAVE_ENTITIES = "lightwave_entities"
 LIGHTWAVE_WEBHOOK = 'lightwave_webhook'
 LIGHTWAVE_WEBHOOKID = 'lightwave_webhookid'

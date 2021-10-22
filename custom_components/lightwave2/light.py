@@ -59,10 +59,8 @@ class LWRF2Light(LightEntity):
                 "power"][1]
         self._has_led = self._lwlink.get_featureset_by_id(
             self._featureset_id).has_led()
-        self._ledrgb = None
-        if self._has_led:
-            self._ledrgb = self._lwlink.get_featureset_by_id(self._featureset_id).features[
-                "rgbColor"][1]
+        for featureset_id, hubname in link.get_hubs():
+            self._linkid = featureset_id
 
     async def async_added_to_hass(self):
         """Subscribe to events."""
@@ -116,10 +114,6 @@ class LWRF2Light(LightEntity):
         if self._reports_power:
             self._power = self._lwlink.get_featureset_by_id(self._featureset_id).features[
                 "power"][1]
-        if self._has_led:
-            self._ledrgb = self._lwlink.get_featureset_by_id(
-                self._featureset_id).features[
-                "rgbColor"][1]
 
     @property
     def name(self):
@@ -165,8 +159,7 @@ class LWRF2Light(LightEntity):
         self.async_schedule_update_ha_state()
 
     async def async_set_rgb(self, led_rgb):
-        self._ledrgb = led_rgb
-        await self._lwlink.async_set_led_rgb_by_featureset_id(self._featureset_id, self._ledrgb)
+        await self._lwlink.async_set_led_rgb_by_featureset_id(self._featureset_id, self.ledrgb)
 
     @property
     def current_power_w(self):
@@ -196,8 +189,8 @@ class LWRF2Light(LightEntity):
             'name': self.name,
             'manufacturer': "Lightwave RF",
             'model': self._lwlink.get_featureset_by_id(
-                self._featureset_id).product_code
-            #TODO 'via_device': (hue.DOMAIN, self.api.bridgeid),
+                self._featureset_id).product_code,
+            'via_device': (DOMAIN, self._linkid)
         }
 
 class LWRF2LED(LightEntity):
@@ -230,6 +223,8 @@ class LWRF2LED(LightEntity):
         self._b = int(self._b * 255 / self._brightness)
         self._gen2 = self._lwlink.get_featureset_by_id(
             self._featureset_id).is_gen2()
+        for featureset_id, hubname in link.get_hubs():
+            self._linkid = featureset_id
 
     async def async_added_to_hass(self):
         """Subscribe to events."""
@@ -359,6 +354,6 @@ class LWRF2LED(LightEntity):
             'name': self._device,
             'manufacturer': "Lightwave RF",
             'model': self._lwlink.get_featureset_by_id(
-                self._featureset_id).product_code
-            #TODO 'via_device': (hue.DOMAIN, self.api.bridgeid),
+                self._featureset_id).product_code,
+            'via_device': (DOMAIN, self._linkid)
         }
