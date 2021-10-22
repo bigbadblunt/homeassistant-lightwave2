@@ -22,7 +22,7 @@ SENSORS = [
         device_class=DEVICE_CLASS_ENERGY,
         state_class=STATE_CLASS_TOTAL_INCREASING,
         name="Total Consumption",
-    )
+    ),
     SensorEntityDescription(
         key="rssi",
         native_unit_of_measurement=SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
