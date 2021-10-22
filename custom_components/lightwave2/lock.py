@@ -135,5 +135,5 @@ class LWRF2Lock(LockEntity):
             'manufacturer': "Lightwave RF",
             'model': self._lwlink.get_featureset_by_id(
                 self._featureset_id).product_code,
-            'via_device': (DOMAIN, self_linkid)
+            'via_device': (DOMAIN, self._linkid)
         }
