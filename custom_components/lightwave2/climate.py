@@ -45,15 +45,22 @@ class LWRF2Climate(ClimateEntity):
             self._support_flags = SUPPORT_TARGET_TEMPERATURE
         self._gen2 = self._lwlink.get_featureset_by_id(
             self._featureset_id).is_gen2()
-        if self._gen2:
-            self._valve_level = 100
-        else:
+        if 'valveLevel' in self._lwlink.get_featureset_by_id(self._featureset_id).keys():
             self._valve_level = \
-            self._lwlink.get_featureset_by_id(self._featureset_id).features[
-                "valveLevel"][1]
-        self._onoff = \
-            self._lwlink.get_featureset_by_id(self._featureset_id).features[
-                "heatState"][1]
+                self._lwlink.get_featureset_by_id(self._featureset_id).features[
+                    "valveLevel"][1]
+        else:
+            self._valve_level = 100
+        if 'heatState' in self._lwlink.get_featureset_by_id(self._featureset_id).keys():
+            self._thermostat = False
+        else:
+            self._thermostat = True
+        if self._thermostat:
+            self._onoff = 1
+        else:
+            self._onoff = \
+                self._lwlink.get_featureset_by_id(self._featureset_id).features[
+                    "heatState"][1]
         self._temperature = \
             self._lwlink.get_featureset_by_id(self._featureset_id).features[
                 "temperature"][1] / 10
@@ -134,7 +141,10 @@ class LWRF2Climate(ClimateEntity):
     @property
     def hvac_modes(self):
         """Return the list of available hvac operation modes."""
-        return [HVAC_MODE_HEAT, HVAC_MODE_OFF]
+        if self._thermostat:
+            return [HVAC_MODE_HEAT]
+        else:
+            return [HVAC_MODE_HEAT, HVAC_MODE_OFF]
 
     @property
     def hvac_action(self):
@@ -169,12 +179,18 @@ class LWRF2Climate(ClimateEntity):
 
     async def async_update(self):
         """Update state"""
-        self._valve_level = \
-            self._lwlink.get_featureset_by_id(self._featureset_id).features[
-                "valveLevel"][1]
-        self._onoff = \
-            self._lwlink.get_featureset_by_id(self._featureset_id).features[
-                "heatState"][1]
+        if 'valveLevel' in self._lwlink.get_featureset_by_id(self._featureset_id).keys():
+            self._valve_level = \
+                self._lwlink.get_featureset_by_id(self._featureset_id).features[
+                    "valveLevel"][1]
+        else:
+            self._valve_level = 100
+        if self._thermostat:
+            self._onoff = 1
+        else:
+            self._onoff = \
+                self._lwlink.get_featureset_by_id(self._featureset_id).features[
+                    "heatState"][1]
         self._temperature = \
             self._lwlink.get_featureset_by_id(self._featureset_id).features[
                 "temperature"][1] / 10
