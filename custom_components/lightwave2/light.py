@@ -1,9 +1,6 @@
 import logging
 from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES, LIGHTWAVE_WEBHOOK
-try:
-    from homeassistant.components.light import LightEntity
-except ImportError:
-    from homeassistant.components.light import Light as LightEntity
+from homeassistant.components.light import LightEntity
 from homeassistant.components.light import (
     ATTR_BRIGHTNESS, COLOR_MODE_BRIGHTNESS, COLOR_MODE_RGB)
 from homeassistant.core import callback

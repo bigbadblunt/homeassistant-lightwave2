@@ -1,9 +1,6 @@
 import logging
 from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES, LIGHTWAVE_WEBHOOK
-try:
-    from homeassistant.components.switch import SwitchEntity
-except ImportError:
-    from homeassistant.components.switch import SwitchDevice as SwitchEntity
+from homeassistant.components.switch import SwitchEntity
 from homeassistant.core import callback
 from .const import DOMAIN
 
