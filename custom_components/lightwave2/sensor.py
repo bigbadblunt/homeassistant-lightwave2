@@ -2,7 +2,8 @@ import logging
 from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES, LIGHTWAVE_WEBHOOK, DOMAIN
 from homeassistant.components.sensor import  STATE_CLASS_MEASUREMENT, STATE_CLASS_TOTAL_INCREASING, SensorEntity, SensorEntityDescription
 from homeassistant.const import (POWER_WATT, ENERGY_WATT_HOUR, DEVICE_CLASS_POWER, DEVICE_CLASS_ENERGY, 
-    DEVICE_CLASS_SIGNAL_STRENGTH, SIGNAL_STRENGTH_DECIBELS_MILLIWATT, PERCENTAGE, DEVICE_CLASS_BATTERY)
+    DEVICE_CLASS_SIGNAL_STRENGTH, SIGNAL_STRENGTH_DECIBELS_MILLIWATT, PERCENTAGE, DEVICE_CLASS_BATTERY,
+    DEVICE_CLASS_TIMESTAMP)
 from homeassistant.core import callback
 
 DEPENDENCIES = ['lightwave2']
@@ -36,6 +37,16 @@ SENSORS = [
         device_class=DEVICE_CLASS_BATTERY,
         state_class=STATE_CLASS_MEASUREMENT,
         name="Battery Level",
+    ),
+    SensorEntityDescription(
+        key="dawnTime",
+        device_class=DEVICE_CLASS_TIMESTAMP,
+        name="Dawn Time",
+    ),
+    SensorEntityDescription(
+        key="duskTime",
+        device_class=DEVICE_CLASS_TIMESTAMP,
+        name="Dusk Time",
     )
 ]
 
@@ -66,8 +77,12 @@ class LWRF2Sensor(SensorEntity):
         self._url = url
         self.entity_description = description
         self._state = self._lwlink.get_featureset_by_id(self._featureset_id).features[self.entity_description.key][1]
-        self._gen2 = self._lwlink.get_featureset_by_id(
-            self._featureset_id).is_gen2()
+        if self.entity_description.key == 'duskTime' or self.entity_description.key == 'dawnTime':
+            hour = _state // 3600
+            _state = state - hour * 3600
+            min = _state // 60
+            second = _state - min * 60
+            _state = f'T{hour:02}{min:02}{second:02}'
         for featureset_id, hubname in link.get_hubs():
             self._linkid = featureset_id
 
@@ -92,12 +107,17 @@ class LWRF2Sensor(SensorEntity):
 
     @property
     def assumed_state(self):
-        """Gen 2 devices will report state changes, gen 1 doesn't"""
-        return not self._gen2
+        return False
 
     async def async_update(self):
         """Update state"""
         self._state = self._lwlink.get_featureset_by_id(self._featureset_id).features[self.entity_description.key][1]
+        if self.entity_description.key == 'duskTime' or self.entity_description.key == 'dawnTime':
+            hour = _state // 3600
+            _state = state - hour * 3600
+            min = _state // 60
+            second = _state - min * 60
+            _state = f'T{hour:02}{min:02}{second:02}'
 
     @property
     def name(self):
