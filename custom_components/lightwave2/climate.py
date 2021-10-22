@@ -43,7 +43,12 @@ class LWRF2Climate(ClimateEntity):
             self._support_flags = SUPPORT_TARGET_TEMPERATURE | SUPPORT_PRESET_MODE
         else:
             self._support_flags = SUPPORT_TARGET_TEMPERATURE
-        self._valve_level = \
+        self._gen2 = self._lwlink.get_featureset_by_id(
+            self._featureset_id).is_gen2()
+        if self._gen2:
+            self._valve_level = 100
+        else:
+            self._valve_level = \
             self._lwlink.get_featureset_by_id(self._featureset_id).features[
                 "valveLevel"][1]
         self._onoff = \
