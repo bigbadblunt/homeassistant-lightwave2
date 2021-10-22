@@ -1,7 +1,8 @@
 import logging
 from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES, LIGHTWAVE_WEBHOOK, DOMAIN
 from homeassistant.components.sensor import  STATE_CLASS_MEASUREMENT, STATE_CLASS_TOTAL_INCREASING, SensorEntity, SensorEntityDescription
-from homeassistant.const import POWER_WATT, ENERGY_WATT_HOUR, DEVICE_CLASS_POWER, DEVICE_CLASS_ENERGY
+from homeassistant.const import POWER_WATT, ENERGY_WATT_HOUR, DEVICE_CLASS_POWER, DEVICE_CLASS_ENERGY, 
+    DEVICE_CLASS_SIGNAL_STRENGTH, SIGNAL_STRENGTH_DECIBELS, PERCENTAGE, DEVICE_CLASS_BATTERY)
 from homeassistant.core import callback
 
 DEPENDENCIES = ['lightwave2']
@@ -21,6 +22,26 @@ ENERGY_SENSORS = [
         device_class=DEVICE_CLASS_ENERGY,
         state_class=STATE_CLASS_TOTAL_INCREASING,
         name="Total Consumption",
+    )
+]
+
+SIGNAL_SENSORS = [
+    SensorEntityDescription(
+        key="signal_strength",
+        native_unit_of_measurement=SIGNAL_STRENGTH_DECIBELS,
+        device_class=DEVICE_CLASS_SIGNAL_STRENGTH,
+        state_class=STATE_CLASS_MEASUREMENT,
+        name="Signal Strength",
+    )
+]
+
+BATTERY_SENSORS = [
+    SensorEntityDescription(
+        key="battery",
+        native_unit_of_measurement=PERCENTAGE,
+        device_class=DEVICE_CLASS_BATTERY,
+        state_class=STATE_CLASS_MEASUREMENT,
+        name="Battery Level",
     )
 ]
 
@@ -44,6 +65,16 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         if link.get_featureset_by_id(featureset_id).reports_power():
             for description in ENERGY_SENSORS:
                 sensors.append(LWRF2Sensor(name, featureset_id, link, url, description))
+
+    for featureset in link.featuresets:
+        if featureset.has_feature('rssi'):
+            for description in SIGNAL_SENSORS:
+                sensors.append(LWRF2Sensor(featureset.name, featureset.featureset_id, link, url, description))
+
+    for featureset in link.featuresets:
+        if featureset.has_feature('batteryLevel'):
+            for description in BATTERY_SENSORS:
+                sensors.append(LWRF2Sensor(featureset.name, featureset.featureset_id, link, url, description))
 
     hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES].extend(sensors)
     async_add_entities(sensors)
