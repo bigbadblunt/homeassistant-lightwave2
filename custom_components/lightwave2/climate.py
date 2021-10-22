@@ -5,7 +5,7 @@ try:
 except ImportError:
     from homeassistant.components.climate import ClimateDevice as ClimateEntity
 from homeassistant.components.climate.const import (
-    HVAC_MODE_OFF, HVAC_MODE_HEAT, SUPPORT_TARGET_TEMPERATURE, SUPPORT_PRESET_MODE, CURRENT_HVAC_HEAT, CURRENT_HVAC_IDLE, CURRENT_HVAC_OFF)
+    HVAC_MODE_OFF, HVAC_MODE_HEAT, SUPPORT_TARGET_HUMIDITY, SUPPORT_TARGET_TEMPERATURE, SUPPORT_PRESET_MODE, CURRENT_HVAC_HEAT, CURRENT_HVAC_IDLE, CURRENT_HVAC_OFF)
 from homeassistant.const import (
     ATTR_TEMPERATURE, TEMP_CELSIUS, TEMP_FAHRENHEIT, STATE_OFF)
 from homeassistant.core import callback
@@ -39,7 +39,10 @@ class LWRF2Climate(ClimateEntity):
         self._lwlink = link
         self._url = url
         self._trv = self._lwlink.get_featureset_by_id(self._featureset_id).is_trv()
-        if self._trv:
+        self._has_humidity = 'targetHumidity' in self._lwlink.get_featureset_by_id(self._featureset_id).features.keys()
+        if self._has_humidity:
+            self._support_flags = SUPPORT_TARGET_TEMPERATURE | SUPPORT_TARGET_HUMIDITY
+        elif self._trv:
             self._support_flags = SUPPORT_TARGET_TEMPERATURE | SUPPORT_PRESET_MODE
         else:
             self._support_flags = SUPPORT_TARGET_TEMPERATURE
@@ -61,6 +64,7 @@ class LWRF2Climate(ClimateEntity):
             self._onoff = \
                 self._lwlink.get_featureset_by_id(self._featureset_id).features[
                     "heatState"][1]
+
         self._temperature = \
             self._lwlink.get_featureset_by_id(self._featureset_id).features[
                 "temperature"][1] / 10
@@ -69,6 +73,15 @@ class LWRF2Climate(ClimateEntity):
                 "targetTemperature"][1] / 10
         self._last_tt = self._target_temperature #Used to store the target temperature to revert to after boosting
         self._temperature_scale = TEMP_CELSIUS
+
+        if self._has_humidity:
+            self._humidity = \
+                self._lwlink.get_featureset_by_id(self._featureset_id).features[
+                    "humidity"][1] / 10
+            self._target_humidity = \
+                self._lwlink.get_featureset_by_id(self._featureset_id).features[
+                    "targetHumiditye"][1] / 10
+
         if self._valve_level == 100 and self._target_temperature < 40:
             self._preset_mode = "Auto"
         elif self._valve_level == 100:
@@ -131,6 +144,14 @@ class LWRF2Climate(ClimateEntity):
         return self._temperature
 
     @property
+    def current_humidity(self):
+        """Return the current temperature."""
+        if self._has_humidity:
+            return self._humidity
+        else:
+            return False
+
+    @property
     def hvac_mode(self):
         """Return current operation ie. heat, cool, idle."""
         if self._onoff == 1:
@@ -160,6 +181,14 @@ class LWRF2Climate(ClimateEntity):
         """Return the temperature we try to reach."""
         return self._target_temperature
 
+    @property
+    def target_humidity(self):
+        """Return the temperature we try to reach."""
+        if self._has_humidity:
+            return self._target_humidity
+        else:
+            return False
+
     async def async_set_temperature(self, **kwargs):
         if ATTR_TEMPERATURE in kwargs:
             self._target_temperature = kwargs[ATTR_TEMPERATURE]
@@ -167,6 +196,10 @@ class LWRF2Climate(ClimateEntity):
 
         await self._lwlink.async_set_temperature_by_featureset_id(
             self._featureset_id, self._target_temperature)
+
+    async def async_set_humidity(self, humidity):
+        feature_id = self._lwlink.get_featureset_by_id(self._featureset_id).features['targetHumidity'][0]
+        await self._lwlink.async_write_feature(feature_id, humidity)
 
     async def async_set_hvac_mode(self, hvac_mode):
         feature_id = self._lwlink.get_featureset_by_id(self._featureset_id).features['heatState'][0]
