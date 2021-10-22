@@ -15,11 +15,11 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     url = hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_WEBHOOK]
 
     for featureset_id, name in link.get_lights():
-        if 'protection' in link.featuresets[featureset_id].features.keys():
+        if link.featuresets[featureset_id].has_feature('protection'):
             locks.append(LWRF2Lock(name, featureset_id, link, url, hass))
 
     for featureset_id, name in link.get_switches():
-        if 'protection' in link.featuresets[featureset_id].features.keys():
+        if link.featuresets[featureset_id].has_feature('protection'):
             locks.append(LWRF2Lock(name, featureset_id, link, url, hass))
 
     hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES].extend(locks)
