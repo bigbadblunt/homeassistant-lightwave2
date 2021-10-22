@@ -1,6 +1,4 @@
-#TODO: expose link and attributes to HA
 import logging
-import voluptuous as vol
 
 from .const import DOMAIN, CONF_PUBLICAPI, CONF_DEBUG, LIGHTWAVE_LINK2,  LIGHTWAVE_ENTITIES, \
     LIGHTWAVE_WEBHOOK, LIGHTWAVE_WEBHOOKID, SERVICE_SETLEDRGB, SERVICE_SETLOCKED, SERVICE_SETUNLOCKED, \
@@ -9,7 +7,6 @@ from homeassistant.const import (CONF_USERNAME, CONF_PASSWORD)
 from homeassistant.helpers import device_registry as dr
 
 _LOGGER = logging.getLogger(__name__)
-
 
 async def handle_webhook(hass, webhook_id, request):
     """Handle webhook callback."""
