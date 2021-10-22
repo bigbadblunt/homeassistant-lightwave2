@@ -39,12 +39,8 @@ class LWRF2Switch(SwitchEntity):
                 "switch"][1]
         self._gen2 = self._lwlink.get_featureset_by_id(
             self._featureset_id).is_gen2()
-        self._reports_power = self._lwlink.get_featureset_by_id(
-            self._featureset_id).reports_power()
-        self._power = None
-        if self._reports_power:
-            self._power = self._lwlink.get_featureset_by_id(self._featureset_id).features[
-                "power"][1]
+        for featureset_id, hubname in link.get_hubs():
+            self._linkid = featureset_id
 
     async def async_added_to_hass(self):
         """Subscribe to events."""
@@ -80,9 +76,6 @@ class LWRF2Switch(SwitchEntity):
         self._state = \
             self._lwlink.get_featureset_by_id(self._featureset_id).features[
                 "switch"][1]
-        if self._reports_power:
-            self._power = self._lwlink.get_featureset_by_id(self._featureset_id).features[
-                "power"][1]
 
     @property
     def name(self):
@@ -112,11 +105,6 @@ class LWRF2Switch(SwitchEntity):
         self.async_schedule_update_ha_state()
 
     @property
-    def current_power_w(self):
-        """Power consumption"""
-        return self._power
-
-    @property
     def device_state_attributes(self):
         """Return the optional state attributes."""
 
@@ -141,6 +129,6 @@ class LWRF2Switch(SwitchEntity):
             'name': self.name,
             'manufacturer': "Lightwave RF",
             'model': self._lwlink.get_featureset_by_id(
-                self._featureset_id).product_code
-            #TODO 'via_device': (hue.DOMAIN, self.api.bridgeid),
+                self._featureset_id).product_code,
+            'via_device': (DOMAIN, self._linkid)
         }

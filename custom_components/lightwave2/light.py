@@ -51,12 +51,6 @@ class LWRF2Light(LightEntity):
                 "dimLevel"][1] / 100 * 255))
         self._gen2 = self._lwlink.get_featureset_by_id(
             self._featureset_id).is_gen2()
-        self._reports_power = self._lwlink.get_featureset_by_id(
-            self._featureset_id).reports_power()
-        self._power = None
-        if self._reports_power:
-            self._power = self._lwlink.get_featureset_by_id(self._featureset_id).features[
-                "power"][1]
         self._has_led = self._lwlink.get_featureset_by_id(
             self._featureset_id).has_led()
         for featureset_id, hubname in link.get_hubs():
@@ -111,9 +105,6 @@ class LWRF2Light(LightEntity):
         self._brightness = int(round(
             self._lwlink.get_featureset_by_id(self._featureset_id).features[
                 "dimLevel"][1] / 100 * 255))
-        if self._reports_power:
-            self._power = self._lwlink.get_featureset_by_id(self._featureset_id).features[
-                "power"][1]
 
     @property
     def name(self):
@@ -160,11 +151,6 @@ class LWRF2Light(LightEntity):
 
     async def async_set_rgb(self, led_rgb):
         await self._lwlink.async_set_led_rgb_by_featureset_id(self._featureset_id, self.ledrgb)
-
-    @property
-    def current_power_w(self):
-        """Power consumption"""
-        return self._power
 
     @property
     def device_state_attributes(self):

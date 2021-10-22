@@ -38,12 +38,8 @@ class LWRF2BinarySensor(BinarySensorEntity):
                 "windowPosition"][1]
         self._gen2 = self._lwlink.get_featureset_by_id(
             self._featureset_id).is_gen2()
-        self._reports_power = self._lwlink.get_featureset_by_id(
-            self._featureset_id).reports_power()
-        self._power = None
-        if self._reports_power:
-            self._power = self._lwlink.get_featureset_by_id(self._featureset_id).features[
-                "power"][1]
+        for featureset_id, hubname in link.get_hubs():
+            self._linkid = featureset_id
 
     async def async_added_to_hass(self):
         """Subscribe to events."""
@@ -74,9 +70,6 @@ class LWRF2BinarySensor(BinarySensorEntity):
         self._state = \
             self._lwlink.get_featureset_by_id(self._featureset_id).features[
                 "windowPosition"][1]
-        if self._reports_power:
-            self._power = self._lwlink.get_featureset_by_id(self._featureset_id).features[
-                "power"][1]
 
     @property
     def name(self):
@@ -92,11 +85,6 @@ class LWRF2BinarySensor(BinarySensorEntity):
     def is_on(self):
         """Lightwave switch is on state."""
         return self._state
-
-    @property
-    def current_power_w(self):
-        """Power consumption"""
-        return self._power
 
     @property
     def device_class(self):
@@ -125,6 +113,6 @@ class LWRF2BinarySensor(BinarySensorEntity):
             'name': self.name,
             'manufacturer': "Lightwave RF",
             'model': self._lwlink.get_featureset_by_id(
-                self._featureset_id).product_code
-            #TODO 'via_device': (hue.DOMAIN, self.api.bridgeid),
+                self._featureset_id).product_code,
+            'via_device': (DOMAIN, self._linkid)
         }
