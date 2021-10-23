@@ -48,6 +48,12 @@ class LWRF2Climate(ClimateEntity):
             self._support_flags = SUPPORT_TARGET_TEMPERATURE
         self._gen2 = self._lwlink.get_featureset_by_id(
             self._featureset_id).is_gen2()
+
+        if 'heatState' in self._lwlink.get_featureset_by_id(self._featureset_id).features.keys():
+            self._thermostat = False
+        else:
+            self._thermostat = True
+            
         if 'valveLevel' in self._lwlink.get_featureset_by_id(self._featureset_id).features.keys():
             self._valve_level = \
                 self._lwlink.get_featureset_by_id(self._featureset_id).features[
@@ -58,10 +64,7 @@ class LWRF2Climate(ClimateEntity):
                     "callForHeat"][1] * 100
         else:
             self._valve_level = 100
-        if 'heatState' in self._lwlink.get_featureset_by_id(self._featureset_id).features.keys():
-            self._thermostat = False
-        else:
-            self._thermostat = True
+
         if self._thermostat:
             self._onoff = 1
         else:
