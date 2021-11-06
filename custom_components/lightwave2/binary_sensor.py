@@ -159,6 +159,10 @@ class LWRF2SocketBinarySensor(BinarySensorEntity):
     def assumed_state(self):
         return False
 
+    @property
+    def entity_category(self):
+        return "diagnostic"
+
     async def async_update(self):
         """Update state"""
         self._state = \

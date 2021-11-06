@@ -110,6 +110,8 @@ class LWRF2Sensor(SensorEntity):
             self._state = f'{year}-{month:02}-{day:02}T{hour:02}:{min:02}:{second:02}'
         for featureset_id, hubname in link.get_hubs():
             self._linkid = featureset_id
+        if self._lwlink.featuresets[self._featureset_id].is_energy():
+            self.entity_description.entity_category = None
 
     async def async_added_to_hass(self):
         """Subscribe to events."""
