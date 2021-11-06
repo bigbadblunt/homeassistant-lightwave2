@@ -16,6 +16,7 @@ SENSORS = [
         device_class=DEVICE_CLASS_POWER,
         state_class=STATE_CLASS_MEASUREMENT,
         name="Current Consumption",
+        entity_category="diagnostic",
     ),
     SensorEntityDescription(
         key="energy",
@@ -23,6 +24,7 @@ SENSORS = [
         device_class=DEVICE_CLASS_ENERGY,
         state_class=STATE_CLASS_TOTAL_INCREASING,
         name="Total Consumption",
+        entity_category="diagnostic",
     ),
     SensorEntityDescription(
         key="rssi",
@@ -30,6 +32,7 @@ SENSORS = [
         device_class=DEVICE_CLASS_SIGNAL_STRENGTH,
         state_class=STATE_CLASS_MEASUREMENT,
         name="Signal Strength",
+        entity_category="diagnostic",
     ),
     SensorEntityDescription(
         key="batteryLevel",
@@ -37,6 +40,7 @@ SENSORS = [
         device_class=DEVICE_CLASS_BATTERY,
         state_class=STATE_CLASS_MEASUREMENT,
         name="Battery Level",
+        entity_category="diagnostic",
     ),
         SensorEntityDescription(
         key="voltage",
@@ -44,6 +48,7 @@ SENSORS = [
         device_class=DEVICE_CLASS_VOLTAGE,
         state_class=STATE_CLASS_MEASUREMENT,
         name="Voltage",
+        entity_category="diagnostic",
     ),
         SensorEntityDescription(
         key="current",
@@ -51,16 +56,19 @@ SENSORS = [
         device_class=DEVICE_CLASS_CURRENT,
         state_class=STATE_CLASS_MEASUREMENT,
         name="Current",
+        entity_category="diagnostic",
     ),
     SensorEntityDescription(
         key="dawnTime",
         device_class=DEVICE_CLASS_TIMESTAMP,
         name="Dawn Time",
+        entity_category="diagnostic",
     ),
     SensorEntityDescription(
         key="duskTime",
         device_class=DEVICE_CLASS_TIMESTAMP,
         name="Dusk Time",
+        entity_category="diagnostic",
     )
 ]
 
