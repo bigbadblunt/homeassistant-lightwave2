@@ -108,6 +108,8 @@ class LWRF2Sensor(SensorEntity):
             min = self._state // 60
             second = self._state - min * 60
             self._state = f'{year}-{month:02}-{day:02}T{hour:02}:{min:02}:{second:02}'
+        if self.entity_description.key == 'current':
+            self._state = self._state / 10
         for featureset_id, hubname in link.get_hubs():
             self._linkid = featureset_id
         if self._lwlink.featuresets[self._featureset_id].is_energy() and not self.entity_description.key == 'rssi':
@@ -145,6 +147,8 @@ class LWRF2Sensor(SensorEntity):
             min = self._state // 60
             second = self._state - min * 60
             self._state = f'T{hour:02}{min:02}{second:02}'
+        if self.entity_description.key == 'current':
+            self._state = self._state / 10
 
     @property
     def name(self):
