@@ -62,12 +62,14 @@ Code|Hex|Meaning
 258|102|Up button double press
 259|103|Up button triple press
 260|104|Up button quad press
+261+||(and so on - I believe up to 20x click is supported)
 512|200|Up button press and hold
 768|300|Up button release after long press
 4353|1101|Down button single press
 4354|1102|Down button double press
 4355|1103|Down button triple press
 4356|1104|Down button quad press
+4357+||(and so on)
 4608|1200|Down button press and hold
 4864|1300|Down button release after long press
 
