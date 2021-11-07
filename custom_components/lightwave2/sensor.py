@@ -3,7 +3,7 @@ from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES, LIGHTWAVE_WEBHOOK, DOMAI
 from homeassistant.components.sensor import  STATE_CLASS_MEASUREMENT, STATE_CLASS_TOTAL_INCREASING, SensorEntity, SensorEntityDescription
 from homeassistant.const import (POWER_WATT, ENERGY_WATT_HOUR, DEVICE_CLASS_POWER, DEVICE_CLASS_ENERGY, 
     DEVICE_CLASS_SIGNAL_STRENGTH, SIGNAL_STRENGTH_DECIBELS_MILLIWATT, PERCENTAGE, DEVICE_CLASS_BATTERY,
-    DEVICE_CLASS_TIMESTAMP, ELECTRIC_POTENTIAL_VOLT, ELECTRIC_CURRENT_AMPERE, DEVICE_CLASS_CURRENT, DEVICE_CLASS_VOLTAGE)
+    DEVICE_CLASS_TIMESTAMP, ELECTRIC_POTENTIAL_VOLT, ELECTRIC_CURRENT_MILLIAMPERE, DEVICE_CLASS_CURRENT, DEVICE_CLASS_VOLTAGE)
 from homeassistant.core import callback
 
 DEPENDENCIES = ['lightwave2']
@@ -52,7 +52,7 @@ SENSORS = [
     ),
         SensorEntityDescription(
         key="current",
-        native_unit_of_measurement=ELECTRIC_CURRENT_AMPERE,
+        native_unit_of_measurement=ELECTRIC_CURRENT_MILLIAMPERE,
         device_class=DEVICE_CLASS_CURRENT,
         state_class=STATE_CLASS_MEASUREMENT,
         name="Current",
@@ -108,8 +108,6 @@ class LWRF2Sensor(SensorEntity):
             min = self._state // 60
             second = self._state - min * 60
             self._state = f'{year}-{month:02}-{day:02}T{hour:02}:{min:02}:{second:02}'
-        if self.entity_description.key == 'current':
-            self._state = self._state / 10
         for featureset_id, hubname in link.get_hubs():
             self._linkid = featureset_id
         if self._lwlink.featuresets[self._featureset_id].is_energy() and not self.entity_description.key == 'rssi':
@@ -147,8 +145,6 @@ class LWRF2Sensor(SensorEntity):
             min = self._state // 60
             second = self._state - min * 60
             self._state = f'T{hour:02}{min:02}{second:02}'
-        if self.entity_description.key == 'current':
-            self._state = self._state / 10
 
     @property
     def name(self):
