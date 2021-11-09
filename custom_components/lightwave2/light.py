@@ -147,7 +147,10 @@ class LWRF2Light(LightEntity):
         self.async_schedule_update_ha_state()
 
     async def async_set_rgb(self, led_rgb):
-        await self._lwlink.async_set_led_rgb_by_featureset_id(self._featureset_id, self.ledrgb)
+        self._r = led_rgb // 65536
+        self._g = (led_rgb - self._r * 65536) //256
+        self._b = (led_rgb - self._r * 65536 - self._g * 256)
+        await self._lwlink.async_set_led_rgb_by_featureset_id(self._featureset_id, led_rgb)
 
     @property
     def device_state_attributes(self):
