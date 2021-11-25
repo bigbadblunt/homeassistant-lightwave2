@@ -119,13 +119,9 @@ class LWRF2Switch(SwitchEntity):
     @property
     def device_info(self):
         return {
-            'identifiers': {
-                # Serial numbers are unique identifiers within a specific domain
-                (DOMAIN, self._featureset_id)
-            },
+            'identifiers': { (DOMAIN, self._featureset_id) },
             'name': self.name,
             'manufacturer': "Lightwave RF",
-            'model': self._lwlink.get_featureset_by_id(
-                self._featureset_id).product_code,
+            'model': self._lwlink.get_featureset_by_id(self._featureset_id).product_code,
             'via_device': (DOMAIN, self._linkid)
         }
