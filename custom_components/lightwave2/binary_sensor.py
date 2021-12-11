@@ -189,7 +189,7 @@ class LWRF2SocketBinarySensor(BinarySensorEntity):
         return DEVICE_CLASS_PLUG
 
     @property
-    def device_state_attributes(self):
+    def extra_state_attributes(self):
         """Return the optional state attributes."""
 
         attribs = {}

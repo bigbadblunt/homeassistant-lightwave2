@@ -299,7 +299,7 @@ class LWRF2Climate(ClimateEntity):
         return 40
 
     @property
-    def device_state_attributes(self):
+    def extra_state_attributes(self):
         """Return the optional state attributes."""
 
         attribs = {}

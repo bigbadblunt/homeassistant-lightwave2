@@ -150,7 +150,7 @@ class LWRF2Light(LightEntity):
         await self._lwlink.async_set_led_rgb_by_featureset_id(self._featureset_id, led_rgb)
 
     @property
-    def device_state_attributes(self):
+    def extra_state_attributes(self):
         """Return the optional state attributes."""
 
         attribs = {}
@@ -317,7 +317,7 @@ class LWRF2LED(LightEntity):
         self.async_schedule_update_ha_state()
 
     @property
-    def device_state_attributes(self):
+    def extra_state_attributes(self):
         """Return the optional state attributes."""
 
         attribs = {}

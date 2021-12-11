@@ -102,7 +102,7 @@ class LWRF2Switch(SwitchEntity):
         self.async_schedule_update_ha_state()
 
     @property
-    def device_state_attributes(self):
+    def extra_state_attributes(self):
         """Return the optional state attributes."""
 
         attribs = {}
