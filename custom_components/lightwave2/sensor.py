@@ -108,7 +108,7 @@ class LWRF2Sensor(SensorEntity):
             self._state = self._state - hour * 3600
             min = self._state // 60
             second = self._state - min * 60
-            self._state = f'{year}-{month:02}-{day:02}T{hour:02}:{min:02}:{second:02}'
+            self._state = dt_util.parse_datetime(f'{year}-{month:02}-{day:02}T{hour:02}:{min:02}:{second:02}')
         for featureset_id, hubname in link.get_hubs():
             self._linkid = featureset_id
         if self._lwlink.featuresets[self._featureset_id].is_energy() and not self.entity_description.key == 'rssi':
@@ -141,11 +141,14 @@ class LWRF2Sensor(SensorEntity):
         """Update state"""
         self._state = self._lwlink.get_featureset_by_id(self._featureset_id).features[self.entity_description.key][1]
         if self.entity_description.key == 'duskTime' or self.entity_description.key == 'dawnTime':
+            year = self._lwlink.get_featureset_by_id(self._featureset_id).features['year'][1]
+            month = self._lwlink.get_featureset_by_id(self._featureset_id).features['month'][1]
+            day = self._lwlink.get_featureset_by_id(self._featureset_id).features['day'][1]
             hour = self._state // 3600
             self._state = self._state - hour * 3600
             min = self._state // 60
             second = self._state - min * 60
-            self._state = dt_util.parse_datetime(f'T{hour:02}{min:02}{second:02}')
+            self._state = dt_util.parse_datetime(f'{year}-{month:02}-{day:02}T{hour:02}:{min:02}:{second:02}')
 
     @property
     def name(self):
