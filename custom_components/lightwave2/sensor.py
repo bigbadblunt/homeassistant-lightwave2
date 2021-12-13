@@ -5,6 +5,7 @@ from homeassistant.const import (POWER_WATT, ENERGY_WATT_HOUR, DEVICE_CLASS_POWE
     DEVICE_CLASS_SIGNAL_STRENGTH, SIGNAL_STRENGTH_DECIBELS_MILLIWATT, PERCENTAGE, DEVICE_CLASS_BATTERY,
     DEVICE_CLASS_TIMESTAMP, ELECTRIC_POTENTIAL_VOLT, ELECTRIC_CURRENT_MILLIAMPERE, DEVICE_CLASS_CURRENT, DEVICE_CLASS_VOLTAGE)
 from homeassistant.core import callback
+from homeassistant.util import dt as dt_util
 
 DEPENDENCIES = ['lightwave2']
 _LOGGER = logging.getLogger(__name__)
@@ -144,7 +145,7 @@ class LWRF2Sensor(SensorEntity):
             self._state = self._state - hour * 3600
             min = self._state // 60
             second = self._state - min * 60
-            self._state = f'T{hour:02}{min:02}{second:02}'
+            self._state = dt_util.parse_datetime(f'T{hour:02}{min:02}{second:02}')
 
     @property
     def name(self):
