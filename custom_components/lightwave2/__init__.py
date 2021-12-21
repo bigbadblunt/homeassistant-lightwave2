@@ -20,51 +20,6 @@ async def handle_webhook(hass, webhook_id, request):
 
 async def async_setup(hass, config):
 
-    async def service_handle_led(call):
-        entity_ids = call.data.get("entity_id")
-        for entry_id in hass.data[DOMAIN]:
-            entities = hass.data[DOMAIN][entry_id][LIGHTWAVE_ENTITIES]
-            entities = [e for e in entities if e.entity_id in entity_ids]
-            rgb = call.data.get("rgb")
-            if str(rgb)[0:1] == "#":
-                rgb = int("0x" + rgb[1:7], 16)
-            else:
-                rgb = int(str(rgb), 0)
-            _LOGGER.debug("Received service call %s, rgb %s, rgb as hex %s", entity_ids, rgb, hex(rgb) )
-            for ent in entities:
-                _LOGGER.debug("Matched entites %s", ent)
-                await ent.async_set_rgb(led_rgb=rgb)
-
-    async def service_handle_lock(call):
-        entity_ids = call.data.get("entity_id")
-        for entry_id in hass.data[DOMAIN]:
-                
-            entities = hass.data[DOMAIN][entry_id][LIGHTWAVE_ENTITIES]
-            entities = [e for e in entities if e.entity_id in entity_ids]
-            
-            link = hass.data[DOMAIN][entry_id][LIGHTWAVE_LINK2]
-
-            for ent in entities:
-                feature_id = link.get_featureset_by_id(ent._featureset_id).features['protection'][0]
-                _LOGGER.debug("Received service call lock")
-                _LOGGER.debug("Setting feature ID: %s ", feature_id)
-                await link.async_write_feature(feature_id, 1)
-
-    async def service_handle_unlock(call):
-        entity_ids = call.data.get("entity_id")
-        for entry_id in hass.data[DOMAIN]:
-
-            entities = hass.data[DOMAIN][entry_id][LIGHTWAVE_ENTITIES]
-            entities = [e for e in entities if e.entity_id in entity_ids]
-
-            link = hass.data[DOMAIN][entry_id][LIGHTWAVE_LINK2]
-
-            for ent in entities:
-                feature_id = link.get_featureset_by_id(ent._featureset_id).features['protection'][0]
-                _LOGGER.debug("Received service call unlock")
-                _LOGGER.debug("Setting feature ID: %s ", feature_id)
-                await link.async_write_feature(feature_id, 0)
-
     async def service_handle_brightness(call):
         entity_ids = call.data.get("entity_id")
         for entry_id in hass.data[DOMAIN]:
@@ -76,7 +31,7 @@ async def async_setup(hass, config):
             link = hass.data[DOMAIN][entry_id][LIGHTWAVE_LINK2]
 
             for ent in entities:
-                feature_id = link.get_featureset_by_id(ent._featureset_id).features['dimLevel'][0]
+                feature_id = link.featuresets[ent._featureset_id].features['dimLevel'].id
                 _LOGGER.debug("Received service call set brightness")
                 _LOGGER.debug("Setting feature ID: %s ", feature_id)
                 await link.async_write_feature(feature_id, brightness)
@@ -137,7 +92,7 @@ async def async_setup_entry(hass, config_entry):
             identifiers={(DOMAIN, featureset_id)},
             manufacturer= "Lightwave RF",
             name=hubname,
-            model=link.get_featureset_by_id(featureset_id).product_code
+            model=link.featuresets[featureset_id].product_code
         )
         hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_LINKID] = featureset_id
 

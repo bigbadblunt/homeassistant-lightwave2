@@ -41,15 +41,11 @@ class LWRF2Light(LightEntity):
         self._lwlink = link
         self._url = url
         self._state = \
-            self._lwlink.get_featureset_by_id(self._featureset_id).features[
-                "switch"][1]
+            self._lwlink.featuresets[self._featureset_id].features["switch"].state
         self._brightness = int(round(
-            self._lwlink.get_featureset_by_id(self._featureset_id).features[
-                "dimLevel"][1] / 100 * 255))
-        self._gen2 = self._lwlink.get_featureset_by_id(
-            self._featureset_id).is_gen2()
-        self._has_led = self._lwlink.get_featureset_by_id(
-            self._featureset_id).has_led()
+            self._lwlink.featuresets[self._featureset_id].features["dimLevel"].state / 100 * 255))
+        self._gen2 = self._lwlink.featuresets[self._featureset_id].is_gen2()
+        self._has_led = self._lwlink.featuresets[self._featureset_id].has_led()
         for featureset_id, hubname in link.get_hubs():
             self._linkid = featureset_id
 
@@ -57,8 +53,8 @@ class LWRF2Light(LightEntity):
         """Subscribe to events."""
         await self._lwlink.async_register_callback(self.async_update_callback)
         if self._url is not None:
-            for featurename in self._lwlink.get_featureset_by_id(self._featureset_id).features:
-                featureid = self._lwlink.get_featureset_by_id(self._featureset_id).features[featurename][0]
+            for featurename in self._lwlink.featuresets[self._featureset_id].features:
+                featureid = self._lwlink.featuresets[self._featureset_id].features[featurename].id
                 _LOGGER.debug("Registering webhook: %s %s", featurename, featureid.replace("+", "P"))
                 req = await self._lwlink.async_register_webhook(self._url, featureid, "hass" + featureid.replace("+", "P"), overwrite = True)
 
@@ -97,11 +93,9 @@ class LWRF2Light(LightEntity):
     async def async_update(self):
         """Update state"""
         self._state = \
-            self._lwlink.get_featureset_by_id(self._featureset_id).features[
-                "switch"][1]
+            self._lwlink.featuresets[self._featureset_id].features["switch"].state
         self._brightness = int(round(
-            self._lwlink.get_featureset_by_id(self._featureset_id).features[
-                "dimLevel"][1] / 100 * 255))
+            self._lwlink.featuresets[self._featureset_id].features["dimLevel"].state / 100 * 255))
 
     @property
     def name(self):
@@ -155,10 +149,10 @@ class LWRF2Light(LightEntity):
 
         attribs = {}
 
-        for featurename, featuredict in self._lwlink.get_featureset_by_id(self._featureset_id).features.items():
-            attribs['lwrf_' + featurename] = featuredict[1]
+        for featurename, feature in self._lwlink.featuresets[self._featureset_id].features.items():
+            attribs['lwrf_' + featurename] = feature.state
 
-        attribs['lrwf_product_code'] = self._lwlink.get_featureset_by_id(self._featureset_id).product_code
+        attribs['lrwf_product_code'] = self._lwlink.featuresets[self._featureset_id].product_code
 
         return attribs
 
@@ -168,7 +162,7 @@ class LWRF2Light(LightEntity):
             'identifiers': { (DOMAIN, self._featureset_id) },
             'name': self.name,
             'manufacturer': "Lightwave RF",
-            'model': self._lwlink.get_featureset_by_id(self._featureset_id).product_code,
+            'model': self._lwlink.featuresets[self._featureset_id].product_code,
             'via_device': (DOMAIN, self._linkid)
         }
 
@@ -184,8 +178,7 @@ class LWRF2LED(LightEntity):
         self._lwlink = link
         self._url = url
         color = \
-            self._lwlink.get_featureset_by_id(self._featureset_id).features[
-                "rgbColor"][1]
+            self._lwlink.featuresets[self._featureset_id].features["rgbColor"].state
         if color == 0:
             self._state = False
             self._r = 255
@@ -200,8 +193,7 @@ class LWRF2LED(LightEntity):
         self._r = int(self._r * 255 / self._brightness)
         self._g = int(self._g * 255 / self._brightness)
         self._b = int(self._b * 255 / self._brightness)
-        self._gen2 = self._lwlink.get_featureset_by_id(
-            self._featureset_id).is_gen2()
+        self._gen2 = self._lwlink.featuresets[self._featureset_id].is_gen2()
         for featureset_id, hubname in link.get_hubs():
             self._linkid = featureset_id
 
@@ -209,8 +201,8 @@ class LWRF2LED(LightEntity):
         """Subscribe to events."""
         await self._lwlink.async_register_callback(self.async_update_callback)
         if self._url is not None:
-            for featurename in self._lwlink.get_featureset_by_id(self._featureset_id).features:
-                featureid = self._lwlink.get_featureset_by_id(self._featureset_id).features[featurename][0]
+            for featurename in self._lwlink.featuresets[self._featureset_id].features:
+                featureid = self._lwlink.featuresets[self._featureset_id].features[featurename].id
                 _LOGGER.debug("Registering webhook: %s %s", featurename, featureid.replace("+", "P"))
                 req = await self._lwlink.async_register_webhook(self._url, featureid, "hass" + featureid.replace("+", "P"), overwrite = True)
 
@@ -248,8 +240,7 @@ class LWRF2LED(LightEntity):
     async def async_update(self):
         """Update state"""
         color = \
-            self._lwlink.get_featureset_by_id(self._featureset_id).features[
-                "rgbColor"][1]
+            self._lwlink.featuresets[self._featureset_id].features["rgbColor"].state
         if color == 0:
             self._state = False
         else:
@@ -322,8 +313,8 @@ class LWRF2LED(LightEntity):
 
         attribs = {}
 
-        for featurename, featuredict in self._lwlink.get_featureset_by_id(self._featureset_id).features.items():
-            attribs['lwrf_' + featurename] = featuredict[1]
+        for featurename, feature in self._lwlink.featuresets[self._featureset_id].features.items():
+            attribs['lwrf_' + featurename] = feature.state
 
         return attribs
 
@@ -333,6 +324,6 @@ class LWRF2LED(LightEntity):
             'identifiers': { (DOMAIN, self._featureset_id) },
             'name': self._device,
             'manufacturer': "Lightwave RF",
-            'model': self._lwlink.get_featureset_by_id(self._featureset_id).product_code,
+            'model': self._lwlink.featuresets[self._featureset_id].product_code,
             'via_device': (DOMAIN, self._linkid)
         }

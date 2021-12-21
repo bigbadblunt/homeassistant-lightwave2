@@ -99,11 +99,11 @@ class LWRF2Sensor(SensorEntity):
         self._lwlink = link
         self._url = url
         self.entity_description = description
-        self._state = self._lwlink.get_featureset_by_id(self._featureset_id).features[self.entity_description.key][1]
+        self._state = self._lwlink.featuresets[self._featureset_id].features[self.entity_description.key].state
         if self.entity_description.key == 'duskTime' or self.entity_description.key == 'dawnTime':
-            year = self._lwlink.get_featureset_by_id(self._featureset_id).features['year'][1]
-            month = self._lwlink.get_featureset_by_id(self._featureset_id).features['month'][1]
-            day = self._lwlink.get_featureset_by_id(self._featureset_id).features['day'][1]
+            year = self._lwlink.featuresets[self._featureset_id].features['year'].state
+            month = self._lwlink.featuresets[self._featureset_id].features['month'].state
+            day = self._lwlink.featuresets[self._featureset_id].features['day'].state
             hour = self._state // 3600
             self._state = self._state - hour * 3600
             min = self._state // 60
@@ -118,8 +118,8 @@ class LWRF2Sensor(SensorEntity):
         """Subscribe to events."""
         await self._lwlink.async_register_callback(self.async_update_callback)
         if self._url is not None:
-            for featurename in self._lwlink.get_featureset_by_id(self._featureset_id).features:
-                featureid = self._lwlink.get_featureset_by_id(self._featureset_id).features[featurename][0]
+            for featurename in self._lwlink.featuresets[self._featureset_id].features:
+                featureid = self._lwlink.featuresets[self._featureset_id].features[featurename].id
                 _LOGGER.debug("Registering webhook: %s %s", featurename, featureid.replace("+", "P"))
                 req = await self._lwlink.async_register_webhook(self._url, featureid, "hass" + featureid.replace("+", "P"), overwrite = True)
 
@@ -139,11 +139,11 @@ class LWRF2Sensor(SensorEntity):
 
     async def async_update(self):
         """Update state"""
-        self._state = self._lwlink.get_featureset_by_id(self._featureset_id).features[self.entity_description.key][1]
+        self._state = self._lwlink.featuresets[self._featureset_id].features[self.entity_description.key].state
         if self.entity_description.key == 'duskTime' or self.entity_description.key == 'dawnTime':
-            year = self._lwlink.get_featureset_by_id(self._featureset_id).features['year'][1]
-            month = self._lwlink.get_featureset_by_id(self._featureset_id).features['month'][1]
-            day = self._lwlink.get_featureset_by_id(self._featureset_id).features['day'][1]
+            year = self._lwlink.featuresets[self._featureset_id].features['year'].state
+            month = self._lwlink.featuresets[self._featureset_id].features['month'].state
+            day = self._lwlink.featuresets[self._featureset_id].features['day'].state
             hour = self._state // 3600
             self._state = self._state - hour * 3600
             min = self._state // 60
@@ -170,10 +170,10 @@ class LWRF2Sensor(SensorEntity):
 
         attribs = {}
 
-        for featurename, featuredict in self._lwlink.get_featureset_by_id(self._featureset_id).features.items():
-            attribs['lwrf_' + featurename] = featuredict[1]
+        for featurename, feature in self._lwlink.featuresets[self._featureset_id].features.items():
+            attribs['lwrf_' + featurename] = feature.state
 
-        attribs['lrwf_product_code'] = self._lwlink.get_featureset_by_id(self._featureset_id).product_code
+        attribs['lrwf_product_code'] = self._lwlink.featuresets[self._featureset_id].product_code
 
         return attribs
 
@@ -183,6 +183,6 @@ class LWRF2Sensor(SensorEntity):
             'identifiers': { (DOMAIN, self._featureset_id) },
             'name': self._device,
             'manufacturer': "Lightwave RF",
-            'model': self._lwlink.get_featureset_by_id(self._featureset_id).product_code,
+            'model': self._lwlink.featuresets[self._featureset_id].product_code,
             'via_device': (DOMAIN, self._linkid)
         }

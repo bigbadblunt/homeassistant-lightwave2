@@ -32,10 +32,8 @@ class LWRF2Switch(SwitchEntity):
         self._lwlink = link
         self._url = url
         self._state = \
-            self._lwlink.get_featureset_by_id(self._featureset_id).features[
-                "switch"][1]
-        self._gen2 = self._lwlink.get_featureset_by_id(
-            self._featureset_id).is_gen2()
+            self._lwlink.featuresets[self._featureset_id].features["switch"].state
+        self._gen2 = self._lwlink.featuresets[self._featureset_id].is_gen2()
         for featureset_id, hubname in link.get_hubs():
             self._linkid = featureset_id
 
@@ -43,8 +41,8 @@ class LWRF2Switch(SwitchEntity):
         """Subscribe to events."""
         await self._lwlink.async_register_callback(self.async_update_callback)
         if self._url is not None:
-            for featurename in self._lwlink.get_featureset_by_id(self._featureset_id).features:
-                featureid = self._lwlink.get_featureset_by_id(self._featureset_id).features[featurename][0]
+            for featurename in self._lwlink.featuresets[self._featureset_id].features:
+                featureid = self._lwlink.featuresets[self._featureset_id].features[featurename].id
                 _LOGGER.debug("Registering webhook: %s %s", featurename, featureid.replace("+", "P"))
                 req = await self._lwlink.async_register_webhook(self._url, featureid, "hass" + featureid.replace("+", "P"), overwrite = True)
 
@@ -71,8 +69,7 @@ class LWRF2Switch(SwitchEntity):
     async def async_update(self):
         """Update state"""
         self._state = \
-            self._lwlink.get_featureset_by_id(self._featureset_id).features[
-                "switch"][1]
+            self._lwlink.featuresets[self._featureset_id].features["switch"].state
 
     @property
     def name(self):
@@ -107,12 +104,10 @@ class LWRF2Switch(SwitchEntity):
 
         attribs = {}
 
-        for featurename, featuredict in self._lwlink.get_featureset_by_id(
-                self._featureset_id).features.items():
-            attribs['lwrf_' + featurename] = featuredict[1]
+        for featurename, feature in self._lwlink.featuresets[self._featureset_id].features.items():
+            attribs['lwrf_' + featurename] = feature.state
 
-        attribs['lrwf_product_code'] = self._lwlink.get_featureset_by_id(
-            self._featureset_id).product_code
+        attribs['lrwf_product_code'] = self._lwlink.featuresets[self._featureset_id].product_code
 
         return attribs
 
@@ -122,6 +117,6 @@ class LWRF2Switch(SwitchEntity):
             'identifiers': { (DOMAIN, self._featureset_id) },
             'name': self.name,
             'manufacturer': "Lightwave RF",
-            'model': self._lwlink.get_featureset_by_id(self._featureset_id).product_code,
+            'model': self._lwlink.featuresets[self._featureset_id].product_code,
             'via_device': (DOMAIN, self._linkid)
         }
