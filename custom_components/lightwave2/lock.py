@@ -75,7 +75,7 @@ class LWRF2Lock(LockEntity):
     async def async_update(self):
         """Update state"""
         self._state = \
-            self._lwlink.featuresets[self._featureset_id).features["protection"].state
+            self._lwlink.featuresets[self._featureset_id].features["protection"].state
 
     @property
     def name(self):
