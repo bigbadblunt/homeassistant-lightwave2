@@ -37,9 +37,6 @@ async def async_setup(hass, config):
                 await link.async_write_feature(feature_id, brightness)
                 await ent.async_update()
 
-    hass.services.async_register(DOMAIN, SERVICE_SETLEDRGB, service_handle_led)
-    hass.services.async_register(DOMAIN, SERVICE_SETLOCKED, service_handle_lock)
-    hass.services.async_register(DOMAIN, SERVICE_SETUNLOCKED, service_handle_unlock)
     hass.services.async_register(DOMAIN, SERVICE_SETBRIGHTNESS, service_handle_brightness)
 
     return True

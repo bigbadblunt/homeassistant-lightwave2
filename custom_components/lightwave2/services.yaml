@@ -1,24 +1,3 @@
-set_led_rgb:
-  description: Set the colour of the LED on the switch.
-  fields:
-    entity_id:
-      description: Name(s) of entities.
-      example: 'light.bedroom'
-    rgb:
-      description: RGB value to set the LED to (can be decimal, "0xABCDFE" hex string or "#ABCDEF" hex string).
-      example: '#FFFFFF'
-lock:
-  description: Lock physical controls.
-  fields:
-    entity_id:
-      description: Name(s) of entities.
-      example: 'light.bedroom'
-unlock:
-  description: Unlock physical controls
-  fields:
-    entity_id:
-      description: Name(s) of entities.
-      example: 'light.bedroom'
 set_brightness:
   description: Set brightness without changing light state (only works for gen 2 lights)
   fields:

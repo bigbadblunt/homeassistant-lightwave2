@@ -76,7 +76,7 @@ class LWRF2Switch(SwitchEntity):
         """Lightwave switch name."""
         return self._name
 
-    @property
+    @propertywri
     def unique_id(self):
         """Unique identifier. Provided by hub."""
         return self._featureset_id
