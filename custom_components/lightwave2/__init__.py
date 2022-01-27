@@ -93,17 +93,17 @@ async def async_setup_entry(hass, config_entry):
         )
         hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_LINKID] = featureset_id
 
-        # Ensure every device associated with this config entry still exists
-        # otherwise remove the device (and thus entities).
-        for device_entry in dr.async_entries_for_config_entry(
-            device_registry, config_entry.entry_id
-        ):
-            for identifier in device_entry.identifiers:
-                _LOGGER.debug("Identifier found in config file %s ", identifier)
-            #    if identifier in inbound_camera:
-            #        break
-            #else:
-            #    device_registry.async_remove_device(device_entry.id)
+    # Ensure every device associated with this config entry still exists
+    # otherwise remove the device (and thus entities).
+    for device_entry in dr.async_entries_for_config_entry(
+        device_registry, config_entry.entry_id
+    ):
+        for identifier in device_entry.identifiers:
+            _LOGGER.debug("Identifier found in config file %s ", identifier)
+        #    if identifier in inbound_camera:
+        #        break
+        #else:
+        #    device_registry.async_remove_device(device_entry.id)
 
     forward_setup = hass.config_entries.async_forward_entry_setup
     hass.async_create_task(forward_setup(config_entry, "switch"))
