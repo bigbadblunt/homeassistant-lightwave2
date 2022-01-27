@@ -99,10 +99,11 @@ async def async_setup_entry(hass, config_entry):
         device_registry, config_entry.entry_id
     ):
         for identifier in device_entry.identifiers:
-            _LOGGER.debug("Identifier found in config file %s ", identifier)
-        #    if identifier in inbound_camera:
-        #        break
-        #else:
+            _LOGGER.debug("Identifier found in config file %s ", identifier[1])
+            if identifier[1] in link.featuresets:
+                _LOGGER.debug("Identifier matched")
+        else:
+            _LOGGER.debug("Identifier not matched, removing entity ")
         #    device_registry.async_remove_device(device_entry.id)
 
     forward_setup = hass.config_entries.async_forward_entry_setup
