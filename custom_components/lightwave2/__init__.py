@@ -104,8 +104,8 @@ async def async_setup_entry(hass, config_entry):
                 _LOGGER.debug("Identifier matched")
                 break
         else:
-            _LOGGER.debug("Identifier not matched, removing entity ")
-        #    device_registry.async_remove_device(device_entry.id)
+            _LOGGER.debug("Identifier not matched, removing device")
+            device_registry.async_remove_device(device_entry.id)
 
     forward_setup = hass.config_entries.async_forward_entry_setup
     hass.async_create_task(forward_setup(config_entry, "switch"))
