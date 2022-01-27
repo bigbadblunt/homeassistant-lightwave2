@@ -102,6 +102,7 @@ async def async_setup_entry(hass, config_entry):
             _LOGGER.debug("Identifier found in config file %s ", identifier[1])
             if identifier[1] in link.featuresets:
                 _LOGGER.debug("Identifier matched")
+                break
         else:
             _LOGGER.debug("Identifier not matched, removing entity ")
         #    device_registry.async_remove_device(device_entry.id)
