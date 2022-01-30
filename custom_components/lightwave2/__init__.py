@@ -33,7 +33,7 @@ async def async_setup(hass, config):
 
             for ent in entities:
                 feature_id = link.featuresets[ent._featureset_id].features['dimLevel'].id
-                _LOGGER.debug("Setting feature ID: %s ", feature_id)
+                _LOGGER.debug("Brightness service call setting feature ID: %s ", feature_id)
                 await link.async_write_feature(feature_id, brightness)
                 await ent.async_update()
 
