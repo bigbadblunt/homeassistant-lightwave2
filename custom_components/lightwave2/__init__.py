@@ -22,6 +22,7 @@ async def async_setup(hass, config):
 
     async def service_handle_brightness(call):
         entity_ids = call.data.get("entity_id")
+        _LOGGER.debug("Received service call set brightness %s", entity_ids)
         for entry_id in hass.data[DOMAIN]:
 
             entities = hass.data[DOMAIN][entry_id][LIGHTWAVE_ENTITIES]
@@ -32,7 +33,6 @@ async def async_setup(hass, config):
 
             for ent in entities:
                 feature_id = link.featuresets[ent._featureset_id].features['dimLevel'].id
-                _LOGGER.debug("Received service call set brightness")
                 _LOGGER.debug("Setting feature ID: %s ", feature_id)
                 await link.async_write_feature(feature_id, brightness)
                 await ent.async_update()
