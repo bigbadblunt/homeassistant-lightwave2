@@ -188,8 +188,8 @@ class LWRF2SocketBinarySensor(BinarySensorEntity):
 
         attribs = {}
 
-        for featurename, featuredict in self._lwlink.featuresets[self._featureset_id].features.items():
-            attribs['lwrf_' + featurename] = featuredict[1]
+        for featurename, feature in self._lwlink.featuresets[self._featureset_id].features.items():
+            attribs['lwrf_' + featurename] = feature.state
 
         attribs['lrwf_product_code'] = self._lwlink.featuresets[self._featureset_id].product_code
 
