@@ -17,12 +17,6 @@ async def handle_webhook(hass, webhook_id, request):
         for ent in hass.data[DOMAIN][entry_id][LIGHTWAVE_ENTITIES]:
             ent.async_schedule_update_ha_state(True)
 
-async def async_setup(hass, config):
-
-
-
-    return True
-
 async def async_setup_entry(hass, config_entry):
     from lightwave2 import lightwave2
 
