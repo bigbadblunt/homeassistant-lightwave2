@@ -1,9 +1,8 @@
 set_brightness:
   description: Set brightness without changing light state (only works for gen 2 lights)
-  fields:
-    entity_id:
-      description: Name(s) of entities.
-      example: 'light.bedroom'
+  target:
+    entity:
+      domain: light
     brightness:
       description: Brightness (0 to 255)
       example: 255
