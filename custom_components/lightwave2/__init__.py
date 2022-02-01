@@ -1,10 +1,9 @@
 import logging
 
 from .const import DOMAIN, CONF_PUBLICAPI, CONF_DEBUG, LIGHTWAVE_LINK2,  LIGHTWAVE_ENTITIES, \
-    LIGHTWAVE_WEBHOOK, LIGHTWAVE_WEBHOOKID, SERVICE_SETLEDRGB, SERVICE_SETLOCKED, SERVICE_SETUNLOCKED, \
-    SERVICE_SETBRIGHTNESS, LIGHTWAVE_LINKID
+    LIGHTWAVE_WEBHOOK, LIGHTWAVE_WEBHOOKID, LIGHTWAVE_LINKID
 from homeassistant.const import (CONF_USERNAME, CONF_PASSWORD)
-from homeassistant.helpers import device_registry as dr, entity_platform
+from homeassistant.helpers import device_registry as dr
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -20,30 +19,7 @@ async def handle_webhook(hass, webhook_id, request):
 
 async def async_setup(hass, config):
 
-    async def service_handle_brightness(light, call):
-        #entity_ids = call.data.get("entity_id")
-        #_LOGGER.debug("Received service call set brightness %s", entity_ids)
-        for entry_id in hass.data[DOMAIN]:
 
-            #entities = hass.data[DOMAIN][entry_id][LIGHTWAVE_ENTITIES]
-            #_LOGGER.debug("Brightness service call list of entities %s", entities)
-            #_LOGGER.debug("Brightness service call list of entities %s", [e.entity_id for e in entities])
-            #entities = [e for e in entities if e.entity_id in entity_ids]
-            #_LOGGER.debug("Brightness service call list of entities 2 %s", entities)
-            brightness = int(round(call.data.get("brightness") / 255 * 100))
-
-            link = hass.data[DOMAIN][entry_id][LIGHTWAVE_LINK2]
-
-            #for ent in entities:
-            feature_id = link.featuresets[light._featureset_id].features['dimLevel'].id
-            #    _LOGGER.debug("Brightness service call setting feature ID: %s ", feature_id)
-            await link.async_write_feature(feature_id, brightness)
-            #await ent.async_update()
-
-    platform = entity_platform.async_get_current_platform()
-    platform.async_register_entity_service(SERVICE_SETBRIGHTNESS, None,service_handle_brightness, )
-
-    #hass.services.async_register(DOMAIN, SERVICE_SETBRIGHTNESS, service_handle_brightness)
 
     return True
 
