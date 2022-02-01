@@ -32,9 +32,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
         _LOGGER.debug("Received service call set brightness %s", light._name)
         brightness = int(round(call.data.get("brightness") / 255 * 100))
-        link = hass.data[DOMAIN][entry_id][LIGHTWAVE_LINK2]
         feature_id = link.featuresets[light._featureset_id].features['dimLevel'].id
         await link.async_write_feature(feature_id, brightness)
+
 
     platform = entity_platform.async_get_current_platform()
     platform.async_register_entity_service(SERVICE_SETBRIGHTNESS, None, service_handle_brightness, )
