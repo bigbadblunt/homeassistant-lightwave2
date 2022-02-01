@@ -22,7 +22,7 @@ async def async_setup(hass, config):
 
     async def service_handle_brightness(light, call):
         #entity_ids = call.data.get("entity_id")
-        _LOGGER.debug("Received service call set brightness %s", entity_ids)
+        #_LOGGER.debug("Received service call set brightness %s", entity_ids)
         for entry_id in hass.data[DOMAIN]:
 
             #entities = hass.data[DOMAIN][entry_id][LIGHTWAVE_ENTITIES]
