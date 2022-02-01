@@ -26,6 +26,7 @@ async def async_setup(hass, config):
         for entry_id in hass.data[DOMAIN]:
 
             entities = hass.data[DOMAIN][entry_id][LIGHTWAVE_ENTITIES]
+            _LOGGER.debug("Brightness service call list of entities %s", entities)
             entities = [e for e in entities if e.entity_id in entity_ids]
             brightness = int(round(call.data.get("brightness") / 255 * 100))
 
