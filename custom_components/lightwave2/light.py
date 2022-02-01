@@ -49,7 +49,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
             #await ent.async_update()
 
     platform = entity_platform.async_get_current_platform()
-    platform.async_register_entity_service(SERVICE_SETBRIGHTNESS, None,service_handle_brightness, )
+    platform.async_register_entity_service(SERVICE_SETBRIGHTNESS, None, service_handle_brightness, )
 
     #hass.services.async_register(DOMAIN, SERVICE_SETBRIGHTNESS, service_handle_brightness)
 
