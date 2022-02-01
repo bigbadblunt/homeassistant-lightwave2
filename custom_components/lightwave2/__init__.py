@@ -20,27 +20,25 @@ async def handle_webhook(hass, webhook_id, request):
 
 async def async_setup(hass, config):
 
-    async def service_handle_brightness(light, call):
-        #entity_ids = call.data.get("entity_id")
-        #_LOGGER.debug("Received service call set brightness %s", entity_ids)
+    async def service_handle_brightness(call):
+        entity_ids = call.data.get("entity_id")
+        _LOGGER.debug("Received service call set brightness %s", entity_ids)
         for entry_id in hass.data[DOMAIN]:
 
-            #entities = hass.data[DOMAIN][entry_id][LIGHTWAVE_ENTITIES]
-            #_LOGGER.debug("Brightness service call list of entities %s", entities)
-            #_LOGGER.debug("Brightness service call list of entities %s", [e.entity_id for e in entities])
-            #entities = [e for e in entities if e.entity_id in entity_ids]
-            #_LOGGER.debug("Brightness service call list of entities 2 %s", entities)
+            entities = hass.data[DOMAIN][entry_id][LIGHTWAVE_ENTITIES]
+            _LOGGER.debug("Brightness service call list of entities %s", entities)
+            _LOGGER.debug("Brightness service call list of entities %s", [e.entity_id for e in entities])
+            entities = [e for e in entities if e.entity_id in entity_ids]
+            _LOGGER.debug("Brightness service call list of entities 2 %s", entities)
             brightness = int(round(call.data.get("brightness") / 255 * 100))
 
             link = hass.data[DOMAIN][entry_id][LIGHTWAVE_LINK2]
 
-            #for ent in entities:
-            #    feature_id = link.featuresets[ent._featureset_id].features['dimLevel'].id
-            #    _LOGGER.debug("Brightness service call setting feature ID: %s ", feature_id)
-            #    await link.async_write_feature(feature_id, brightness)
-            #    await ent.async_update()
-            feature_id = link.featuresets[light._featureset_id].features['dimLevel'].id
-            await link.async_write_feature(feature_id, brightness)
+            for ent in entities:
+                feature_id = link.featuresets[ent._featureset_id].features['dimLevel'].id
+                _LOGGER.debug("Brightness service call setting feature ID: %s ", feature_id)
+                await link.async_write_feature(feature_id, brightness)
+                await ent.async_update()
 
     hass.services.async_register(DOMAIN, SERVICE_SETBRIGHTNESS, service_handle_brightness)
 
