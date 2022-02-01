@@ -3,6 +3,7 @@ set_brightness:
   target:
     entity:
       domain: light
+  fields:
     brightness:
       description: Brightness (0 to 255)
       example: 255
