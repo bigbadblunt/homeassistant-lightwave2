@@ -37,8 +37,6 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     platform = entity_platform.async_get_current_platform()
     platform.async_register_entity_service(SERVICE_SETBRIGHTNESS, None, service_handle_brightness, )
 
-    #hass.services.async_register(DOMAIN, SERVICE_SETBRIGHTNESS, service_handle_brightness)
-
     hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES].extend(lights)
     async_add_entities(lights)
 
@@ -76,9 +74,8 @@ class LWRF2Light(LightEntity):
     def async_update_callback(self, **kwargs):
         """Update the component's state."""
         if kwargs["feature"] == "uiButtonPair" and self._lwlink.get_featureset_by_featureid(kwargs["feature_id"]).featureset_id == self._featureset_id:
-            self._hass.bus.fire(
-            "lightwave2.click",
-            {"entity_id": self.entity_id, "code": kwargs["new_value"]},
+            _LOGGER.debug("Button (light) press event: %s %s", self.entity_id, kwargs["new_value"])
+            self._hass.bus.fire("lightwave2.click",{"entity_id": self.entity_id, "code": kwargs["new_value"]},
         )
         self.async_schedule_update_ha_state(True)
 
