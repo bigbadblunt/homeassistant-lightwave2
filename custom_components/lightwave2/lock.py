@@ -2,6 +2,7 @@ import logging
 from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES, LIGHTWAVE_WEBHOOK
 from homeassistant.components.lock import LockEntity
 from homeassistant.core import callback
+from homeassistant.helpers.entity import EntityCategory
 from .const import DOMAIN
 
 DEPENDENCIES = ['lightwave2']
@@ -70,7 +71,7 @@ class LWRF2Lock(LockEntity):
 
     @property
     def entity_category(self):
-        return "config"
+        return EntityCategory.CONFIG
 
     async def async_update(self):
         """Update state"""

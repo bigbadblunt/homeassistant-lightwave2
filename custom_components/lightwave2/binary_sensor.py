@@ -6,6 +6,7 @@ except ImportError:
     from homeassistant.components.binary_sensor import BinarySensorDevice as BinarySensorEntity
 from homeassistant.components.binary_sensor import (DEVICE_CLASS_WINDOW, DEVICE_CLASS_PLUG)
 from homeassistant.core import callback
+from homeassistant.helpers.entity import EntityCategory
 from .const import DOMAIN
 
 DEPENDENCIES = ['lightwave2']
@@ -156,7 +157,7 @@ class LWRF2SocketBinarySensor(BinarySensorEntity):
 
     @property
     def entity_category(self):
-        return "diagnostic"
+        return EntityCategory.DIAGNOSTIC
 
     async def async_update(self):
         """Update state"""

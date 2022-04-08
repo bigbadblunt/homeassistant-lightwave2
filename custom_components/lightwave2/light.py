@@ -5,6 +5,7 @@ from homeassistant.components.light import (
     ATTR_BRIGHTNESS, COLOR_MODE_BRIGHTNESS, COLOR_MODE_RGB)
 from homeassistant.core import callback
 from homeassistant.helpers import entity_platform
+from homeassistant.helpers.entity import EntityCategory
 from .const import DOMAIN
 
 DEPENDENCIES = ['lightwave2']
@@ -244,7 +245,7 @@ class LWRF2LED(LightEntity):
 
     @property
     def entity_category(self):
-        return "config"
+        return EntityCategory.CONFIG
 
     async def async_update(self):
         """Update state"""
