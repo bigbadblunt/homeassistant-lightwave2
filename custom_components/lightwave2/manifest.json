@@ -5,7 +5,7 @@
   "documentation": "https://github.com/bigbadblunt/homeassistant-lightwave2",
   "dependencies": [],
   "codeowners": ["@bigbadblunt"],
-  "requirements": ["lightwave2==0.8.2"],
+  "requirements": ["lightwave2==0.8.3"],
   "config_flow": true,
   "iot_class": "cloud_push"
 }
