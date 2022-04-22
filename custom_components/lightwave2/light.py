@@ -64,10 +64,12 @@ class LWRF2Light(LightEntity):
         """Subscribe to events."""
         await self._lwlink.async_register_callback(self.async_update_callback)
         if self._url is not None:
+            featlist = []
             for featurename in self._lwlink.featuresets[self._featureset_id].features:
                 featureid = self._lwlink.featuresets[self._featureset_id].features[featurename].id
-                _LOGGER.debug("Registering webhook: %s %s", featurename, featureid.replace("+", "P"))
-                req = await self._lwlink.async_register_webhook(self._url, featureid, "hass" + featureid.replace("+", "P"), overwrite = True)
+                featlist.append(featureid)
+            _LOGGER.debug("Registering webhook: %s", featlist)
+            req = await self._lwlink.async_register_webhook_list(self._url, featlist, "hasslight", overwrite = True)
 
     #TODO add async_will_remove_from_hass() to clean up
 
