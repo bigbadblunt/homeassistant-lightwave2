@@ -69,7 +69,7 @@ class LWRF2Light(LightEntity):
                 featureid = self._lwlink.featuresets[self._featureset_id].features[featurename].id
                 featlist.append(featureid)
             _LOGGER.debug("Registering webhook: %s", featlist)
-            req = await self._lwlink.async_register_webhook_list(self._url, featlist, "hasslight" + self.name, overwrite = True)
+            req = await self._lwlink.async_register_webhook_list(self._url, featlist, "hasslight" + self.name.replace(" ", ""), overwrite = True)
 
     #TODO add async_will_remove_from_hass() to clean up
 
