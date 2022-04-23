@@ -1,5 +1,5 @@
 import logging
-from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES, LIGHTWAVE_WEBHOOK, SERVICE_SETBRIGHTNESS
+from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES, SERVICE_SETBRIGHTNESS
 from homeassistant.components.light import LightEntity
 from homeassistant.components.light import (
     ATTR_BRIGHTNESS, COLOR_MODE_BRIGHTNESS, COLOR_MODE_RGB)
@@ -16,18 +16,17 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
     lights = []
     link = hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_LINK2]
-    url = hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_WEBHOOK]
 
     for featureset_id, name in link.get_lights():
-        lights.append(LWRF2Light(name, featureset_id, link, url, hass))
+        lights.append(LWRF2Light(name, featureset_id, link, hass))
 
     for featureset_id, name in link.get_lights():
         if link.featuresets[featureset_id].has_led():
-            lights.append(LWRF2LED(name, featureset_id, link, url, hass))
+            lights.append(LWRF2LED(name, featureset_id, link, hass))
 
     for featureset_id, name in link.get_hubs():
         if link.featuresets[featureset_id].has_led():
-            lights.append(LWRF2LED(name, featureset_id, link, url, hass))
+            lights.append(LWRF2LED(name, featureset_id, link, hass))
 
     async def service_handle_brightness(light, call):
         _LOGGER.debug("Received service call set brightness %s", light._name)
@@ -44,13 +43,12 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 class LWRF2Light(LightEntity):
     """Representation of a LightWaveRF light."""
 
-    def __init__(self, name, featureset_id, link, url, hass):
+    def __init__(self, name, featureset_id, link, hass):
         self._name = name
         self._hass = hass
         _LOGGER.debug("Adding light: %s ", self._name)
         self._featureset_id = featureset_id
         self._lwlink = link
-        self._url = url
         self._state = \
             self._lwlink.featuresets[self._featureset_id].features["switch"].state
         self._brightness = int(round(
@@ -174,14 +172,13 @@ class LWRF2Light(LightEntity):
 class LWRF2LED(LightEntity):
     """Representation of a LightWaveRF LED."""
 
-    def __init__(self, name, featureset_id, link, url, hass):
+    def __init__(self, name, featureset_id, link, hass):
         self._name = f"{name} LED"
         self._device = name
         self._hass = hass
         _LOGGER.debug("Adding LED: %s ", self._name)
         self._featureset_id = featureset_id
         self._lwlink = link
-        self._url = url
         color = \
             self._lwlink.featuresets[self._featureset_id].features["rgbColor"].state
         if color == 0:

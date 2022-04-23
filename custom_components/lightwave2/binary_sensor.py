@@ -1,5 +1,5 @@
 import logging
-from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES, LIGHTWAVE_WEBHOOK
+from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES
 try:
     from homeassistant.components.binary_sensor import BinarySensorEntity
 except ImportError:
@@ -17,14 +17,13 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
     sensors = []
     link = hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_LINK2]
-    url = hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_WEBHOOK]
 
     for featureset_id, name in link.get_windowsensors():
-        sensors.append(LWRF2BinarySensor(name, featureset_id, link, url))
+        sensors.append(LWRF2BinarySensor(name, featureset_id, link))
 
     for featureset_id, name in link.get_switches():
         if link.featuresets[featureset_id].has_feature('outletInUse'):
-            sensors.append(LWRF2SocketBinarySensor(name, featureset_id, link, url))
+            sensors.append(LWRF2SocketBinarySensor(name, featureset_id, link))
 
     hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES].extend(sensors)
     async_add_entities(sensors)
@@ -32,12 +31,11 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 class LWRF2BinarySensor(BinarySensorEntity):
     """Representation of a LightWaveRF window sensor."""
 
-    def __init__(self, name, featureset_id, link, url=None):
+    def __init__(self, name, featureset_id, link):
         self._name = name
         _LOGGER.debug("Adding sensor: %s ", self._name)
         self._featureset_id = featureset_id
         self._lwlink = link
-        self._url = url
         self._state = \
             self._lwlink.featuresets[self._featureset_id].features["windowPosition"].state
         self._gen2 = self._lwlink.featuresets[self._featureset_id].is_gen2()
@@ -116,12 +114,11 @@ class LWRF2BinarySensor(BinarySensorEntity):
 class LWRF2SocketBinarySensor(BinarySensorEntity):
     """Representation of a LightWaveRF window sensor."""
 
-    def __init__(self, name, featureset_id, link, url=None):
+    def __init__(self, name, featureset_id, link):
         self._name = f"{name} Plug Sensor"
         _LOGGER.debug("Adding sensor: %s ", self._name)
         self._featureset_id = featureset_id
         self._lwlink = link
-        self._url = url
         self._state = \
             self._lwlink.featuresets[self._featureset_id].features["outletInUse"].state
         for featureset_id, hubname in link.get_hubs():

@@ -1,5 +1,5 @@
 import logging
-from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES, LIGHTWAVE_WEBHOOK
+from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES
 try:
     from homeassistant.components.cover import CoverEntity
 except ImportError:
@@ -18,10 +18,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
     covers = []
     link = hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_LINK2]
-    url = hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_WEBHOOK]
 
     for featureset_id, name in link.get_covers():
-        covers.append(LWRF2Cover(name, featureset_id, link, url))
+        covers.append(LWRF2Cover(name, featureset_id, link))
 
     hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES].extend(covers)
     async_add_entities(covers)
@@ -30,13 +29,12 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 class LWRF2Cover(CoverEntity):
     """Representation of a LightWaveRF cover."""
 
-    def __init__(self, name, featureset_id, link, url=None):
+    def __init__(self, name, featureset_id, link):
         """Initialize LWRFCover entity."""
         self._name = name
         _LOGGER.debug("Adding cover: %s ", self._name)
         self._featureset_id = featureset_id
         self._lwlink = link
-        self._url = url
         self._state = 50
         self._gen2 = self._lwlink.featuresets[self._featureset_id].is_gen2()
         for featureset_id, hubname in link.get_hubs():

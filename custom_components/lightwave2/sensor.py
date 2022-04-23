@@ -1,5 +1,5 @@
 import logging
-from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES, LIGHTWAVE_WEBHOOK, DOMAIN
+from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES, DOMAIN
 from homeassistant.components.sensor import  STATE_CLASS_MEASUREMENT, STATE_CLASS_TOTAL_INCREASING, SensorEntity, SensorEntityDescription
 from homeassistant.const import (POWER_WATT, ENERGY_WATT_HOUR, DEVICE_CLASS_POWER, DEVICE_CLASS_ENERGY, 
     DEVICE_CLASS_SIGNAL_STRENGTH, SIGNAL_STRENGTH_DECIBELS_MILLIWATT, PERCENTAGE, DEVICE_CLASS_BATTERY,
@@ -79,12 +79,11 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
     sensors = []
     link = hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_LINK2]
-    url = hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_WEBHOOK]
 
     for featureset_id, featureset in link.featuresets.items():
         for description in SENSORS:
             if featureset.has_feature(description.key):
-                sensors.append(LWRF2Sensor(featureset.name, featureset_id, link, url, description))
+                sensors.append(LWRF2Sensor(featureset.name, featureset_id, link, description))
 
     hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES].extend(sensors)
     async_add_entities(sensors)
@@ -92,13 +91,12 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 class LWRF2Sensor(SensorEntity):
     """Representation of a LightWaveRF power usage sensor."""
 
-    def __init__(self, name, featureset_id, link, url, description):
+    def __init__(self, name, featureset_id, link, description):
         self._name = f"{name} {description.name}"
         self._device = name
         _LOGGER.debug("Adding sensor: %s ", self._name)
         self._featureset_id = featureset_id
         self._lwlink = link
-        self._url = url
         self.entity_description = description
         self._state = self._lwlink.featuresets[self._featureset_id].features[self.entity_description.key].state
         if self.entity_description.key == 'duskTime' or self.entity_description.key == 'dawnTime':

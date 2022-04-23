@@ -1,5 +1,5 @@
 import logging
-from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES, LIGHTWAVE_WEBHOOK
+from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES
 from homeassistant.components.lock import LockEntity
 from homeassistant.core import callback
 from homeassistant.helpers.entity import EntityCategory
@@ -13,15 +13,14 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
     locks = []
     link = hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_LINK2]
-    url = hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_WEBHOOK]
 
     for featureset_id, name in link.get_lights():
         if link.featuresets[featureset_id].has_feature('protection'):
-            locks.append(LWRF2Lock(name, featureset_id, link, url, hass))
+            locks.append(LWRF2Lock(name, featureset_id, link, hass))
 
     for featureset_id, name in link.get_switches():
         if link.featuresets[featureset_id].has_feature('protection'):
-            locks.append(LWRF2Lock(name, featureset_id, link, url, hass))
+            locks.append(LWRF2Lock(name, featureset_id, link, hass))
 
     hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES].extend(locks)
     async_add_entities(locks)
@@ -29,14 +28,13 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 class LWRF2Lock(LockEntity):
     """Representation of a LightWaveRF light."""
 
-    def __init__(self, name, featureset_id, link, url, hass):
+    def __init__(self, name, featureset_id, link, hass):
         self._name = f"{name} Lock"
         self._device = name
         self._hass = hass
         _LOGGER.debug("Adding lock: %s ", self._name)
         self._featureset_id = featureset_id
         self._lwlink = link
-        self._url = url
         self._state = \
             self._lwlink.featuresets[self._featureset_id].features["protection"].state
         self._gen2 = self._lwlink.featuresets[self._featureset_id].is_gen2()
