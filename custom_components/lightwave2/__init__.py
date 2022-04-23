@@ -41,6 +41,7 @@ async def async_setup_entry(hass, config_entry):
         logging.getLogger("lightwave2").setLevel(logging.DEBUG)
 
     force_reconnect_secs = config_entry.options.get(CONF_RECONNECT, False)
+    _LOGGER.debug("Forced reconnection setting: %s ", force_reconnect_secs)
 
     if not await link.async_connect(max_tries = 1, force_keep_alive_secs=force_reconnect_secs):
         return False

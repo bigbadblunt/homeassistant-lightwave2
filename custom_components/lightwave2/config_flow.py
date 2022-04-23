@@ -57,6 +57,6 @@ class Lightwave2OptionsFlowHandler(config_entries.OptionsFlow):
             step_id="user", data_schema=vol.Schema({
                 vol.Optional(CONF_PUBLICAPI, default=options.get(CONF_PUBLICAPI)): bool,
                 vol.Optional(CONF_DEBUG, default=options.get(CONF_DEBUG)): bool,
-                vol.Optional(CONF_RECONNECT, default=options.get(CONF_DEBUG)): int
+                vol.Optional(CONF_RECONNECT, default=options.get(CONF_RECONNECT)): int
             })
         )
