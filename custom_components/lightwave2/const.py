@@ -2,6 +2,7 @@ DOMAIN = "lightwave2"
 CONF_PUBLICAPI = 'lightwave_publicapi'
 CONF_DEBUG = 'lightwave_debug'
 CONF_FORCESEND = 'lightwave_alwayssend'
+CONF_RECONNECT = 'lightwave_reconnect'
 LIGHTWAVE_LINK2 = 'lightwave_link2'
 LIGHTWAVE_LINKID = 'lightwave_linkid'
 LIGHTWAVE_ENTITIES = "lightwave_entities"
