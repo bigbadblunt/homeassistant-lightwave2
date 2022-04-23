@@ -1,8 +1,8 @@
 import logging
 
-from .const import DOMAIN, CONF_PUBLICAPI, CONF_DEBUG, LIGHTWAVE_LINK2,  LIGHTWAVE_ENTITIES, \
+from .const import DOMAIN, CONF_PUBLICAPI, CONF_DEBUG, CONF_RECONNECT, LIGHTWAVE_LINK2,  LIGHTWAVE_ENTITIES, \
     LIGHTWAVE_WEBHOOK, LIGHTWAVE_WEBHOOKID, LIGHTWAVE_LINKID
-from homeassistant.const import (CONF_USERNAME, CONF_PASSWORD, CONF_RECONNECT)
+from homeassistant.const import (CONF_USERNAME, CONF_PASSWORD)
 from homeassistant.helpers import device_registry as dr
 
 _LOGGER = logging.getLogger(__name__)

@@ -1,8 +1,8 @@
 import logging
 from homeassistant import config_entries
 from homeassistant.core import callback
-from homeassistant.const import (CONF_USERNAME, CONF_PASSWORD, CONF_RECONNECT)
-from .const import DOMAIN, CONF_PUBLICAPI, CONF_DEBUG
+from homeassistant.const import (CONF_USERNAME, CONF_PASSWORD)
+from .const import DOMAIN, CONF_PUBLICAPI, CONF_DEBUG, CONF_RECONNECT
 import voluptuous as vol
 _LOGGER = logging.getLogger(__name__)
 
