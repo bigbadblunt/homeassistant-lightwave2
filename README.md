@@ -48,10 +48,6 @@ Various sensor entities (including power consumption) and controls for the butto
 
 All other attributes reported by the Lightwave devices are exposed with the names `lwrf_*`. These are all read-only.
 
-The color of the LED for generation 2 devices can be changed using the service call `lightwave2.set_led_rgb`.
-Devices can be locked/unlocked using the service calls `lightwave2.lock` and `lightwave2.unlock`.
-(both the lock and the LED are now exposed as entities, so I will remove the above calls at some point - it is recommended not to use them)
-
 For gen2 devices, the brightness can be set without turning the light on using `lightwave2.set_brightness`.
 
 Firmware 5+ devices generate `lightwave2.click` events when the buttons are pressed. The "code" returned is the type of click:
