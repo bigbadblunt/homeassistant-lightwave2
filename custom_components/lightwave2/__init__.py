@@ -56,6 +56,8 @@ async def async_setup_entry(hass, config_entry):
             'lightwave2', 'Lightwave webhook', webhook_id, handle_webhook)
         url = hass.components.webhook.async_generate_url(webhook_id)
         _LOGGER.debug("Webhook URL: %s ", url)
+        await link.async_register_webhook_all(url, LIGHTWAVE_WEBHOOK, overwrite = True)
+
     hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_WEBHOOK] = url
 
     device_registry = await dr.async_get_registry(hass)

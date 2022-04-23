@@ -118,11 +118,6 @@ class LWRF2Sensor(SensorEntity):
     async def async_added_to_hass(self):
         """Subscribe to events."""
         await self._lwlink.async_register_callback(self.async_update_callback)
-        if self._url is not None:
-            for featurename in self._lwlink.featuresets[self._featureset_id].features:
-                featureid = self._lwlink.featuresets[self._featureset_id].features[featurename].id
-                _LOGGER.debug("Registering webhook: %s %s", featurename, featureid.replace("+", "P"))
-                req = await self._lwlink.async_register_webhook(self._url, featureid, "hass" + featureid.replace("+", "P"), overwrite = True)
 
     @callback
     def async_update_callback(self, **kwargs):
