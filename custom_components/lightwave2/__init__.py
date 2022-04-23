@@ -15,6 +15,8 @@ async def handle_webhook(hass, webhook_id, request):
         _LOGGER.debug("Received webhook: %s ", body)
         link.process_webhook_received(body)
         for ent in hass.data[DOMAIN][entry_id][LIGHTWAVE_ENTITIES]:
+            _LOGGER.debug("Webhook debug: ent: {}".format(ent))
+            _LOGGER.debug("Webhook debug: ent.hass: {}".format(ent.hass))
             ent.async_schedule_update_ha_state(True)
 
 async def async_setup_entry(hass, config_entry):
