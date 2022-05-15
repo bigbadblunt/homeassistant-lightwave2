@@ -15,10 +15,10 @@ set_brightness:
           max: 255
 
 reconnect:
-  description: Force a reconnect to the Lightwave servers (only for non-public API)
+  description: Force a reconnect to the Lightwave servers (only for non-public API, has no effect on public API)
 
 whdelete:
-  description: Delete a webhook registration (use this if you get "Received message for unregistered webhook" log entries)
+  description: Delete a webhook registration (use this if you get "Received message for unregistered webhook" log entries, will only work on puclic API)
   fields:
     webhookid:
       name: Webhook ID
