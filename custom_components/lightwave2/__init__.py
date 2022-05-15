@@ -18,7 +18,7 @@ async def handle_webhook(hass, webhook_id, request):
             if ent.hass is not None:
                 ent.async_schedule_update_ha_state(True)
 
-async def async_central_callback(**kwargs):
+def async_central_callback(**kwargs):
     _LOGGER.debug("Central callback")
 
 async def async_setup(hass, config):
