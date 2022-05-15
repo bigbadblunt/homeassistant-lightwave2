@@ -20,6 +20,10 @@ async def handle_webhook(hass, webhook_id, request):
 
 def async_central_callback(**kwargs):
     _LOGGER.debug("Central callback")
+    if kwargs["feature"] == "buttonPress":
+            _LOGGER.debug("Button (remote) press event: %s %s", kwargs["feature_id"], kwargs["new_value"])
+            self._hass.bus.fire("lightwave2.click",{"feature_id": kwargs["feature_id"], "code": kwargs["new_value"]},
+        )
 
 async def async_setup(hass, config):
 
