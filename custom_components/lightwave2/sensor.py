@@ -76,7 +76,6 @@ SENSORS = [
     ),
     SensorEntityDescription(
         key="lastEvent",
-        device_class=DEVICE_CLASS_TIMESTAMP,
         name="Last Event Received",
         entity_category=EntityCategory.DIAGNOSTIC,
     )
