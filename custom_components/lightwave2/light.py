@@ -189,7 +189,7 @@ class LWRF2LED(LightEntity):
         else:
             self._state = True
             self._r = color // 65536
-            self._g = (color - self._r * 65536) //256
+            self._g = (color - self._r * 65536) // 256
             self._b = (color - self._r * 65536 - self._g * 256)
         self._brightness = max(self._r, self._g, self._b)
         self._r = int(self._r * 255 / self._brightness)
