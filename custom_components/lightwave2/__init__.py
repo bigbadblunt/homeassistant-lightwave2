@@ -22,9 +22,14 @@ async def async_setup(hass, config):
 
     async def service_handle_reconnect(call):
         _LOGGER.debug("Received service call reconnect")
-        link = hass.data[DOMAIN][entry_id][LIGHTWAVE_LINK2]
+        for entry_id in hass.data[DOMAIN]:
+            link = hass.data[DOMAIN][entry_id][LIGHTWAVE_LINK2]
+            if link._websocket is not None:
+                await link._websocket.close()
     
     hass.services.async_register(DOMAIN, SERVICE_RECONNECT, service_handle_reconnect)
+
+    return True
 
 async def async_setup_entry(hass, config_entry):
     from lightwave2 import lightwave2
