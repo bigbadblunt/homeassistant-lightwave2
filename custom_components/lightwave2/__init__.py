@@ -68,7 +68,7 @@ async def async_setup_entry(hass, config_entry):
     hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES] = []
     if not publicapi:
         url = None
-        await link._lwlink.async_register_callback(async_update_callback)
+        await link.async_register_callback(async_update_callback)
     else:
         webhook_id = hass.components.webhook.async_generate_id()
         hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_WEBHOOKID] = webhook_id
