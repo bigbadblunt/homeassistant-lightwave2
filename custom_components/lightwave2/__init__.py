@@ -1,7 +1,7 @@
 import logging
 
 from .const import DOMAIN, CONF_PUBLICAPI, CONF_DEBUG, CONF_RECONNECT, LIGHTWAVE_LINK2,  LIGHTWAVE_ENTITIES, \
-    LIGHTWAVE_WEBHOOK, LIGHTWAVE_WEBHOOKID, LIGHTWAVE_LINKID
+    LIGHTWAVE_WEBHOOK, LIGHTWAVE_WEBHOOKID, LIGHTWAVE_LINKID, SERVICE_RECONNECT
 from homeassistant.const import (CONF_USERNAME, CONF_PASSWORD)
 from homeassistant.helpers import device_registry as dr
 
@@ -17,6 +17,14 @@ async def handle_webhook(hass, webhook_id, request):
         for ent in hass.data[DOMAIN][entry_id][LIGHTWAVE_ENTITIES]:
             if ent.hass is not None:
                 ent.async_schedule_update_ha_state(True)
+
+async def async_setup(hass, config):
+
+    async def service_handle_reconnect(call):
+        _LOGGER.debug("Received service call reconnect")
+        link = hass.data[DOMAIN][entry_id][LIGHTWAVE_LINK2]
+    
+    hass.services.async_register(DOMAIN, SERVICE_RECONNECT, service_handle_reconnect)
 
 async def async_setup_entry(hass, config_entry):
     from lightwave2 import lightwave2

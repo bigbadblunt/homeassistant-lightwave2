@@ -1,5 +1,5 @@
 import logging
-from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES, SERVICE_SETBRIGHTNESS, SERVICE_SETBRIGHTNESS
+from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES, SERVICE_SETBRIGHTNESS
 from homeassistant.components.light import LightEntity
 from homeassistant.components.light import (
     ATTR_BRIGHTNESS, COLOR_MODE_BRIGHTNESS, COLOR_MODE_RGB)
@@ -10,16 +10,6 @@ from .const import DOMAIN
 
 DEPENDENCIES = ['lightwave2']
 _LOGGER = logging.getLogger(__name__)
-
-
-async def async_setup(hass, config):
-
-    async def service_handle_reconnect(call):
-        _LOGGER.debug("Received service call reconnect")
-        link = hass.data[DOMAIN][entry_id][LIGHTWAVE_LINK2]
-    
-    hass.services.async_register(DOMAIN, SERVICE_RECONNECT, service_handle_reconnect)
-
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
     """Find and return LightWave lights."""
@@ -38,7 +28,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         if link.featuresets[featureset_id].has_led():
             lights.append(LWRF2LED(name, featureset_id, link, hass))
 
-    async def   _handle_brightness(light, call):
+    async def service_handle_brightness(light, call):
         _LOGGER.debug("Received service call set brightness %s", light._name)
         brightness = int(round(call.data.get("brightness") / 255 * 100))
         feature_id = link.featuresets[light._featureset_id].features['dimLevel'].id
