@@ -31,9 +31,6 @@ async def async_setup(hass, config):
                 await link._websocket.close()
     
     hass.services.async_register(DOMAIN, SERVICE_RECONNECT, service_handle_reconnect)
-    for entry_id in hass.data[DOMAIN]:
-        link = hass.data[DOMAIN][entry_id][LIGHTWAVE_LINK2]
-        await link._lwlink.async_register_callback(async_update_callback)
 
     return True
 
@@ -71,6 +68,7 @@ async def async_setup_entry(hass, config_entry):
     hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES] = []
     if not publicapi:
         url = None
+        await link._lwlink.async_register_callback(async_update_callback)
     else:
         webhook_id = hass.components.webhook.async_generate_id()
         hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_WEBHOOKID] = webhook_id
