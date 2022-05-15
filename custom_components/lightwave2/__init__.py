@@ -35,9 +35,7 @@ async def async_setup(hass, config):
         wh_name = call.data.get("webhookid")
         for entry_id in hass.data[DOMAIN]:
             link = hass.data[DOMAIN][entry_id][LIGHTWAVE_LINK2]
-            if link._websocket is not None:
-                await link.async_delete_webhook(wh_name)
-
+            await link.async_delete_webhook(wh_name)
 
     hass.services.async_register(DOMAIN, SERVICE_RECONNECT, service_handle_reconnect)
     hass.services.async_register(DOMAIN, SERVICE_WHDELETE, service_handle_delete_webhook)
