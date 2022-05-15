@@ -18,7 +18,7 @@ async def handle_webhook(hass, webhook_id, request):
             if ent.hass is not None:
                 ent.async_schedule_update_ha_state(True)
 
-async def async_update_callback(**kwargs):
+async def async_central_callback(**kwargs):
     _LOGGER.debug("Central callback")
 
 async def async_setup(hass, config):
@@ -68,7 +68,7 @@ async def async_setup_entry(hass, config_entry):
     hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES] = []
     if not publicapi:
         url = None
-        await link.async_register_callback(async_update_callback)
+        await link.async_register_callback(async_central_callback)
     else:
         webhook_id = hass.components.webhook.async_generate_id()
         hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_WEBHOOKID] = webhook_id
