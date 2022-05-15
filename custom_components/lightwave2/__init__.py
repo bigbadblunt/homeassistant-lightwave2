@@ -18,6 +18,9 @@ async def handle_webhook(hass, webhook_id, request):
             if ent.hass is not None:
                 ent.async_schedule_update_ha_state(True)
 
+async def async_update_callback(self, **kwargs):
+    _LOGGER.debug("Central callback")
+
 async def async_setup(hass, config):
 
     async def service_handle_reconnect(call):
@@ -28,6 +31,9 @@ async def async_setup(hass, config):
                 await link._websocket.close()
     
     hass.services.async_register(DOMAIN, SERVICE_RECONNECT, service_handle_reconnect)
+    for entry_id in hass.data[DOMAIN]:
+        link = hass.data[DOMAIN][entry_id][LIGHTWAVE_LINK2]
+        await link._lwlink.async_register_callback(async_update_callback)
 
     return True
 
