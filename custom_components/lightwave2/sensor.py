@@ -7,6 +7,7 @@ from homeassistant.const import (POWER_WATT, ENERGY_WATT_HOUR, DEVICE_CLASS_POWE
 from homeassistant.core import callback
 from homeassistant.util import dt as dt_util
 from homeassistant.helpers.entity import EntityCategory
+from datetime import datetime
 
 DEPENDENCIES = ['lightwave2']
 _LOGGER = logging.getLogger(__name__)
@@ -71,6 +72,12 @@ SENSORS = [
         device_class=DEVICE_CLASS_TIMESTAMP,
         name="Dusk Time",
         entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    SensorEntityDescription(
+        key="lastEvent",
+        device_class=DEVICE_CLASS_TIMESTAMP,
+        name="Last Event Received",
+        entity_category=EntityCategory.DIAGNOSTIC,
     )
 ]
 
@@ -84,12 +91,20 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         for description in SENSORS:
             if featureset.has_feature(description.key):
                 sensors.append(LWRF2Sensor(featureset.name, featureset_id, link, description))
+    
+    for featureset_id, hubname in link.get_hubs():
+        sensors.append(LWRF2EventSensor(hubname, featureset_id, link, SensorEntityDescription(
+        key="lastEvent",
+        device_class=DEVICE_CLASS_TIMESTAMP,
+        name="Last Event Received",
+        entity_category=EntityCategory.DIAGNOSTIC,
+    )))
 
     hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES].extend(sensors)
     async_add_entities(sensors)
 
 class LWRF2Sensor(SensorEntity):
-    """Representation of a LightWaveRF power usage sensor."""
+    """Representation of a LightWaveRF sensor."""
 
     def __init__(self, name, featureset_id, link, description):
         self._name = f"{name} {description.name}"
@@ -170,6 +185,65 @@ class LWRF2Sensor(SensorEntity):
         attribs['lrwf_product_code'] = self._lwlink.featuresets[self._featureset_id].product_code
 
         return attribs
+
+    @property
+    def device_info(self):
+        return {
+            'identifiers': { (DOMAIN, self._featureset_id) },
+            'name': self._device,
+            'manufacturer': "Lightwave RF",
+            'model': self._lwlink.featuresets[self._featureset_id].product_code,
+            'via_device': (DOMAIN, self._linkid)
+        }
+
+class LWRF2EventSensor(SensorEntity):
+    """Representation of a LightWaveRF sensor."""
+
+    def __init__(self, name, featureset_id, link, description):
+        self._name = f"{name} {description.name}"
+        self._device = name
+        _LOGGER.debug("Adding event sensor: %s ", self._name)
+        self._featureset_id = featureset_id
+        self._lwlink = link
+        self.entity_description = description
+        self._state = datetime.now()
+        self._linkid = featureset_id
+
+    async def async_added_to_hass(self):
+        """Subscribe to events."""
+        await self._lwlink.async_register_callback(self.async_update_callback)
+
+    @callback
+    def async_update_callback(self, **kwargs):
+        """Update the component's state."""
+        self.async_schedule_update_ha_state(True)
+
+    @property
+    def should_poll(self):
+        """Lightwave2 library will push state, no polling needed"""
+        return False
+
+    @property
+    def assumed_state(self):
+        return False
+
+    async def async_update(self):
+        """Update state"""
+        self._state = datetime.now()
+
+    @property
+    def name(self):
+        """Lightwave name."""
+        return self._name
+
+    @property
+    def unique_id(self):
+        """Unique identifier. Provided by hub."""
+        return f"{self._featureset_id}_{self.entity_description.key}"
+
+    @property
+    def native_value(self):
+        return self._state
 
     @property
     def device_info(self):
