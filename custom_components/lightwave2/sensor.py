@@ -8,6 +8,7 @@ from homeassistant.core import callback
 from homeassistant.util import dt as dt_util
 from homeassistant.helpers.entity import EntityCategory
 from datetime import datetime
+import pytz
 
 DEPENDENCIES = ['lightwave2']
 _LOGGER = logging.getLogger(__name__)
@@ -206,7 +207,7 @@ class LWRF2EventSensor(SensorEntity):
         self._featureset_id = featureset_id
         self._lwlink = link
         self.entity_description = description
-        self._state = datetime.now()
+        self._state = datetime.now(pytz.utc)
         self._linkid = featureset_id
 
     async def async_added_to_hass(self):
@@ -229,7 +230,7 @@ class LWRF2EventSensor(SensorEntity):
 
     async def async_update(self):
         """Update state"""
-        self._state = datetime.now()
+        self._state = datetime.now(pytz.utc)
 
     @property
     def name(self):
