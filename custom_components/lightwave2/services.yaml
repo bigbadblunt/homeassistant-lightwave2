@@ -13,3 +13,6 @@ set_brightness:
         number:
           min: 0
           max: 255
+
+reconnect:
+  description: Force a reconnect to the Lightwave servers

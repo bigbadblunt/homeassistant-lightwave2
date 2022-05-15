@@ -68,7 +68,7 @@ async def async_setup_entry(hass, config_entry):
     for featureset_id, hubname in link.get_hubs():
         device_registry.async_get_or_create(
             config_entry_id=config_entry.entry_id,
-            configuration_url = "homeassistant://lightwave2",
+            configuration_url = "https://my.lightwaverf.com/a/login",
             entry_type=dr.DeviceEntryType.SERVICE,
             identifiers={(DOMAIN, featureset_id)},
             manufacturer= "Lightwave RF",
