@@ -34,8 +34,7 @@ async def async_setup(hass, config):
         _LOGGER.debug("Received service call update states")
         for entry_id in hass.data[DOMAIN]:
             link = hass.data[DOMAIN][entry_id][LIGHTWAVE_LINK2]
-            if link._websocket is not None:
-                await link.async_update_featureset_states()
+            await link.async_update_featureset_states()
             for ent in hass.data[DOMAIN][entry_id][LIGHTWAVE_ENTITIES]:
                 if ent.hass is not None:
                     ent.async_schedule_update_ha_state(True)
