@@ -26,3 +26,7 @@ whdelete:
       selector:
         text:
 
+update_states:
+  description: Force a read of all states of devices
+
+

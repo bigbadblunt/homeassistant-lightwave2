@@ -1,7 +1,7 @@
 import logging
 
 from .const import DOMAIN, CONF_PUBLICAPI, CONF_DEBUG, CONF_RECONNECT, LIGHTWAVE_LINK2,  LIGHTWAVE_ENTITIES, \
-    LIGHTWAVE_WEBHOOK, LIGHTWAVE_WEBHOOKID, LIGHTWAVE_LINKID, SERVICE_RECONNECT, SERVICE_WHDELETE
+    LIGHTWAVE_WEBHOOK, LIGHTWAVE_WEBHOOKID, LIGHTWAVE_LINKID, SERVICE_RECONNECT, SERVICE_WHDELETE, SERVICE_UPDATE
 from homeassistant.const import (CONF_USERNAME, CONF_PASSWORD)
 from homeassistant.helpers import device_registry as dr
 
@@ -30,6 +30,16 @@ async def async_setup(hass, config):
             if link._websocket is not None:
                 await link._websocket.close()
 
+    async def service_handle_update_states(call):
+        _LOGGER.debug("Received service call update states")
+        for entry_id in hass.data[DOMAIN]:
+            link = hass.data[DOMAIN][entry_id][LIGHTWAVE_LINK2]
+            if link._websocket is not None:
+                await link.async_update_featureset_states()
+            for ent in hass.data[DOMAIN][entry_id][LIGHTWAVE_ENTITIES]:
+                if ent.hass is not None:
+                    ent.async_schedule_update_ha_state(True)
+
     async def service_handle_delete_webhook(call):
         _LOGGER.debug("Received service call delete webhook")
         wh_name = call.data.get("webhookid")
@@ -39,6 +49,7 @@ async def async_setup(hass, config):
 
     hass.services.async_register(DOMAIN, SERVICE_RECONNECT, service_handle_reconnect)
     hass.services.async_register(DOMAIN, SERVICE_WHDELETE, service_handle_delete_webhook)
+    hass.services.async_register(DOMAIN, SERVICE_UPDATE, service_handle_update_states)
     
     return True
 
