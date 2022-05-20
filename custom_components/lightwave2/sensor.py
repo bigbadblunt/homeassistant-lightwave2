@@ -90,7 +90,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     for featureset_id, featureset in link.featuresets.items():
         for description in SENSORS:
             if featureset.has_feature(description.key):
-                sensors.append(LWRF2Sensor(featureset.name, featureset_id, link, description))
+                sensors.append(LWRF2Sensor(featureset.name, featureset_id, link, description, hass))
     
     for featureset_id, hubname in link.get_hubs():
         sensors.append(LWRF2EventSensor(hubname, featureset_id, link, SensorEntityDescription(
@@ -106,8 +106,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 class LWRF2Sensor(SensorEntity):
     """Representation of a LightWaveRF sensor."""
 
-    def __init__(self, name, featureset_id, link, description):
+    def __init__(self, name, featureset_id, link, description, hass):
         self._name = f"{name} {description.name}"
+        self._hass = hass
         self._device = name
         _LOGGER.debug("Adding sensor: %s ", self._name)
         self._featureset_id = featureset_id
