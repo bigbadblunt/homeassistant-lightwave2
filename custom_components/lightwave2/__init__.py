@@ -102,7 +102,7 @@ async def async_setup_entry(hass, config_entry):
     hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_WEBHOOK] = url
 
     device_registry = dr.async_get(hass)
-    entity_registry = er.async.get(hass)
+    entity_registry = er.async_get(hass)
     for featureset_id, hubname in link.get_hubs():
         device_registry.async_get_or_create(
             config_entry_id=config_entry.entry_id,
