@@ -24,9 +24,10 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     else:
         er = entity_registry.async_get(hass)
         for featureset_id, name in link.get_lights():
-            if entity_id := er.async_get_entity_id(
-                DOMAIN, DOMAIN, featureset_id
-            ):
+            
+            entity_id = er.async_get_entity_id(DOMAIN, DOMAIN, featureset_id)
+            _LOGGER.debug(entity_id)
+            if entity_id:
                 _LOGGER.debug("Removing entity %s", entity_id)
                 er.async_remove(entity_id)
 
