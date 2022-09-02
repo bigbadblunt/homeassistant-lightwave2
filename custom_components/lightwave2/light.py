@@ -4,7 +4,7 @@ from homeassistant.components.light import LightEntity
 from homeassistant.components.light import (
     ATTR_BRIGHTNESS, COLOR_MODE_BRIGHTNESS, COLOR_MODE_RGB)
 from homeassistant.core import callback
-from homeassistant.helpers import entity_platform
+from homeassistant.helpers import entity_platform, entity_registry
 from homeassistant.helpers.entity import EntityCategory
 from .const import DOMAIN
 
@@ -21,6 +21,14 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     if not homekit:
         for featureset_id, name in link.get_lights():
             lights.append(LWRF2Light(name, featureset_id, link, hass))
+    else:
+        er = entity_registry.async_get(hass)
+        for featureset_id, name in link.get_lights():
+            if entity_id := er.async_get_entity_id(
+                DOMAIN, DOMAIN, featureset_id
+            ):
+                _LOGGER.debug("Removing entity %s", entity_id)
+                er.async_remove(entity_id)
 
     for featureset_id, name in link.get_lights():
         if link.featuresets[featureset_id].has_led():
