@@ -1,5 +1,5 @@
 import logging
-from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES
+from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES, CONF_HOMEKIT
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.core import callback
 from .const import DOMAIN
@@ -13,8 +13,10 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     switches = []
     link = hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_LINK2]
 
-    for featureset_id, name in link.get_switches():
-        switches.append(LWRF2Switch(name, featureset_id, link, hass))
+    homekit = config_entry.options.get(CONF_HOMEKIT, False)
+    if not homekit:
+        for featureset_id, name in link.get_switches():
+            switches.append(LWRF2Switch(name, featureset_id, link, hass))
 
     hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES].extend(switches)
     async_add_entities(switches)

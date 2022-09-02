@@ -1,5 +1,5 @@
 import logging
-from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES, SERVICE_SETBRIGHTNESS
+from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES, SERVICE_SETBRIGHTNESS, CONF_HOMEKIT
 from homeassistant.components.light import LightEntity
 from homeassistant.components.light import (
     ATTR_BRIGHTNESS, COLOR_MODE_BRIGHTNESS, COLOR_MODE_RGB)
@@ -17,8 +17,10 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     lights = []
     link = hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_LINK2]
 
-    for featureset_id, name in link.get_lights():
-        lights.append(LWRF2Light(name, featureset_id, link, hass))
+    homekit = config_entry.options.get(CONF_HOMEKIT, False)
+    if not homekit:
+        for featureset_id, name in link.get_lights():
+            lights.append(LWRF2Light(name, featureset_id, link, hass))
 
     for featureset_id, name in link.get_lights():
         if link.featuresets[featureset_id].has_led():

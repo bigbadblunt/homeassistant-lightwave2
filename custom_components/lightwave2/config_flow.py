@@ -2,7 +2,7 @@ import logging
 from homeassistant import config_entries
 from homeassistant.core import callback
 from homeassistant.const import (CONF_USERNAME, CONF_PASSWORD)
-from .const import DOMAIN, CONF_PUBLICAPI, CONF_DEBUG, CONF_RECONNECT
+from .const import DOMAIN, CONF_PUBLICAPI, CONF_DEBUG, CONF_RECONNECT, CONF_HOMEKIT
 import voluptuous as vol
 _LOGGER = logging.getLogger(__name__)
 
@@ -49,7 +49,8 @@ class Lightwave2OptionsFlowHandler(config_entries.OptionsFlow):
             options = {
                 CONF_PUBLICAPI: False,
                 CONF_DEBUG: False,
-                CONF_RECONNECT: 0
+                CONF_RECONNECT: 0,
+                CONF_HOMEKIT: False
             }
             _LOGGER.debug("Creating options form using default options")
 
@@ -57,6 +58,7 @@ class Lightwave2OptionsFlowHandler(config_entries.OptionsFlow):
             step_id="user", data_schema=vol.Schema({
                 vol.Optional(CONF_PUBLICAPI, default=options.get(CONF_PUBLICAPI)): bool,
                 vol.Optional(CONF_DEBUG, default=options.get(CONF_DEBUG)): bool,
-                vol.Optional(CONF_RECONNECT, default=options.get(CONF_RECONNECT)): int
+                vol.Optional(CONF_RECONNECT, default=options.get(CONF_RECONNECT)): int,
+                vol.Optional(CONF_PUBLICAPI, default=options.get(CONF_HOMEKIT)): bool
             })
         )
