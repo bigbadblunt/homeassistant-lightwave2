@@ -59,6 +59,6 @@ class Lightwave2OptionsFlowHandler(config_entries.OptionsFlow):
                 vol.Optional(CONF_PUBLICAPI, default=options.get(CONF_PUBLICAPI)): bool,
                 vol.Optional(CONF_DEBUG, default=options.get(CONF_DEBUG)): bool,
                 vol.Optional(CONF_RECONNECT, default=options.get(CONF_RECONNECT)): int,
-                vol.Optional(CONF_PUBLICAPI, default=options.get(CONF_HOMEKIT)): bool
+                vol.Optional(CONF_HOMEKIT, default=options.get(CONF_HOMEKIT)): bool
             })
         )
