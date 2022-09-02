@@ -1,6 +1,7 @@
 import logging
 from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES, CONF_HOMEKIT
 from homeassistant.components.switch import SwitchEntity
+from homeassistant.helpers import entity_registry
 from homeassistant.core import callback
 from .const import DOMAIN
 
@@ -17,6 +18,12 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     if not homekit:
         for featureset_id, name in link.get_switches():
             switches.append(LWRF2Switch(name, featureset_id, link, hass))
+    else:
+        er = entity_registry.async_get(hass)
+        for featureset_id, name in link.get_lights():
+            if entity_id := er.async_get_entity_id('switch', DOMAIN, featureset_id):
+                _LOGGER.debug("Removing entity provided by Homekit %s", entity_id)
+                er.async_remove(entity_id)
 
     hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES].extend(switches)
     async_add_entities(switches)
