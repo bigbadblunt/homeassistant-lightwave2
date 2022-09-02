@@ -4,6 +4,7 @@ from .const import DOMAIN, CONF_PUBLICAPI, CONF_DEBUG, CONF_RECONNECT, LIGHTWAVE
     LIGHTWAVE_WEBHOOK, LIGHTWAVE_WEBHOOKID, LIGHTWAVE_LINKID, SERVICE_RECONNECT, SERVICE_WHDELETE, SERVICE_UPDATE
 from homeassistant.const import (CONF_USERNAME, CONF_PASSWORD)
 from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers import entity_registry as er
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -101,6 +102,7 @@ async def async_setup_entry(hass, config_entry):
     hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_WEBHOOK] = url
 
     device_registry = dr.async_get(hass)
+    entity_registry = er.async.get(hass)
     for featureset_id, hubname in link.get_hubs():
         device_registry.async_get_or_create(
             config_entry_id=config_entry.entry_id,
@@ -119,13 +121,17 @@ async def async_setup_entry(hass, config_entry):
         device_registry, config_entry.entry_id
     ):
         for identifier in device_entry.identifiers:
-            _LOGGER.debug("Identifier found in config file %s ", identifier[1])
+            _LOGGER.debug("Identifier found in Home Assistant device registry %s ", identifier[1])
             if identifier[1] in link.featuresets:
-                _LOGGER.debug("Identifier matched")
+                _LOGGER.debug("Identifier exists in Lightwave config")
                 break
         else:
-            _LOGGER.debug("Identifier not matched, removing device")
+            _LOGGER.debug("Identifier does not exist in Lightwave config, removing device")
             device_registry.async_remove_device(device_entry.id)
+    for entity_entry in er.async_entries_for_config_entry(
+        entity_registry, config_entry.entry_id
+    ):
+        _LOGGER.debug("Entity registry item %s", entity_entry)
 
     forward_setup = hass.config_entries.async_forward_entry_setup
     hass.async_create_task(forward_setup(config_entry, "switch"))
