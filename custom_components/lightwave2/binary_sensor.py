@@ -4,7 +4,7 @@ try:
     from homeassistant.components.binary_sensor import BinarySensorEntity
 except ImportError:
     from homeassistant.components.binary_sensor import BinarySensorDevice as BinarySensorEntity
-from homeassistant.components.binary_sensor import (DEVICE_CLASS_WINDOW, DEVICE_CLASS_PLUG)
+from homeassistant.components.binary_sensor import (DEVICE_CLASS_WINDOW, DEVICE_CLASS_PLUG, DEVICE_CLASS_MOVING)
 from homeassistant.core import callback
 from homeassistant.helpers.entity import EntityCategory
 from .const import DOMAIN
@@ -169,6 +169,84 @@ class LWRF2SocketBinarySensor(BinarySensorEntity):
     @property
     def device_class(self):
         return DEVICE_CLASS_PLUG
+
+    @property
+    def extra_state_attributes(self):
+        """Return the optional state attributes."""
+
+        attribs = {}
+
+        for featurename, feature in self._lwlink.featuresets[self._featureset_id].features.items():
+            attribs['lwrf_' + featurename] = feature.state
+
+        attribs['lrwf_product_code'] = self._lwlink.featuresets[self._featureset_id].product_code
+
+        return attribs
+
+    @property
+    def device_info(self):
+        return {
+            'identifiers': { (DOMAIN, self._featureset_id)},
+            'name': self.name,
+            'manufacturer': "Lightwave RF",
+            'model': self._lwlink.featuresets[self._featureset_id].product_code,
+            'via_device': (DOMAIN, self._linkid)
+        }
+
+class LWRF2MovementBinarySensor(BinarySensorEntity):
+    """Representation of a LightWaveRF movement sensor."""
+
+    def __init__(self, name, featureset_id, link):
+        self._name = f"{name} Movement Sensor"
+        _LOGGER.debug("Adding sensor: %s ", self._name)
+        self._featureset_id = featureset_id
+        self._lwlink = link
+        self._state = \
+            self._lwlink.featuresets[self._featureset_id].features["movement"].state
+        for featureset_id, hubname in link.get_hubs():
+            self._linkid = featureset_id
+
+    async def async_added_to_hass(self):
+        """Subscribe to events."""
+        await self._lwlink.async_register_callback(self.async_update_callback)
+
+    @callback
+    def async_update_callback(self, **kwargs):
+        """Update the component's state."""
+        self.async_schedule_update_ha_state(True)
+
+    @property
+    def should_poll(self):
+        """Lightwave2 library will push state, no polling needed"""
+        return False
+
+    @property
+    def assumed_state(self):
+        return False
+
+    async def async_update(self):
+        """Update state"""
+        self._state = \
+            self._lwlink.featuresets[self._featureset_id].features["outletInUse"].state
+
+    @property
+    def name(self):
+        """Lightwave switch name."""
+        return self._name
+
+    @property
+    def unique_id(self):
+        """Unique identifier. Provided by hub."""
+        return self._featureset_id
+
+    @property
+    def is_on(self):
+        """Lightwave switch is on state."""
+        return self._state
+
+    @property
+    def device_class(self):
+        return DEVICE_CLASS_MOVING
 
     @property
     def extra_state_attributes(self):
