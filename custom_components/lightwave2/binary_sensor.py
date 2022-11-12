@@ -28,7 +28,7 @@ SENSORS = [
     ),
     BinarySensorEntityDescription(
         key="movement",
-        device_class=DEVICE_CLASS_MOVING,
+        device_class=DEVICE_CLASS_MOTION,
         name="Movement",
     )
 ]
