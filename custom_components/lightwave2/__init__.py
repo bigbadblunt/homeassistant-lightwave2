@@ -132,6 +132,7 @@ async def async_setup_entry(hass, config_entry):
         entity_registry, config_entry.entry_id
     ):
         _LOGGER.debug("Entity registry item %s", entity_entry)
+        _LOGGER.debug("Entity gen2 %s", entity_registry.async_get(entity_entry.entity_id))
 
     forward_setup = hass.config_entries.async_forward_entry_setup
     hass.async_create_task(forward_setup(config_entry, "switch"))

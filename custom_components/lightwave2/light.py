@@ -149,10 +149,6 @@ class LWRF2Light(LightEntity):
         await self._lwlink.async_set_led_rgb_by_featureset_id(self._featureset_id, led_rgb)
 
     @property
-    def entity_registry_visible_default(self):
-        return (not self._homekit) or (not self._gen2)
-
-    @property
     def extra_state_attributes(self):
         """Return the optional state attributes."""
 
