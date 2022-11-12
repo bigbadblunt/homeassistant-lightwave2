@@ -1,7 +1,7 @@
 import logging
 from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES, CONF_HOMEKIT
 try:
-    from homeassistant.components.binary_sensor import BinarySensorEntity
+    from homeassistant.components.binary_sensor import BinarySensorEntity, BinarySensorEntityDescription
 except ImportError:
     from homeassistant.components.binary_sensor import BinarySensorDevice as BinarySensorEntity
 from homeassistant.components.binary_sensor import (DEVICE_CLASS_WINDOW, DEVICE_CLASS_PLUG, DEVICE_CLASS_MOVING)
@@ -12,6 +12,25 @@ from .const import DOMAIN
 
 DEPENDENCIES = ['lightwave2']
 _LOGGER = logging.getLogger(__name__)
+
+SENSORS = [
+    BinarySensorEntityDescription(
+        key="windowPosition",
+        device_class=DEVICE_CLASS_WINDOW,
+        name="Window Position",
+    ),
+    BinarySensorEntityDescription(
+        key="outletInUse",
+        device_class=DEVICE_CLASS_PLUG,
+        name="Socket In Use",
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    BinarySensorEntityDescription(
+        key="movement",
+        device_class=DEVICE_CLASS_MOVING,
+        name="Movement",
+    )
+]
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
     """Find and return LightWave sensors."""
