@@ -66,7 +66,8 @@ class LWRF2Light(LightEntity):
         """Subscribe to events."""
         await self._lwlink.async_register_callback(self.async_update_callback)
         registry = er.async_get(self._hass)
-        registry.async_update_entity(
+        if self._homekit and self._gen2:
+            registry.async_update_entity(
                 self.entity_id, hidden_by=er.RegistryEntryHider.INTEGRATION
             )
 
