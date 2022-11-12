@@ -1,5 +1,5 @@
 import logging
-from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES
+from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES, CONF_HOMEKIT
 try:
     from homeassistant.components.binary_sensor import BinarySensorEntity
 except ImportError:
@@ -7,6 +7,7 @@ except ImportError:
 from homeassistant.components.binary_sensor import (DEVICE_CLASS_WINDOW, DEVICE_CLASS_PLUG, DEVICE_CLASS_MOVING)
 from homeassistant.core import callback
 from homeassistant.helpers.entity import EntityCategory
+from homeassistant.helpers import entity_registry as er
 from .const import DOMAIN
 
 DEPENDENCIES = ['lightwave2']
@@ -18,12 +19,14 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     sensors = []
     link = hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_LINK2]
 
+    homekit = config_entry.options.get(CONF_HOMEKIT, False)
+
     for featureset_id, name in link.get_windowsensors():
-        sensors.append(LWRF2BinarySensor(name, featureset_id, link))
+        sensors.append(LWRF2BinarySensor(name, featureset_id, link, homekit))
 
     for featureset_id, name in link.get_switches():
         if link.featuresets[featureset_id].has_feature('outletInUse'):
-            sensors.append(LWRF2SocketBinarySensor(name, featureset_id, link))
+            sensors.append(LWRF2SocketBinarySensor(name, featureset_id, link, homekit))
 
     for featureset_id, name in link.get_motionsensors():
         sensors.append(LWRF2MovementBinarySensor(name, featureset_id, link))
@@ -34,11 +37,12 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 class LWRF2BinarySensor(BinarySensorEntity):
     """Representation of a LightWaveRF window sensor."""
 
-    def __init__(self, name, featureset_id, link):
+    def __init__(self, name, featureset_id, link, homekit):
         self._name = name
         _LOGGER.debug("Adding sensor: %s ", self._name)
         self._featureset_id = featureset_id
         self._lwlink = link
+        self._homekit = homekit
         self._state = \
             self._lwlink.featuresets[self._featureset_id].features["windowPosition"].state
         self._gen2 = self._lwlink.featuresets[self._featureset_id].is_gen2()
@@ -48,6 +52,16 @@ class LWRF2BinarySensor(BinarySensorEntity):
     async def async_added_to_hass(self):
         """Subscribe to events."""
         await self._lwlink.async_register_callback(self.async_update_callback)
+        registry = er.async_get(self._hass)
+        entity_entry = registry.async_get(self.entity_id)
+        if self._homekit:
+            if entity_entry is not None and not entity_entry.hidden:
+                registry.async_update_entity(
+                    self.entity_id, hidden_by=er.RegistryEntryHider.INTEGRATION
+                )
+        else:
+            if entity_entry.hidden_by == er.RegistryEntryHider.INTEGRATION:
+                registry.async_update_entity(self.entity_id, hidden_by=None)
 
     @callback
     def async_update_callback(self, **kwargs):
@@ -117,11 +131,12 @@ class LWRF2BinarySensor(BinarySensorEntity):
 class LWRF2SocketBinarySensor(BinarySensorEntity):
     """Representation of a LightWaveRF socket sensor."""
 
-    def __init__(self, name, featureset_id, link):
+    def __init__(self, name, featureset_id, link, homekit):
         self._name = f"{name} Plug Sensor"
         _LOGGER.debug("Adding sensor: %s ", self._name)
         self._featureset_id = featureset_id
         self._lwlink = link
+        self._homekit = homekit
         self._state = \
             self._lwlink.featuresets[self._featureset_id].features["outletInUse"].state
         for featureset_id, hubname in link.get_hubs():
@@ -130,6 +145,16 @@ class LWRF2SocketBinarySensor(BinarySensorEntity):
     async def async_added_to_hass(self):
         """Subscribe to events."""
         await self._lwlink.async_register_callback(self.async_update_callback)
+        registry = er.async_get(self._hass)
+        entity_entry = registry.async_get(self.entity_id)
+        if self._homekit and self._gen2:
+            if entity_entry is not None and not entity_entry.hidden:
+                registry.async_update_entity(
+                    self.entity_id, hidden_by=er.RegistryEntryHider.INTEGRATION
+                )
+        else:
+            if entity_entry.hidden_by == er.RegistryEntryHider.INTEGRATION:
+                registry.async_update_entity(self.entity_id, hidden_by=None)
 
     @callback
     def async_update_callback(self, **kwargs):

@@ -1,7 +1,7 @@
 import logging
 from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES, CONF_HOMEKIT
 from homeassistant.components.switch import SwitchEntity
-from homeassistant.helpers import entity_registry
+from homeassistant.helpers import entity_registry as er
 from homeassistant.core import callback
 from .const import DOMAIN
 
@@ -15,15 +15,8 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     link = hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_LINK2]
 
     homekit = config_entry.options.get(CONF_HOMEKIT, False)
-    if not homekit:
-        for featureset_id, name in link.get_switches():
-            switches.append(LWRF2Switch(name, featureset_id, link, hass))
-    else:
-        er = entity_registry.async_get(hass)
-        for featureset_id, name in link.get_lights():
-            if entity_id := er.async_get_entity_id('switch', DOMAIN, featureset_id):
-                _LOGGER.debug("Removing entity provided by Homekit %s", entity_id)
-                er.async_remove(entity_id)
+    for featureset_id, name in link.get_switches():
+        switches.append(LWRF2Switch(name, featureset_id, link, hass, homekit))
 
     hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES].extend(switches)
     async_add_entities(switches)
@@ -31,13 +24,14 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 class LWRF2Switch(SwitchEntity):
     """Representation of a LightWaveRF switch."""
 
-    def __init__(self, name, featureset_id, link, hass):
+    def __init__(self, name, featureset_id, link, hass, homekit):
         """Initialize LWRFSwitch entity."""
         self._name = name
         self._hass = hass
         _LOGGER.debug("Adding switch: %s ", self._name)
         self._featureset_id = featureset_id
         self._lwlink = link
+        self._homekit = homekit
         self._state = \
             self._lwlink.featuresets[self._featureset_id].features["switch"].state
         self._gen2 = self._lwlink.featuresets[self._featureset_id].is_gen2()
@@ -47,6 +41,16 @@ class LWRF2Switch(SwitchEntity):
     async def async_added_to_hass(self):
         """Subscribe to events."""
         await self._lwlink.async_register_callback(self.async_update_callback)
+        registry = er.async_get(self._hass)
+        entity_entry = registry.async_get(self.entity_id)
+        if self._homekit and self._gen2:
+            if entity_entry is not None and not entity_entry.hidden:
+                registry.async_update_entity(
+                    self.entity_id, hidden_by=er.RegistryEntryHider.INTEGRATION
+                )
+        else:
+            if entity_entry.hidden_by == er.RegistryEntryHider.INTEGRATION:
+                registry.async_update_entity(self.entity_id, hidden_by=None)
 
     @callback
     def async_update_callback(self, **kwargs):
