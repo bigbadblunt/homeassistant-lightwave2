@@ -61,9 +61,7 @@ class LWRF2Light(LightEntity):
             self._linkid = featureset_id
 
         registry = er.async_get(self._hass)
-        entity_entry = registry.async_get(self.unique_id)
-        if entity_entry is not None and not entity_entry.hidden:
-            registry.async_update_entity(
+        registry.async_update_entity(
                 self.unique_id, hidden_by=er.RegistryEntryHider.INTEGRATION
             )
 
