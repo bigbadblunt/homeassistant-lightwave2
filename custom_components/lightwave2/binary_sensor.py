@@ -13,6 +13,7 @@ from .const import DOMAIN
 DEPENDENCIES = ['lightwave2']
 _LOGGER = logging.getLogger(__name__)
 
+#TODO, refactor this in the style of the sensors module
 SENSORS = [
     BinarySensorEntityDescription(
         key="windowPosition",
@@ -39,6 +40,11 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     link = hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_LINK2]
 
     homekit = config_entry.options.get(CONF_HOMEKIT, False)
+
+    #for featureset_id, featureset in link.featuresets.items():
+    #    for description in SENSORS:
+    #        if featureset.has_feature(description.key):
+    #            sensors.append(LWRF2BinarySensor(featureset.name, featureset_id, link, description, hass, homekit))
 
     for featureset_id, name in link.get_windowsensors():
         sensors.append(LWRF2BinarySensor(name, featureset_id, link, homekit))
