@@ -66,10 +66,15 @@ class LWRF2Light(LightEntity):
         """Subscribe to events."""
         await self._lwlink.async_register_callback(self.async_update_callback)
         registry = er.async_get(self._hass)
+        entity_entry = registry.async_get(self.entity_id)
         if self._homekit and self._gen2:
-            registry.async_update_entity(
-                self.entity_id, hidden_by=er.RegistryEntryHider.INTEGRATION
-            )
+            if entity_entry is not None and not entity_entry.hidden:
+                registry.async_update_entity(
+                    self.entity_id, hidden_by=er.RegistryEntryHider.INTEGRATION
+                )
+        else:
+            if entity_entry.hidden_by == er.RegistryEntryHider.INTEGRATION:
+                registry.async_update_entity(self.entity_id, hidden_by=None)
 
     #TODO add async_will_remove_from_hass() to clean up
 
