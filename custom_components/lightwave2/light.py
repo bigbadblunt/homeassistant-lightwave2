@@ -18,23 +18,16 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     link = hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_LINK2]
 
     homekit = config_entry.options.get(CONF_HOMEKIT, False)
-    if not homekit:
-        for featureset_id, name in link.get_lights():
-            lights.append(LWRF2Light(name, featureset_id, link, hass))
-    else:
-        er = entity_registry.async_get(hass)
-        for featureset_id, name in link.get_lights():
-            if entity_id := er.async_get_entity_id('light', DOMAIN, featureset_id):
-                _LOGGER.debug("Removing entity provided by Homekit %s", entity_id)
-                er.async_remove(entity_id)
+    for featureset_id, name in link.get_lights():
+            lights.append(LWRF2Light(name, featureset_id, link, hass, homekit))
 
     for featureset_id, name in link.get_lights():
         if link.featuresets[featureset_id].has_led():
-            lights.append(LWRF2LED(name, featureset_id, link, hass))
+            lights.append(LWRF2LED(name, featureset_id, link, hass, homekit))
 
     for featureset_id, name in link.get_hubs():
         if link.featuresets[featureset_id].has_led():
-            lights.append(LWRF2LED(name, featureset_id, link, hass))
+            lights.append(LWRF2LED(name, featureset_id, link, hass, homekit))
 
     async def service_handle_brightness(light, call):
         _LOGGER.debug("Received service call set brightness %s", light._name)
@@ -54,9 +47,10 @@ class LWRF2Light(LightEntity):
     def __init__(self, name, featureset_id, link, hass):
         self._name = name
         self._hass = hass
-        _LOGGER.debug("Adding light: %s ", self._name)
+        _LOGGER.debug("Adding light: %s ", self._name, homekit)
         self._featureset_id = featureset_id
         self._lwlink = link
+        self._homekit = homekit
         self._state = \
             self._lwlink.featuresets[self._featureset_id].features["switch"].state
         self._brightness = int(round(
@@ -153,6 +147,10 @@ class LWRF2Light(LightEntity):
 
     async def async_set_rgb(self, led_rgb):
         await self._lwlink.async_set_led_rgb_by_featureset_id(self._featureset_id, led_rgb)
+
+    @property
+    def entity_registry_visible_default(self):
+        return (not self._homekit) and (not self._gen2)
 
     @property
     def extra_state_attributes(self):
