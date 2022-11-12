@@ -4,7 +4,7 @@ from homeassistant.components.light import LightEntity
 from homeassistant.components.light import (
     ATTR_BRIGHTNESS, COLOR_MODE_BRIGHTNESS, COLOR_MODE_RGB)
 from homeassistant.core import callback
-from homeassistant.helpers import entity_platform, entity_registry
+from homeassistant.helpers import entity_platform, entity_registry as er
 from homeassistant.helpers.entity import EntityCategory
 from .const import DOMAIN
 
@@ -59,6 +59,13 @@ class LWRF2Light(LightEntity):
         self._has_led = self._lwlink.featuresets[self._featureset_id].has_led()
         for featureset_id, hubname in link.get_hubs():
             self._linkid = featureset_id
+
+        registry = er.async_get(self.hass)
+        entity_entry = registry.async_get(self.unique_id)
+        if entity_entry is not None and not entity_entry.hidden:
+            registry.async_update_entity(
+                self.unique_id, hidden_by=er.RegistryEntryHider.INTEGRATION
+            )
 
     async def async_added_to_hass(self):
         """Subscribe to events."""
