@@ -62,7 +62,7 @@ class LWRF2Light(LightEntity):
 
         registry = er.async_get(self._hass)
         registry.async_update_entity(
-                self.unique_id, hidden_by=er.RegistryEntryHider.INTEGRATION
+                self.entity_id, hidden_by=er.RegistryEntryHider.INTEGRATION
             )
 
     async def async_added_to_hass(self):
