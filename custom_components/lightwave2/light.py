@@ -60,7 +60,7 @@ class LWRF2Light(LightEntity):
         for featureset_id, hubname in link.get_hubs():
             self._linkid = featureset_id
 
-        registry = er.async_get(self.hass)
+        registry = er.async_get(self._hass)
         entity_entry = registry.async_get(self.unique_id)
         if entity_entry is not None and not entity_entry.hidden:
             registry.async_update_entity(
