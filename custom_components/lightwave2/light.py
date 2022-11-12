@@ -60,14 +60,15 @@ class LWRF2Light(LightEntity):
         for featureset_id, hubname in link.get_hubs():
             self._linkid = featureset_id
 
-        registry = er.async_get(self._hass)
-        registry.async_update_entity(
-                self.entity_id, hidden_by=er.RegistryEntryHider.INTEGRATION
-            )
+
 
     async def async_added_to_hass(self):
         """Subscribe to events."""
         await self._lwlink.async_register_callback(self.async_update_callback)
+        registry = er.async_get(self._hass)
+        registry.async_update_entity(
+                self.entity_id, hidden_by=er.RegistryEntryHider.INTEGRATION
+            )
 
     #TODO add async_will_remove_from_hass() to clean up
 
