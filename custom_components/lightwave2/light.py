@@ -23,11 +23,11 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
     for featureset_id, name in link.get_lights():
         if link.featuresets[featureset_id].has_led():
-            lights.append(LWRF2LED(name, featureset_id, link, hass, homekit))
+            lights.append(LWRF2LED(name, featureset_id, link, hass))
 
     for featureset_id, name in link.get_hubs():
         if link.featuresets[featureset_id].has_led():
-            lights.append(LWRF2LED(name, featureset_id, link, hass, homekit))
+            lights.append(LWRF2LED(name, featureset_id, link, hass))
 
     async def service_handle_brightness(light, call):
         _LOGGER.debug("Received service call set brightness %s", light._name)
@@ -44,10 +44,10 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 class LWRF2Light(LightEntity):
     """Representation of a LightWaveRF light."""
 
-    def __init__(self, name, featureset_id, link, hass):
+    def __init__(self, name, featureset_id, link, hass, homekit):
         self._name = name
         self._hass = hass
-        _LOGGER.debug("Adding light: %s ", self._name, homekit)
+        _LOGGER.debug("Adding light: %s ", self._name)
         self._featureset_id = featureset_id
         self._lwlink = link
         self._homekit = homekit
@@ -150,7 +150,7 @@ class LWRF2Light(LightEntity):
 
     @property
     def entity_registry_visible_default(self):
-        return (not self._homekit) and (not self._gen2)
+        return (not self._homekit) or (not self._gen2)
 
     @property
     def extra_state_attributes(self):
