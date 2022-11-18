@@ -47,11 +47,11 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     #            sensors.append(LWRF2BinarySensor(featureset.name, featureset_id, link, description, hass, homekit))
 
     for featureset_id, name in link.get_windowsensors():
-        sensors.append(LWRF2BinarySensor(name, featureset_id, link, homekit))
+        sensors.append(LWRF2BinarySensor(name, featureset_id, link, hass, homekit))
 
     for featureset_id, name in link.get_switches():
         if link.featuresets[featureset_id].has_feature('outletInUse'):
-            sensors.append(LWRF2SocketBinarySensor(name, featureset_id, link, homekit))
+            sensors.append(LWRF2SocketBinarySensor(name, featureset_id, link, hass, homekit))
 
     for featureset_id, name in link.get_motionsensors():
         sensors.append(LWRF2MovementBinarySensor(name, featureset_id, link))
@@ -62,8 +62,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 class LWRF2BinarySensor(BinarySensorEntity):
     """Representation of a LightWaveRF window sensor."""
 
-    def __init__(self, name, featureset_id, link, homekit):
+    def __init__(self, name, featureset_id, link, hass, homekit):
         self._name = name
+        self._hass = hass
         _LOGGER.debug("Adding sensor: %s ", self._name)
         self._featureset_id = featureset_id
         self._lwlink = link
@@ -156,8 +157,9 @@ class LWRF2BinarySensor(BinarySensorEntity):
 class LWRF2SocketBinarySensor(BinarySensorEntity):
     """Representation of a LightWaveRF socket sensor."""
 
-    def __init__(self, name, featureset_id, link, homekit):
+    def __init__(self, name, featureset_id, link, hass, homekit):
         self._name = f"{name} Plug Sensor"
+        self._hass = hass
         _LOGGER.debug("Adding sensor: %s ", self._name)
         self._featureset_id = featureset_id
         self._lwlink = link
