@@ -252,7 +252,7 @@ class LWRF2LED(LightEntity):
         """Update state"""
         color = \
             self._lwlink.featuresets[self._featureset_id].features["rgbColor"].state
-        if color == 0:
+        if color == 0 or not color:
             self._state = False
         else:
             self._state = True
