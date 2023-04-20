@@ -47,7 +47,7 @@ class LWRF2Light(LightEntity):
     def __init__(self, name, featureset_id, link, hass, homekit):
         self._name = name
         self._hass = hass
-        _LOGGER.debug("Adding light: %s ", self._name)
+        _LOGGER.debug("Adding light: %s  -  %s", self._name, featureset_id)
         self._featureset_id = featureset_id
         self._lwlink = link
         self._homekit = homekit
@@ -252,7 +252,7 @@ class LWRF2LED(LightEntity):
         """Update state"""
         color = \
             self._lwlink.featuresets[self._featureset_id].features["rgbColor"].state
-        if color == 0:
+        if color == 0 or not color:
             self._state = False
         else:
             self._state = True
