@@ -55,8 +55,11 @@ class LWRF2Climate(ClimateEntity):
             self._valve_level = \
                 self._lwlink.featuresets[self._featureset_id].features["valveLevel"].state
         elif self._thermostat:
-            self._valve_level = \
-                self._lwlink.featuresets[self._featureset_id].features["callForHeat"].state * 100
+            if self._lwlink.featuresets[self._featureset_id].features["callForHeat"].state is None:
+                self._valve_level = 0
+            else:    
+                self._valve_level = \
+                    self._lwlink.featuresets[self._featureset_id].features["callForHeat"].state * 100
         else:
             self._valve_level = 100
 
@@ -66,10 +69,17 @@ class LWRF2Climate(ClimateEntity):
             self._onoff = \
                 self._lwlink.featuresets[self._featureset_id].features["heatState"].state
 
-        self._temperature = \
-            self._lwlink.featuresets[self._featureset_id].features["temperature"].state / 10
-        self._target_temperature = \
-            self._lwlink.featuresets[self._featureset_id].features["targetTemperature"].state / 10
+        if self._lwlink.featuresets[self._featureset_id].features["temperature"].state is None:
+            self._temperature = None
+        else:
+            self._temperature = \
+                self._lwlink.featuresets[self._featureset_id].features["temperature"].state / 10
+
+        if self._lwlink.featuresets[self._featureset_id].features["targetTemperature"].state is None:
+            self._target_temperature = None
+        else:
+            self._target_temperature = \
+                self._lwlink.featuresets[self._featureset_id].features["targetTemperature"].state / 10
         self._last_tt = self._target_temperature #Used to store the target temperature to revert to after boosting
         self._temperature_scale = TEMP_CELSIUS
 
