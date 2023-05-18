@@ -22,7 +22,10 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     link = hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_LINK2]
 
     for featureset_id, name in link.get_climates():
-        climates.append(LWRF2Climate(name, featureset_id, link))
+        try:
+            climates.append(LWRF2Climate(name, featureset_id, link))
+        except Exception as e: _LOGGER.exception("Could not add LWRF2Climate")
+
 
     hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES].extend(climates)
     async_add_entities(climates)

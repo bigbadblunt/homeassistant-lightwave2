@@ -19,15 +19,22 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
     homekit = config_entry.options.get(CONF_HOMEKIT, False)
     for featureset_id, name in link.get_lights():
+        try:
             lights.append(LWRF2Light(name, featureset_id, link, hass, homekit))
+        except Exception as e: _LOGGER.exception("Could not add LWRF2Light")
+
 
     for featureset_id, name in link.get_lights():
         if link.featuresets[featureset_id].has_led():
-            lights.append(LWRF2LED(name, featureset_id, link, hass))
+            try:
+                lights.append(LWRF2LED(name, featureset_id, link, hass))
+            except Exception as e: _LOGGER.exception("Could not add LWRF2LED")
 
     for featureset_id, name in link.get_hubs():
         if link.featuresets[featureset_id].has_led():
-            lights.append(LWRF2LED(name, featureset_id, link, hass))
+            try:
+                lights.append(LWRF2LED(name, featureset_id, link, hass))
+            except Exception as e: _LOGGER.exception("Could not add LWRF2LED")
 
     async def service_handle_brightness(light, call):
         _LOGGER.debug("Received service call set brightness %s", light._name)
