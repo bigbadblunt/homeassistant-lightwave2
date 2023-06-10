@@ -16,7 +16,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
     homekit = config_entry.options.get(CONF_HOMEKIT, False)
     for featureset_id, name in link.get_switches():
-        switches.append(LWRF2Switch(name, featureset_id, link, hass, homekit))
+        try:
+            switches.append(LWRF2Switch(name, featureset_id, link, hass, homekit))
+        except Exception as e: _LOGGER.exception("Could not add LWRF2Switch")
 
     hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES].extend(switches)
     async_add_entities(switches)

@@ -45,16 +45,24 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     #    for description in SENSORS:
     #        if featureset.has_feature(description.key):
     #            sensors.append(LWRF2BinarySensor(featureset.name, featureset_id, link, description, hass, homekit))
+    
 
     for featureset_id, name in link.get_windowsensors():
-        sensors.append(LWRF2BinarySensor(name, featureset_id, link, hass, homekit))
+        try:
+            sensors.append(LWRF2BinarySensor(name, featureset_id, link, hass, homekit))
+        except Exception as e: _LOGGER.exception("Could not add LWRF2BinarySensor")
+
 
     for featureset_id, name in link.get_switches():
         if link.featuresets[featureset_id].has_feature('outletInUse'):
-            sensors.append(LWRF2SocketBinarySensor(name, featureset_id, link, hass, homekit))
+            try:
+                sensors.append(LWRF2SocketBinarySensor(name, featureset_id, link, hass, homekit))
+            except Exception as e: _LOGGER.exception("Could not add LWRF2SocketBinarySensor")
 
     for featureset_id, name in link.get_motionsensors():
-        sensors.append(LWRF2MovementBinarySensor(name, featureset_id, link))
+        try:
+            sensors.append(LWRF2MovementBinarySensor(name, featureset_id, link))
+        except Exception as e: _LOGGER.exception("Could not add LWRF2MovementBinarySensor")
 
     hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES].extend(sensors)
     async_add_entities(sensors)

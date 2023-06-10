@@ -100,12 +100,14 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
                 sensors.append(LWRF2Sensor(featureset.name, featureset_id, link, description, hass))
     
     for featureset_id, hubname in link.get_hubs():
-        sensors.append(LWRF2EventSensor(hubname, featureset_id, link, SensorEntityDescription(
-        key="lastEvent",
-        device_class=DEVICE_CLASS_TIMESTAMP,
-        name="Last Event Received",
-        entity_category=EntityCategory.DIAGNOSTIC,
-    )))
+            try:
+                sensors.append(LWRF2EventSensor(hubname, featureset_id, link, SensorEntityDescription(
+                key="lastEvent",
+                device_class=DEVICE_CLASS_TIMESTAMP,
+                name="Last Event Received",
+                entity_category=EntityCategory.DIAGNOSTIC,
+            )))
+            except Exception as e: _LOGGER.exception("Could not add LWRF2EventSensor")
 
     hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES].extend(sensors)
     async_add_entities(sensors)
