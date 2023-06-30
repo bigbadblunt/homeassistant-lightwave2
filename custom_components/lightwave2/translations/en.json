@@ -20,8 +20,6 @@
             "user": {
                 "data": {
                     "lightwave_publicapi": "Use public API (experimental, turn off if you have issues)?",
-                    "lightwave_debug": "Log extra debugging info?",
-                    "lightwave_reconnect": "Force websocket reconnect every x seconds (set to zero for no forced reconnect)",
                     "lightwave_homekit": "Hide Homekit entities?"
                 }
             }

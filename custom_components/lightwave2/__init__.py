@@ -1,6 +1,6 @@
 import logging
 
-from .const import DOMAIN, CONF_PUBLICAPI, CONF_DEBUG, CONF_RECONNECT, LIGHTWAVE_LINK2,  LIGHTWAVE_ENTITIES, \
+from .const import DOMAIN, CONF_PUBLICAPI, LIGHTWAVE_LINK2,  LIGHTWAVE_ENTITIES, \
     LIGHTWAVE_WEBHOOK, LIGHTWAVE_WEBHOOKID, LIGHTWAVE_LINKID, SERVICE_RECONNECT, SERVICE_WHDELETE, SERVICE_UPDATE
 from homeassistant.const import (CONF_USERNAME, CONF_PASSWORD)
 from homeassistant.helpers import device_registry as dr
@@ -69,17 +69,7 @@ async def async_setup_entry(hass, config_entry):
     else:
         link = lightwave2.LWLink2(email, password)
 
-    debugmode = config_entry.options.get(CONF_DEBUG, False)
-
-    if debugmode:
-        _LOGGER.warning("Logging turned on")
-        _LOGGER.setLevel(logging.DEBUG)
-        logging.getLogger("lightwave2").setLevel(logging.DEBUG)
-
-    force_reconnect_secs = config_entry.options.get(CONF_RECONNECT, False)
-    _LOGGER.debug("Forced reconnection setting: %s ", force_reconnect_secs)
-
-    if not await link.async_connect(max_tries = 1, force_keep_alive_secs=force_reconnect_secs):
+    if not await link.async_connect(max_tries = 1, force_keep_alive_secs=0):
         return False
     await link.async_get_hierarchy()
 

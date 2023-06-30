@@ -48,8 +48,6 @@ class Lightwave2OptionsFlowHandler(config_entries.OptionsFlow):
         else:
             options = {
                 CONF_PUBLICAPI: False,
-                CONF_DEBUG: False,
-                CONF_RECONNECT: 0,
                 CONF_HOMEKIT: False
             }
             _LOGGER.debug("Creating options form using default options")
@@ -57,8 +55,6 @@ class Lightwave2OptionsFlowHandler(config_entries.OptionsFlow):
         return self.async_show_form(
             step_id="user", data_schema=vol.Schema({
                 vol.Optional(CONF_PUBLICAPI, default=options.get(CONF_PUBLICAPI)): bool,
-                vol.Optional(CONF_DEBUG, default=options.get(CONF_DEBUG)): bool,
-                vol.Optional(CONF_RECONNECT, default=options.get(CONF_RECONNECT)): int,
                 vol.Optional(CONF_HOMEKIT, default=options.get(CONF_HOMEKIT)): bool
             })
         )
