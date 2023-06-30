@@ -7,6 +7,7 @@ from homeassistant.const import (POWER_WATT, ENERGY_WATT_HOUR, DEVICE_CLASS_POWE
 from homeassistant.core import callback
 from homeassistant.util import dt as dt_util
 from homeassistant.helpers.entity import EntityCategory
+from homeassistant.exceptions import ConfigEntryNotReady
 from datetime import datetime
 import pytz
 
@@ -99,12 +100,14 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
                 sensors.append(LWRF2Sensor(featureset.name, featureset_id, link, description, hass))
     
     for featureset_id, hubname in link.get_hubs():
-        sensors.append(LWRF2EventSensor(hubname, featureset_id, link, SensorEntityDescription(
-        key="lastEvent",
-        device_class=DEVICE_CLASS_TIMESTAMP,
-        name="Last Event Received",
-        entity_category=EntityCategory.DIAGNOSTIC,
-    )))
+            try:
+                sensors.append(LWRF2EventSensor(hubname, featureset_id, link, SensorEntityDescription(
+                key="lastEvent",
+                device_class=DEVICE_CLASS_TIMESTAMP,
+                name="Last Event Received",
+                entity_category=EntityCategory.DIAGNOSTIC,
+            )))
+            except Exception as e: _LOGGER.exception("Could not add LWRF2EventSensor")
 
     hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES].extend(sensors)
     async_add_entities(sensors)
@@ -121,15 +124,19 @@ class LWRF2Sensor(SensorEntity):
         self._lwlink = link
         self.entity_description = description
         self._state = self._lwlink.featuresets[self._featureset_id].features[self.entity_description.key].state
-        if self.entity_description.key == 'duskTime' or self.entity_description.key == 'dawnTime':
-            year = self._lwlink.featuresets[self._featureset_id].features['year'].state
-            month = self._lwlink.featuresets[self._featureset_id].features['month'].state
-            day = self._lwlink.featuresets[self._featureset_id].features['day'].state
-            hour = self._state // 3600
-            self._state = self._state - hour * 3600
-            min = self._state // 60
-            second = self._state - min * 60
-            self._state = dt_util.parse_datetime(f'{year}-{month:02}-{day:02}T{hour:02}:{min:02}:{second:02}Z')
+
+        if self._state is None:
+            raise ConfigEntryNotReady(f"Sensor is not responding: {self._featureset_id}")
+        else:
+            if self.entity_description.key == 'duskTime' or self.entity_description.key == 'dawnTime':
+                year = self._lwlink.featuresets[self._featureset_id].features['year'].state
+                month = self._lwlink.featuresets[self._featureset_id].features['month'].state
+                day = self._lwlink.featuresets[self._featureset_id].features['day'].state
+                hour = self._state // 3600
+                self._state = self._state - hour * 3600
+                min = self._state // 60
+                second = self._state - min * 60
+                self._state = dt_util.parse_datetime(f'{year}-{month:02}-{day:02}T{hour:02}:{min:02}:{second:02}Z')
         for featureset_id, hubname in link.get_hubs():
             self._linkid = featureset_id
         if self._lwlink.featuresets[self._featureset_id].is_energy() and not self.entity_description.key == 'rssi':
@@ -160,15 +167,18 @@ class LWRF2Sensor(SensorEntity):
     async def async_update(self):
         """Update state"""
         self._state = self._lwlink.featuresets[self._featureset_id].features[self.entity_description.key].state
-        if self.entity_description.key == 'duskTime' or self.entity_description.key == 'dawnTime':
-            year = self._lwlink.featuresets[self._featureset_id].features['year'].state
-            month = self._lwlink.featuresets[self._featureset_id].features['month'].state
-            day = self._lwlink.featuresets[self._featureset_id].features['day'].state
-            hour = self._state // 3600
-            self._state = self._state - hour * 3600
-            min = self._state // 60
-            second = self._state - min * 60
-            self._state = dt_util.parse_datetime(f'{year}-{month:02}-{day:02}T{hour:02}:{min:02}:{second:02}Z')
+        if self._state is None:
+            _LOGGER.warning("async_update - state is None for: %s - %s", self._featureset_id, self.entity_description.key)
+        else:
+            if self.entity_description.key == 'duskTime' or self.entity_description.key == 'dawnTime':
+                year = self._lwlink.featuresets[self._featureset_id].features['year'].state
+                month = self._lwlink.featuresets[self._featureset_id].features['month'].state
+                day = self._lwlink.featuresets[self._featureset_id].features['day'].state
+                hour = self._state // 3600
+                self._state = self._state - hour * 3600
+                min = self._state // 60
+                second = self._state - min * 60
+                self._state = dt_util.parse_datetime(f'{year}-{month:02}-{day:02}T{hour:02}:{min:02}:{second:02}Z')
 
     @property
     def name(self):

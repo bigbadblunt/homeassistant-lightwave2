@@ -19,15 +19,22 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
     homekit = config_entry.options.get(CONF_HOMEKIT, False)
     for featureset_id, name in link.get_lights():
+        try:
             lights.append(LWRF2Light(name, featureset_id, link, hass, homekit))
+        except Exception as e: _LOGGER.exception("Could not add LWRF2Light")
+
 
     for featureset_id, name in link.get_lights():
         if link.featuresets[featureset_id].has_led():
-            lights.append(LWRF2LED(name, featureset_id, link, hass))
+            try:
+                lights.append(LWRF2LED(name, featureset_id, link, hass))
+            except Exception as e: _LOGGER.exception("Could not add LWRF2LED")
 
     for featureset_id, name in link.get_hubs():
         if link.featuresets[featureset_id].has_led():
-            lights.append(LWRF2LED(name, featureset_id, link, hass))
+            try:
+                lights.append(LWRF2LED(name, featureset_id, link, hass))
+            except Exception as e: _LOGGER.exception("Could not add LWRF2LED")
 
     async def service_handle_brightness(light, call):
         _LOGGER.debug("Received service call set brightness %s", light._name)
@@ -47,7 +54,7 @@ class LWRF2Light(LightEntity):
     def __init__(self, name, featureset_id, link, hass, homekit):
         self._name = name
         self._hass = hass
-        _LOGGER.debug("Adding light: %s ", self._name)
+        _LOGGER.debug("Adding light: %s  -  %s", self._name, featureset_id)
         self._featureset_id = featureset_id
         self._lwlink = link
         self._homekit = homekit
@@ -195,7 +202,7 @@ class LWRF2LED(LightEntity):
         self._lwlink = link
         color = \
             self._lwlink.featuresets[self._featureset_id].features["rgbColor"].state
-        if color == 0:
+        if color == 0 or not color:
             self._state = False
             self._r = 255
             self._g = 255
@@ -252,7 +259,7 @@ class LWRF2LED(LightEntity):
         """Update state"""
         color = \
             self._lwlink.featuresets[self._featureset_id].features["rgbColor"].state
-        if color == 0:
+        if color == 0 or not color:
             self._state = False
         else:
             self._state = True

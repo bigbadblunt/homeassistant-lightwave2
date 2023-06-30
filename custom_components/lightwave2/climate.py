@@ -22,7 +22,10 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     link = hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_LINK2]
 
     for featureset_id, name in link.get_climates():
-        climates.append(LWRF2Climate(name, featureset_id, link))
+        try:
+            climates.append(LWRF2Climate(name, featureset_id, link))
+        except Exception as e: _LOGGER.exception("Could not add LWRF2Climate")
+
 
     hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES].extend(climates)
     async_add_entities(climates)
@@ -55,8 +58,11 @@ class LWRF2Climate(ClimateEntity):
             self._valve_level = \
                 self._lwlink.featuresets[self._featureset_id].features["valveLevel"].state
         elif self._thermostat:
-            self._valve_level = \
-                self._lwlink.featuresets[self._featureset_id].features["callForHeat"].state * 100
+            if self._lwlink.featuresets[self._featureset_id].features["callForHeat"].state is None:
+                self._valve_level = 0
+            else:    
+                self._valve_level = \
+                    self._lwlink.featuresets[self._featureset_id].features["callForHeat"].state * 100
         else:
             self._valve_level = 100
 
@@ -66,10 +72,17 @@ class LWRF2Climate(ClimateEntity):
             self._onoff = \
                 self._lwlink.featuresets[self._featureset_id].features["heatState"].state
 
-        self._temperature = \
-            self._lwlink.featuresets[self._featureset_id].features["temperature"].state / 10
-        self._target_temperature = \
-            self._lwlink.featuresets[self._featureset_id].features["targetTemperature"].state / 10
+        if self._lwlink.featuresets[self._featureset_id].features["temperature"].state is None:
+            self._temperature = None
+        else:
+            self._temperature = \
+                self._lwlink.featuresets[self._featureset_id].features["temperature"].state / 10
+
+        if self._lwlink.featuresets[self._featureset_id].features["targetTemperature"].state is None:
+            self._target_temperature = None
+        else:
+            self._target_temperature = \
+                self._lwlink.featuresets[self._featureset_id].features["targetTemperature"].state / 10
         self._last_tt = self._target_temperature #Used to store the target temperature to revert to after boosting
         self._temperature_scale = TEMP_CELSIUS
 

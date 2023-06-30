@@ -20,7 +20,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     link = hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_LINK2]
 
     for featureset_id, name in link.get_covers():
-        covers.append(LWRF2Cover(name, featureset_id, link))
+        try:
+            covers.append(LWRF2Cover(name, featureset_id, link))
+        except Exception as e: _LOGGER.exception("Could not add LWRF2Cover")
 
     hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES].extend(covers)
     async_add_entities(covers)

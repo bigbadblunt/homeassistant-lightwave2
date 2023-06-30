@@ -16,11 +16,15 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
     for featureset_id, name in link.get_lights():
         if link.featuresets[featureset_id].has_feature('protection'):
-            locks.append(LWRF2Lock(name, featureset_id, link, hass))
+            try:
+                locks.append(LWRF2Lock(name, featureset_id, link, hass))
+            except Exception as e: _LOGGER.exception("Could not add LWRF2Lock")
 
     for featureset_id, name in link.get_switches():
         if link.featuresets[featureset_id].has_feature('protection'):
-            locks.append(LWRF2Lock(name, featureset_id, link, hass))
+            try:
+                locks.append(LWRF2Lock(name, featureset_id, link, hass))
+            except Exception as e: _LOGGER.exception("Could not add LWRF2Lock")
 
     hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES].extend(locks)
     async_add_entities(locks)
