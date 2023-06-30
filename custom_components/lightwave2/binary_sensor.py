@@ -13,7 +13,6 @@ from .const import DOMAIN
 DEPENDENCIES = ['lightwave2']
 _LOGGER = logging.getLogger(__name__)
 
-#TODO, refactor this in the style of the sensors module
 SENSORS = [
     BinarySensorEntityDescription(
         key="windowPosition",
@@ -33,8 +32,7 @@ SENSORS = [
     ),
     BinarySensorEntityDescription(
         key="uiDigitalInput",
-        device_class=DEVICE_CLASS_MOTION,
-        name="Movement",
+        name="DigitalInput",
     )
 ]
 
@@ -68,7 +66,7 @@ class LWRF2BinarySensor(BinarySensorEntity):
         self.entity_description = description
         self._homekit = homekit
         self._state = \
-            self._lwlink.featuresets[self._featureset_id].features["windowPosition"].state
+            self._lwlink.featuresets[self._featureset_id].features[self.entity_description.key].state
         self._gen2 = self._lwlink.featuresets[self._featureset_id].is_gen2()
         for featureset_id, hubname in link.get_hubs():
             self._linkid = featureset_id
@@ -105,7 +103,7 @@ class LWRF2BinarySensor(BinarySensorEntity):
     async def async_update(self):
         """Update state"""
         self._state = \
-            self._lwlink.featuresets[self._featureset_id].features["windowPosition"].state
+            self._lwlink.featuresets[self._featureset_id].features[self.entity_description.key].state
 
     @property
     def name(self):
@@ -121,10 +119,6 @@ class LWRF2BinarySensor(BinarySensorEntity):
     def is_on(self):
         """Lightwave switch is on state."""
         return self._state
-
-    @property
-    def device_class(self):
-        return DEVICE_CLASS_WINDOW
 
     @property
     def extra_state_attributes(self):
