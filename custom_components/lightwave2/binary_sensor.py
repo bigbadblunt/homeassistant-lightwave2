@@ -30,6 +30,11 @@ SENSORS = [
         key="movement",
         device_class=DEVICE_CLASS_MOTION,
         name="Movement",
+    ),
+    BinarySensorEntityDescription(
+        key="uiDigitalInput",
+        device_class=DEVICE_CLASS_MOTION,
+        name="Movement",
     )
 ]
 
@@ -41,41 +46,26 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
     homekit = config_entry.options.get(CONF_HOMEKIT, False)
 
-    #for featureset_id, featureset in link.featuresets.items():
-    #    for description in SENSORS:
-    #        if featureset.has_feature(description.key):
-    #            sensors.append(LWRF2BinarySensor(featureset.name, featureset_id, link, description, hass, homekit))
+    for featureset_id, featureset in link.featuresets.items():
+        for description in SENSORS:
+            if featureset.has_feature(description.key):
+                try:
+                    sensors.append(LWRF2BinarySensor(featureset.name, featureset_id, link, description, hass, homekit))
+                except Exception as e: _LOGGER.exception("Could not add LWRF2BinarySensor")
     
-
-    for featureset_id, name in link.get_windowsensors():
-        try:
-            sensors.append(LWRF2BinarySensor(name, featureset_id, link, hass, homekit))
-        except Exception as e: _LOGGER.exception("Could not add LWRF2BinarySensor")
-
-
-    for featureset_id, name in link.get_switches():
-        if link.featuresets[featureset_id].has_feature('outletInUse'):
-            try:
-                sensors.append(LWRF2SocketBinarySensor(name, featureset_id, link, hass, homekit))
-            except Exception as e: _LOGGER.exception("Could not add LWRF2SocketBinarySensor")
-
-    for featureset_id, name in link.get_motionsensors():
-        try:
-            sensors.append(LWRF2MovementBinarySensor(name, featureset_id, link))
-        except Exception as e: _LOGGER.exception("Could not add LWRF2MovementBinarySensor")
-
     hass.data[DOMAIN][config_entry.entry_id][LIGHTWAVE_ENTITIES].extend(sensors)
     async_add_entities(sensors)
 
 class LWRF2BinarySensor(BinarySensorEntity):
     """Representation of a LightWaveRF window sensor."""
 
-    def __init__(self, name, featureset_id, link, hass, homekit):
+    def __init__(self, name, featureset_id, link, description, hass, homekit):
         self._name = name
         self._hass = hass
         _LOGGER.debug("Adding sensor: %s ", self._name)
         self._featureset_id = featureset_id
         self._lwlink = link
+        self.entity_description = description
         self._homekit = homekit
         self._state = \
             self._lwlink.featuresets[self._featureset_id].features["windowPosition"].state
@@ -162,174 +152,3 @@ class LWRF2BinarySensor(BinarySensorEntity):
             'via_device': (DOMAIN, self._linkid)
         }
 
-class LWRF2SocketBinarySensor(BinarySensorEntity):
-    """Representation of a LightWaveRF socket sensor."""
-
-    def __init__(self, name, featureset_id, link, hass, homekit):
-        self._name = f"{name} Plug Sensor"
-        self._hass = hass
-        _LOGGER.debug("Adding sensor: %s ", self._name)
-        self._featureset_id = featureset_id
-        self._lwlink = link
-        self._homekit = homekit
-        self._state = \
-            self._lwlink.featuresets[self._featureset_id].features["outletInUse"].state
-        for featureset_id, hubname in link.get_hubs():
-            self._linkid = featureset_id
-
-    async def async_added_to_hass(self):
-        """Subscribe to events."""
-        await self._lwlink.async_register_callback(self.async_update_callback)
-        registry = er.async_get(self._hass)
-        entity_entry = registry.async_get(self.entity_id)
-        if self._homekit and self._gen2:
-            if entity_entry is not None and not entity_entry.hidden:
-                registry.async_update_entity(
-                    self.entity_id, hidden_by=er.RegistryEntryHider.INTEGRATION
-                )
-        else:
-            if entity_entry.hidden_by == er.RegistryEntryHider.INTEGRATION:
-                registry.async_update_entity(self.entity_id, hidden_by=None)
-
-    @callback
-    def async_update_callback(self, **kwargs):
-        """Update the component's state."""
-        self.async_schedule_update_ha_state(True)
-
-    @property
-    def should_poll(self):
-        """Lightwave2 library will push state, no polling needed"""
-        return False
-
-    @property
-    def assumed_state(self):
-        return False
-
-    @property
-    def entity_category(self):
-        return EntityCategory.DIAGNOSTIC
-
-    async def async_update(self):
-        """Update state"""
-        self._state = \
-            self._lwlink.featuresets[self._featureset_id].features["outletInUse"].state
-
-    @property
-    def name(self):
-        """Lightwave switch name."""
-        return self._name
-
-    @property
-    def unique_id(self):
-        """Unique identifier. Provided by hub."""
-        return self._featureset_id
-
-    @property
-    def is_on(self):
-        """Lightwave switch is on state."""
-        return self._state
-
-    @property
-    def device_class(self):
-        return DEVICE_CLASS_PLUG
-
-    @property
-    def extra_state_attributes(self):
-        """Return the optional state attributes."""
-
-        attribs = {}
-
-        for featurename, feature in self._lwlink.featuresets[self._featureset_id].features.items():
-            attribs['lwrf_' + featurename] = feature.state
-
-        attribs['lrwf_product_code'] = self._lwlink.featuresets[self._featureset_id].product_code
-
-        return attribs
-
-    @property
-    def device_info(self):
-        return {
-            'identifiers': { (DOMAIN, self._featureset_id)},
-            'name': self.name,
-            'manufacturer': "Lightwave RF",
-            'model': self._lwlink.featuresets[self._featureset_id].product_code,
-            'via_device': (DOMAIN, self._linkid)
-        }
-
-class LWRF2MovementBinarySensor(BinarySensorEntity):
-    """Representation of a LightWaveRF movement sensor."""
-
-    def __init__(self, name, featureset_id, link):
-        self._name = f"{name} Movement Sensor"
-        _LOGGER.debug("Adding sensor: %s ", self._name)
-        self._featureset_id = featureset_id
-        self._lwlink = link
-        self._state = \
-            self._lwlink.featuresets[self._featureset_id].features["movement"].state
-        for featureset_id, hubname in link.get_hubs():
-            self._linkid = featureset_id
-
-    async def async_added_to_hass(self):
-        """Subscribe to events."""
-        await self._lwlink.async_register_callback(self.async_update_callback)
-
-    @callback
-    def async_update_callback(self, **kwargs):
-        """Update the component's state."""
-        self.async_schedule_update_ha_state(True)
-
-    @property
-    def should_poll(self):
-        """Lightwave2 library will push state, no polling needed"""
-        return False
-
-    @property
-    def assumed_state(self):
-        return False
-
-    async def async_update(self):
-        """Update state"""
-        self._state = \
-            self._lwlink.featuresets[self._featureset_id].features["movement"].state
-
-    @property
-    def name(self):
-        """Lightwave switch name."""
-        return self._name
-
-    @property
-    def unique_id(self):
-        """Unique identifier. Provided by hub."""
-        return self._featureset_id
-
-    @property
-    def is_on(self):
-        """Lightwave switch is on state."""
-        return self._state
-
-    @property
-    def device_class(self):
-        return DEVICE_CLASS_MOTION
-
-    @property
-    def extra_state_attributes(self):
-        """Return the optional state attributes."""
-
-        attribs = {}
-
-        for featurename, feature in self._lwlink.featuresets[self._featureset_id].features.items():
-            attribs['lwrf_' + featurename] = feature.state
-
-        attribs['lrwf_product_code'] = self._lwlink.featuresets[self._featureset_id].product_code
-
-        return attribs
-
-    @property
-    def device_info(self):
-        return {
-            'identifiers': { (DOMAIN, self._featureset_id)},
-            'name': self.name,
-            'manufacturer': "Lightwave RF",
-            'model': self._lwlink.featuresets[self._featureset_id].product_code,
-            'via_device': (DOMAIN, self._linkid)
-        }
