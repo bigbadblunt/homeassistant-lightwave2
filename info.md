@@ -1,12 +1,3 @@
-## Read this!
-Due to an unknown issue believed to be happening on the Lightwave servers, the connection from this component to the LW servers is dropped after some period of inactivity. This does not affect the ability to control devices, but will mean that the state is not correctly reported if you control the device from some other controller (e.g. the physical buttons or the app).
-
-This is described in issue [#69](https://github.com/bigbadblunt/homeassistant-lightwave2/issues/69).
-
-The easiest workaround is to setup Home Assistant to use Homekit to control Lightwave devices, which will provide fully local control. You can still use this component for more advanced features.
-
-There are some more complicated workarounds described in [#77](https://github.com/bigbadblunt/homeassistant-lightwave2/issues/77) and [#92](https://github.com/bigbadblunt/homeassistant-lightwave2/issues/92).
-
 ## Configuration:
 In Home Assistant:
 
@@ -50,5 +41,5 @@ For sockets the codes are the "up button" versions.
 There are further service calls:
 
 `lightwave2.reconnect`: Force a reconnect to the Lightwave servers (only for non-public API, has no effect on public API)
-`lightwave2.whdelete`: Delete a webhook registration (use this if you get "Received message for unregistered webhook" log 
+`lightwave2.whdelete`: Delete a webhook registration (use this if you get "Received message for unregistered webhook" log messages)
 `lightwave2.update_states`: Force a read of all states of devices
