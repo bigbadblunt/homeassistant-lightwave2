@@ -30,6 +30,12 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
                 lights.append(LWRF2LED(name, featureset_id, link, hass))
             except Exception as e: _LOGGER.exception("Could not add LWRF2LED")
 
+    for featureset_id, name in link.get_switches():
+        if link.featuresets[featureset_id].has_led():
+            try:
+                lights.append(LWRF2LED(name, featureset_id, link, hass))
+            except Exception as e: _LOGGER.exception("Could not add LWRF2LED")
+
     for featureset_id, name in link.get_hubs():
         if link.featuresets[featureset_id].has_led():
             try:
