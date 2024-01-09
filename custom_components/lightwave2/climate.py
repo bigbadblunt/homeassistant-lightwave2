@@ -1,13 +1,38 @@
 import logging
 from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES
+from homeassistant.const import ATTR_TEMPERATURE, STATE_OFF
 try:
     from homeassistant.components.climate import ClimateEntity
 except ImportError:
     from homeassistant.components.climate import ClimateDevice as ClimateEntity
-from homeassistant.components.climate.const import (
-    HVAC_MODE_OFF, HVAC_MODE_HEAT, SUPPORT_TARGET_HUMIDITY, SUPPORT_TARGET_TEMPERATURE, SUPPORT_PRESET_MODE, CURRENT_HVAC_HEAT, CURRENT_HVAC_IDLE, CURRENT_HVAC_OFF)
-from homeassistant.const import (
-    ATTR_TEMPERATURE, TEMP_CELSIUS, TEMP_FAHRENHEIT, STATE_OFF)
+try:
+    from homeassistant.components.climate.const import ClimateEntityFeature, HVACAction, HVACMode
+    CURRENT_HVAC_HEAT = HVACAction.HEATING
+    CURRENT_HVAC_IDLE = HVACAction.IDLE
+    CURRENT_HVAC_OFF = HVACAction.OFF
+    HVAC_MODE_HEAT = HVACMode.HEAT
+    HVAC_MODE_OFF = HVACMode.OFF
+    SUPPORT_PRESET_MODE = ClimateEntityFeature.PRESET_MODE
+    SUPPORT_TARGET_HUMIDITY = ClimateEntityFeature.TARGET_HUMIDITY
+    SUPPORT_TARGET_TEMPERATURE = ClimateEntityFeature.TARGET_TEMPERATURE
+except ImportError:
+    from homeassistant.components.climate.const import (
+        CURRENT_HVAC_HEAT,
+        CURRENT_HVAC_IDLE,
+        CURRENT_HVAC_OFF,
+        HVAC_MODE_HEAT,
+        HVAC_MODE_OFF,
+        SUPPORT_PRESET_MODE,
+        SUPPORT_TARGET_HUMIDITY,
+        SUPPORT_TARGET_TEMPERATURE,
+    )
+# Units
+try:
+    from homeassistant.const import UnitOfTemperature
+    TEMP_CELSIUS = UnitOfTemperature.CELSIUS
+    TEMP_FAHRENHEIT = UnitOfTemperature.FAHRENHEIT
+except ImportError:
+    from homeassistant.const import TEMP_CELSIUS, TEMP_FAHRENHEIT
 from homeassistant.core import callback
 from .const import DOMAIN
 
