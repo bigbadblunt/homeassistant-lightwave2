@@ -4,9 +4,15 @@ try:
     from homeassistant.components.cover import CoverEntity
 except ImportError:
     from homeassistant.components.cover import CoverDevice as CoverEntity
-from homeassistant.components.cover import (
-    SUPPORT_CLOSE, SUPPORT_OPEN,
-    SUPPORT_STOP)
+try:
+    from homeassistant.components.cover import CoverEntityFeature
+    SUPPORT_CLOSE = CoverEntityFeature.CLOSE
+    SUPPORT_OPEN = CoverEntityFeature.OPEN
+    SUPPORT_STOP = CoverEntityFeature.STOP
+except ImportError:
+    from homeassistant.components.cover import (
+        SUPPORT_CLOSE, SUPPORT_OPEN,
+        SUPPORT_STOP)
 from homeassistant.core import callback
 from .const import DOMAIN
 
