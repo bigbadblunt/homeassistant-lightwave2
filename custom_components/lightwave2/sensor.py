@@ -1,9 +1,46 @@
 import logging
 from .const import LIGHTWAVE_LINK2, LIGHTWAVE_ENTITIES, DOMAIN
-from homeassistant.components.sensor import  STATE_CLASS_MEASUREMENT, STATE_CLASS_TOTAL_INCREASING, SensorEntity, SensorEntityDescription
-from homeassistant.const import (POWER_WATT, ENERGY_WATT_HOUR, DEVICE_CLASS_POWER, DEVICE_CLASS_ENERGY, 
-    DEVICE_CLASS_SIGNAL_STRENGTH, SIGNAL_STRENGTH_DECIBELS_MILLIWATT, PERCENTAGE, DEVICE_CLASS_BATTERY,
-    DEVICE_CLASS_TIMESTAMP, ELECTRIC_POTENTIAL_VOLT, ELECTRIC_CURRENT_MILLIAMPERE, DEVICE_CLASS_CURRENT, DEVICE_CLASS_VOLTAGE, DEVICE_CLASS_ILLUMINANCE)
+from homeassistant.components.sensor import SensorEntity, SensorEntityDescription
+# State Classes
+try:
+    from homeassistant.components.sensor import SensorStateClass
+    STATE_CLASS_MEASUREMENT = SensorStateClass.MEASUREMENT
+    STATE_CLASS_TOTAL_INCREASING = SensorStateClass.TOTAL_INCREASING
+except ImportError:
+    from homeassistant.components.sensor import  STATE_CLASS_MEASUREMENT, STATE_CLASS_TOTAL_INCREASING
+# Device Classes
+try:
+    from homeassistant.components.sensor import SensorDeviceClass
+    DEVICE_CLASS_BATTERY = SensorDeviceClass.BATTERY
+    DEVICE_CLASS_CURRENT = SensorDeviceClass.CURRENT
+    DEVICE_CLASS_ENERGY = SensorDeviceClass.ENERGY
+    DEVICE_CLASS_ILLUMINANCE = SensorDeviceClass.ILLUMINANCE
+    DEVICE_CLASS_POWER = SensorDeviceClass.POWER
+    DEVICE_CLASS_SIGNAL_STRENGTH = SensorDeviceClass.SIGNAL_STRENGTH
+    DEVICE_CLASS_TIMESTAMP = SensorDeviceClass.TIMESTAMP
+    DEVICE_CLASS_VOLTAGE = SensorDeviceClass.VOLTAGE
+except ImportError:
+    from homeassistant.components.sensor import (
+        DEVICE_CLASS_BATTERY, 
+        DEVICE_CLASS_CURRENT, 
+        DEVICE_CLASS_ENERGY, 
+        DEVICE_CLASS_ILLUMINANCE, 
+        DEVICE_CLASS_POWER, 
+        DEVICE_CLASS_SIGNAL_STRENGTH, 
+        DEVICE_CLASS_TIMESTAMP, 
+        DEVICE_CLASS_VOLTAGE
+    )
+# Units
+from homeassistant.const import PERCENTAGE, SIGNAL_STRENGTH_DECIBELS_MILLIWATT
+try:
+    from homeassistant.const import UnitOfElectricCurrent, UnitOfElectricPotential, UnitOfEnergy, UnitOfPower
+    ELECTRIC_CURRENT_MILLIAMPERE = UnitOfElectricCurrent.MILLIAMPERE
+    ELECTRIC_POTENTIAL_VOLT = UnitOfElectricPotential.VOLT
+    ENERGY_WATT_HOUR = UnitOfEnergy.WATT_HOUR
+    POWER_WATT = UnitOfPower.WATT
+except ImportError:
+    from homeassistant.const import (POWER_WATT, ENERGY_WATT_HOUR, ELECTRIC_POTENTIAL_VOLT, ELECTRIC_CURRENT_MILLIAMPERE)
+
 from homeassistant.core import callback
 from homeassistant.util import dt as dt_util
 from homeassistant.helpers.entity import EntityCategory
